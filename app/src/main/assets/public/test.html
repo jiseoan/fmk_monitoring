@@ -20,5 +20,12 @@
 </html>
 
 <script language="javascript" type="text/javascript">
+  $('.btn').on('click', function() {
+    var t = window.android.setMessage("insert into sample values(null, 'popox', '99')");
+    alert(t);
+  });
 
+  function test() {
+    alert("xx");
+  }
 </script>

@@ -12,7 +12,7 @@ import android.widget.Button;
 
 public class MainActivity extends AppCompatActivity {
 
-    private DBHelper mDBHlper = null;
+    private DBHelper m_dbHlper = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -23,21 +23,8 @@ public class MainActivity extends AppCompatActivity {
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-//                Intent intent = new Intent(MainActivity.this, WebviewActivity.class);
-//                startActivity(intent);
-
-
-                if(null == mDBHlper) {
-                    mDBHlper = new DBHelper(MainActivity.this, "test.db", null, 1);
-                }
-
-                SQLiteDatabase db = mDBHlper.getWritableDatabase();
-                ContentValues cv = new ContentValues();
-                cv.put("name", "kim");
-                cv.put("value", "34");
-                long result = db.insert("sample", null, cv);
-                Log.e("db:", Long.toString(result));
-                mDBHlper.close();
+                Intent intent = new Intent(MainActivity.this, WebviewActivity.class);
+                startActivity(intent);
             }
         });
     }
