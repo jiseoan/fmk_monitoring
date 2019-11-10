@@ -1,7 +1,7 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <title>Bootstrap 4 Example</title>
+  <title>android webview sample</title>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="file:///android_asset/vendor/bootstrap/css/bootstrap.min.css">
@@ -11,21 +11,38 @@
 <body>
 
 <div class="container">
-  <h1>My First Bootstrap Page</h1>
-  <p>This is some text.</p>
-  <button class="btn btn-primary">버튼</button>
+  <h5>SQLite sample by segeuru.com</h5>
+
+  <div class="input-group">
+    <input id="text1" type="text" class="form-control" value="insert into test values(null, 'jiseoan', '1')">
+    <div class="input-group-append">
+      <button id="btn1" class="btn btn-outline-secondary" type="button">Run</button>
+    </div>
+  </div>
+
+  <div class="input-group" style="margin-top:5px;">
+    <input id="text2" type="text" class="form-control" value="select * from test">
+    <div class="input-group-append">
+      <button id="btn2" class="btn btn-outline-secondary" type="button">Run</button>
+    </div>
+  </div>
+
 </div>
 
 </body>
 </html>
 
 <script language="javascript" type="text/javascript">
-  $('.btn').on('click', function() {
-    var t = window.android.setMessage("insert into sample values(null, 'popox', '99')");
-    alert(t);
+  $('#btn1').on('click', function() {
+    var result = window.android.DBSQL($('#text1').val());
+  });
+
+  $('#btn2').on('click', function() {
+    var result = window.android.DBSQL($('#text2').val());
+    alert(result);
   });
 
   function test() {
-    alert("xx");
+    alert("call from android");
   }
 </script>

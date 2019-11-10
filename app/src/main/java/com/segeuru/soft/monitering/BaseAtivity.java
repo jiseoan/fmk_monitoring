@@ -4,6 +4,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Handler;
+import android.util.Log;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
@@ -42,41 +43,51 @@ public class BaseAtivity extends AppCompatActivity {
     protected class AndroidBridge {
 
         @JavascriptInterface
-        public String setMessage(final String msg) {
+        public String DBSQL(final String sql) {
 
-
-            JSONObject jsonObj = new JSONObject();
-
-            JSONArray jArray = new JSONArray();
-            JSONObject json = new JSONObject();
-            try {
-                json.put("aaa", "123");
-                json.put("bbb", "333");
-                jArray.put(json);
-
-                json.put("aaa", "555");
-                json.put("bbb", "666");
-                jArray.put(json);
-
-            } catch(Exception e) {
-
+            if(sql.substring(0, 6).compareTo("select") == 0) {
+                return selectSQL(sql);
             }
 
-
-//            Cursor cursor = m_db.rawQuery("select * from sample", null);
-//
-//            while (cursor.moveToNext()) {
-//                for (int i = 0; i < cursor.getColumnCount(); ++i) {
-//                    System.out.println(cursor.getColumnName(i));
-//                    System.out.println(cursor.getString(i));
-//                }
-//                count++;
-//            }
-//
-//            cursor.close();
-
-            return jArray.toString();
+            m_db.execSQL(sql);
+            return null;
         }
     }
 
+     protected String selectSQL(String sql) {
+         Cursor cursor = m_db.rawQuery(sql, null);
+
+         JSONArray jsonArray = new JSONArray();
+         while (cursor.moveToNext()) {
+             JSONObject json = new JSONObject();
+             for (int i = 0; i < cursor.getColumnCount(); i++) {
+                 try {
+                     switch (cursor.getType(i)) {
+                         case Cursor.FIELD_TYPE_NULL:
+                             break;
+                         case Cursor.FIELD_TYPE_BLOB:
+                             json.put(cursor.getColumnName(i), cursor.getBlob(i));
+                             break;
+                         case Cursor.FIELD_TYPE_INTEGER:
+                             json.put(cursor.getColumnName(i), cursor.getInt(i));
+                             break;
+                         case Cursor.FIELD_TYPE_FLOAT:
+                             json.put(cursor.getColumnName(i), cursor.getFloat(i));
+                             break;
+                         case Cursor.FIELD_TYPE_STRING:
+                             json.put(cursor.getColumnName(i), cursor.getString(i));
+                             break;
+                     }
+
+                     json.put(cursor.getColumnName(i), cursor.getString(i));
+                 } catch(Exception e) {
+
+                 }
+             }
+             jsonArray.put(json);
+         }
+
+         cursor.close();
+         return jsonArray.toString();
+     }
 }

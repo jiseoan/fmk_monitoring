@@ -15,12 +15,12 @@ public class DBHelper extends SQLiteOpenHelper {
 
     @Override
     public void onCreate(SQLiteDatabase db) {
-        db.execSQL("create table sample (id integer primary key autoincrement, name text, value text)");
+        db.execSQL("create table test (id integer primary key autoincrement, name text, value text)");
     }
 
     @Override
     public void onUpgrade(SQLiteDatabase db, int i, int i1) {
-        db.execSQL("drop table if exists sample");
+        db.execSQL("drop table if exists test");
         onCreate(db);
     }
 
