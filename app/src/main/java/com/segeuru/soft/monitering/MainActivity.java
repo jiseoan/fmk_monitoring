@@ -1,22 +1,26 @@
 package com.segeuru.soft.monitering;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
 
 import android.Manifest;
 import android.content.Intent;
 import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
 
+import java.util.Arrays;
+
 public class MainActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
 
-    private static final int REQUEST_CAMERA_PERMISSION = 1000;
+    private static final int REQUEST_PERMISSION_CODE = 1000;
+    private String[] PERMISSIONS = { Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE };
     private DBHelper m_dbHlper = null;
 
     @Override
@@ -42,24 +46,46 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
             }
         });
 
-        // 카메라 권한 체크
-        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED) {
-            ActivityCompat.requestPermissions(this, new String[] { Manifest.permission.CAMERA }, REQUEST_CAMERA_PERMISSION);
-            return;
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if(!hasPermissions(PERMISSIONS))
+                requestPermissions(PERMISSIONS, REQUEST_PERMISSION_CODE);
+        } else {
+            finish();
         }
 
+    }
 
+    private boolean hasPermissions(String[] permissions) {
+        int result;
+        for(String perms : permissions) {
+            result = ContextCompat.checkSelfPermission(this, perms);
+            if(result == PackageManager.PERMISSION_DENIED) {
+                return false;
+            }
+        }
+
+        return true;
     }
 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-        if (requestCode == REQUEST_CAMERA_PERMISSION) {
-            if (grantResults[0] == PackageManager.PERMISSION_DENIED) {
-                Toast.makeText(this, "Permission denied", Toast.LENGTH_LONG).show();
-                finish();
-            }
+        switch(requestCode) {
+            case REQUEST_PERMISSION_CODE:
+                if(grantResults.length > 0) {
+                    boolean result = true;
+                    result &= grantResults[0] == PackageManager.PERMISSION_GRANTED;
+                    result &= grantResults[1] == PackageManager.PERMISSION_GRANTED;
+
+                    if(!result) {
+                        Toast.makeText(this, "접근권한이 거부되었습니다.", Toast.LENGTH_LONG).show();
+                        finish();
+                    }
+                }
+                break;
         }
     }
+
+
 }
