@@ -1,4 +1,8 @@
 <resources>
     <string name="app_name">monitering</string>
     <string name="title_activity_webview">WebviewActivity</string>
+
+    <string name="title_activity_camera">CameraActivity</string>
+    <string name="dummy_button">Dummy Button</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
 </resources>
