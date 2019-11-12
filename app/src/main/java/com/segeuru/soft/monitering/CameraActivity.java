@@ -3,6 +3,9 @@ package com.segeuru.soft.monitering;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
+import android.content.pm.PackageManager;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
 import android.graphics.SurfaceTexture;
 import android.hardware.Sensor;
@@ -15,11 +18,15 @@ import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CameraMetadata;
 import android.hardware.camera2.CaptureRequest;
 import android.hardware.camera2.params.StreamConfigurationMap;
+import android.media.Image;
+import android.media.ImageReader;
+import android.os.AsyncTask;
 import android.os.Bundle;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
+import androidx.core.app.ActivityCompat;
 
 import android.os.Handler;
 import android.os.HandlerThread;
@@ -36,6 +43,7 @@ import android.widget.FrameLayout;
 import android.widget.ImageButton;
 import android.widget.Toast;
 
+import java.nio.ByteBuffer;
 import java.util.Arrays;
 
 public class CameraActivity extends AppCompatActivity {
@@ -45,6 +53,7 @@ public class CameraActivity extends AppCompatActivity {
     private Size m_previewSize;
     private CaptureRequest.Builder m_captureRequestBuilder;
     private CameraCaptureSession m_cameraSession;
+    private ImageReader m_imageReader;
 
     private SurfaceView m_surfaceView;
     private SurfaceHolder m_surfaceHolder;
@@ -53,6 +62,9 @@ public class CameraActivity extends AppCompatActivity {
     private Sensor m_magnetometer;
     private Sensor m_accelerometer;
     private int m_DSI_height, m_DSI_width;
+    private CameraDevice m_cameraDevice;
+    private CaptureRequest.Builder m_previewBuilder;
+    private CameraCaptureSession m_captureSession;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -117,14 +129,111 @@ public class CameraActivity extends AppCompatActivity {
             CameraCharacteristics characteristics = cameraManager.getCameraCharacteristics(cameraId);
             StreamConfigurationMap map = characteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
             Size largestPreviewSize = map.getOutputSizes(ImageFormat.JPEG)[0];
-            Log.e("LargestSize", largestPreviewSize.getWidth() + " " + largestPreviewSize.getHeight());
+            Log.d("segeuru.com", map.toString());
+            Log.d("segeuru.com", "large size: " + largestPreviewSize.getWidth() + " " + largestPreviewSize.getHeight());
 
             setAspectRatioTextureView(largestPreviewSize.getHeight(),largestPreviewSize.getWidth());
+
+            m_imageReader = ImageReader.newInstance(largestPreviewSize.getWidth(), largestPreviewSize.getHeight(), ImageFormat.JPEG,7);
+            //m_imageReader.setOnImageAvailableListener(mOnImageAvailableListener, mainHandler);
+
+            if (ActivityCompat.checkSelfPermission(this, android.Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
+                return;
+
+            cameraManager.openCamera(cameraId, deviceStateCallback, null);
 
         } catch(CameraAccessException e) {
             Toast.makeText(this, "카메라를 열지 못했습니다.", Toast.LENGTH_SHORT).show();
         }
     }
+
+    private CameraDevice.StateCallback deviceStateCallback = new CameraDevice.StateCallback() {
+        @Override
+        public void onOpened(@NonNull CameraDevice cameraDevice) {
+            Log.d("segeuru.com", "camera opened");
+            m_cameraDevice = cameraDevice;
+            try {
+                updatePreview();
+            } catch (CameraAccessException e) {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public void onDisconnected(@NonNull CameraDevice cameraDevice) {
+            if(m_cameraDevice != null) {
+                m_cameraDevice.close();
+                m_cameraDevice = null;
+            }
+        }
+
+        @Override
+        public void onError(@NonNull CameraDevice cameraDevice, int i) {
+            Toast.makeText(CameraActivity.this, "카메라를 열지 못했습니다.", Toast.LENGTH_SHORT).show();
+        }
+    };
+
+    private void updatePreview() throws CameraAccessException {
+        m_previewBuilder = m_cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_PREVIEW);
+        m_previewBuilder.addTarget(m_surfaceHolder.getSurface());
+        m_cameraDevice.createCaptureSession(Arrays.asList(m_surfaceHolder.getSurface(), m_imageReader.getSurface()), sessionPrevireStateCallback, null);
+    }
+
+    private CameraCaptureSession.StateCallback sessionPrevireStateCallback = new CameraCaptureSession.StateCallback() {
+        @Override
+        public void onConfigured(@NonNull CameraCaptureSession cameraCaptureSession) {
+            m_captureSession = cameraCaptureSession;
+            try {
+                m_previewBuilder.set(CaptureRequest.CONTROL_AF_MODE, CaptureRequest.CONTROL_AF_MODE_CONTINUOUS_PICTURE);
+                m_previewBuilder.set(CaptureRequest.CONTROL_AE_MODE, CaptureRequest.CONTROL_AE_MODE_ON_AUTO_FLASH);
+                m_captureSession.setRepeatingRequest(m_previewBuilder.build(), null, null);
+            } catch (CameraAccessException e) {
+                e.printStackTrace();
+            }
+        }
+
+        @Override
+        public void onConfigureFailed(@NonNull CameraCaptureSession cameraCaptureSession) {
+            Toast.makeText(CameraActivity.this, "카메라 구성 실패", Toast.LENGTH_SHORT).show();
+        }
+    };
+
+//    private ImageReader.OnImageAvailableListener mOnImageAvailableListener = new ImageReader.OnImageAvailableListener() {
+//        @Override
+//        public void onImageAvailable(ImageReader reader) {
+//
+//            Image image = reader.acquireNextImage();
+//            ByteBuffer buffer = image.getPlanes()[0].getBuffer();
+//            byte[] bytes = new byte[buffer.remaining()];
+//            buffer.get(bytes);
+//            final Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+//            new SaveImageTask().execute(bitmap);
+//        }
+//    };
+
+//    private class SaveImageTask extends AsyncTask<Bitmap, Void, Void> {
+//
+//        @Override
+//        protected void onPostExecute(Void aVoid) {
+//            super.onPostExecute(aVoid);
+//
+//            Toast.makeText(MainActivity.this, "사진을 저장하였습니다.", Toast.LENGTH_SHORT).show();
+//        }
+//
+//        @Override
+//        protected Void doInBackground(Bitmap... data) {
+//
+//            Bitmap bitmap = null;
+//            try {
+//                bitmap = getRotatedBitmap(data[0], mDeviceRotation);
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//            insertImage(getContentResolver(), bitmap, ""+System.currentTimeMillis(), "");
+//
+//            return null;
+//        }
+//    }
 
     private void setAspectRatioTextureView(int ResolutionWidth , int ResolutionHeight )
     {
@@ -142,7 +251,7 @@ public class CameraActivity extends AppCompatActivity {
     }
 
     private void updateTextureViewSize(int viewWidth, int viewHeight) {
-        Log.e("segeuru", "TextureView Width : " + viewWidth + " TextureView Height : " + viewHeight);
+        Log.d("segeuru.com", "TextureView Width : " + viewWidth + " TextureView Height : " + viewHeight);
         m_surfaceView.setLayoutParams(new FrameLayout.LayoutParams(viewWidth, viewHeight));
     }
 
@@ -152,23 +261,23 @@ public class CameraActivity extends AppCompatActivity {
 //            @Override
 //            public void onSurfaceTextureAvailable(SurfaceTexture surfaceTexture, int i, int i1) {
 //                openCamera();
-//                Log.e("segeuru", "onSurfaceTextureAvailable");
+//                Log.d("segeuru.com", "onSurfaceTextureAvailable");
 //            }
 //
 //            @Override
 //            public void onSurfaceTextureSizeChanged(SurfaceTexture surfaceTexture, int i, int i1) {
-//                Log.e("segeuru", "onSurfaceTextureSizeChanged");
+//                Log.d("segeuru.com", "onSurfaceTextureSizeChanged");
 //            }
 //
 //            @Override
 //            public boolean onSurfaceTextureDestroyed(SurfaceTexture surfaceTexture) {
-//                Log.e("segeuru", "onSurfaceTextureDestroyed");
+//                Log.d("segeuru.com", "onSurfaceTextureDestroyed");
 //                return false;
 //            }
 //
 //            @Override
 //            public void onSurfaceTextureUpdated(SurfaceTexture surfaceTexture) {
-//                Log.e("segeuru", "onSurfaceTextureUpdated");
+//                Log.d("segeuru.com", "onSurfaceTextureUpdated");
 //            }
 //        });
 //    }
@@ -178,19 +287,19 @@ public class CameraActivity extends AppCompatActivity {
 //        CameraManager cameraManager = (CameraManager) getSystemService(Context.CAMERA_SERVICE);
 //        try {
 //            String[] cameraIdArray = cameraManager.getCameraIdList();
-//            Log.e("segeuru", "MMM cameraIds = " + Arrays.deepToString(cameraIdArray));
+//            Log.d("segeuru.com", "MMM cameraIds = " + Arrays.deepToString(cameraIdArray));
 //
 //            String mainCameraId = cameraIdArray[0];
 //            CameraCharacteristics cameraCharacteristics = cameraManager.getCameraCharacteristics(mainCameraId);
-//            Log.e("segeuru", "x => " + cameraCharacteristics);
+//            Log.d("segeuru.com", "x => " + cameraCharacteristics);
 //
 //            StreamConfigurationMap map = cameraCharacteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
 //            Size[] sizesForStream = map.getOutputSizes(SurfaceTexture.class);
-//            Log.e("segeuru", "MMM sizesForStream = " + Arrays.deepToString(sizesForStream));
+//            Log.d("segeuru.com", "MMM sizesForStream = " + Arrays.deepToString(sizesForStream));
 //
 //            // 가장 큰 사이즈부터 들어있다
 //            m_previewSize = sizesForStream[0];
-//            Log.e("segeuru", m_previewSize.toString());
+//            Log.d("segeuru.com", m_previewSize.toString());
 //
 //            cameraManager.openCamera(mainCameraId, new CameraDevice.StateCallback() {
 //                @Override
@@ -235,11 +344,11 @@ public class CameraActivity extends AppCompatActivity {
 //
 //                @Override
 //                public void onConfigureFailed(@NonNull CameraCaptureSession cameraCaptureSession) {
-//                    Log.e("cklee", "MMM onConfigureFailed");
+//                    Log.d("segeuru.com", "MMM onConfigureFailed");
 //                }
 //            }, null);
 //        } catch (CameraAccessException e) {
-//            Log.e("cklee", "MMM showCameraPreview ", e);
+//            Log.d("segeuru.com", "MMM showCameraPreview ", e);
 //        }
 //    }
 //
@@ -247,7 +356,7 @@ public class CameraActivity extends AppCompatActivity {
 //        try {
 //            m_cameraSession.setRepeatingRequest(m_captureRequestBuilder.build(), null, null);
 //        } catch (CameraAccessException e) {
-//            Log.e("cklee", "MMM updatePreview", e);
+//            Log.d("segeuru.com", "MMM updatePreview", e);
 //        }
 //    }
 
