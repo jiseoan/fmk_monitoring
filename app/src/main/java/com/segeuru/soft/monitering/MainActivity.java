@@ -52,7 +52,6 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
             finish();
         }
 
-        Log.d("segeuru.com", MediaStore.Images.Media.EXTERNAL_CONTENT_URI.toString());
     }
 
     private boolean hasPermissions(String[] permissions) {

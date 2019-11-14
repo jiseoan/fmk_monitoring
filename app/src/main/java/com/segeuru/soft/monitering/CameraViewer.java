@@ -4,7 +4,11 @@ import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.annotation.SuppressLint;
+import android.content.ContentResolver;
+import android.content.ContentValues;
 import android.content.Context;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
 import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraAccessException;
@@ -19,10 +23,13 @@ import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.Image;
 import android.media.ImageReader;
+import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.os.HandlerThread;
+import android.provider.MediaStore;
 import android.util.Log;
 import android.util.Size;
 import android.util.SparseIntArray;
@@ -204,13 +211,29 @@ public class CameraViewer extends AppCompatActivity {
                 }
 
                 public void save(byte[] bytes) throws IOException {
-                    OutputStream output = null;
-                    try {
-                        output = new FileOutputStream(file);
-                        output.write(bytes);
-                    } finally {
-                        if(null != output) output.close();
-                    }
+
+
+                    ContentResolver contentResolver = getContentResolver();
+                    ContentValues values = new ContentValues();
+                    values.put(MediaStore.Images.Media.TITLE, "test picture");
+                    values.put(MediaStore.Images.Media.DISPLAY_NAME, "---- test ----");
+                    values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg");
+                    values.put(MediaStore.Images.Media.DATE_ADDED, System.currentTimeMillis());
+                    values.put(MediaStore.Images.Media.DATE_TAKEN, System.currentTimeMillis());
+
+                    Uri uri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+                    OutputStream imageOut = contentResolver.openOutputStream(uri);
+                    Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                    bitmap.compress(Bitmap.CompressFormat.JPEG, 50, imageOut);
+
+
+//                    OutputStream output = null;
+//                    try {
+//                        output = new FileOutputStream(file);
+//                        output.write(bytes);
+//                    } finally {
+//                        if(null != output) output.close();
+//                    }
                 }
             };
             reader.setOnImageAvailableListener(readerListener, null);
@@ -242,6 +265,36 @@ public class CameraViewer extends AppCompatActivity {
 
         } catch(CameraAccessException e) {
             e.printStackTrace();
+        }
+    }
+
+    private class saveThread extends AsyncTask<byte[], Void, Void> {
+        @Override
+        protected Void doInBackground(byte[]... bytes) {
+            ContentResolver contentResolver = getContentResolver();
+            ContentValues values = new ContentValues();
+            values.put(MediaStore.Images.Media.TITLE, "test picture");
+            values.put(MediaStore.Images.Media.DISPLAY_NAME, "---- test ----");
+            values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg");
+            values.put(MediaStore.Images.Media.DATE_ADDED, System.currentTimeMillis());
+            values.put(MediaStore.Images.Media.DATE_TAKEN, System.currentTimeMillis());
+
+            try {
+                Uri uri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+                OutputStream imageOut = contentResolver.openOutputStream(uri);
+                Bitmap bitmap = BitmapFactory.decodeByteArray(bytes[0], 0, bytes.length);
+                bitmap.compress(Bitmap.CompressFormat.JPEG, 50, imageOut);
+            } catch(IOException e) {
+                e.printStackTrace();
+            }
+
+            return null;
+        }
+
+        @Override
+        protected void onPostExecute(Void aVoid) {
+            super.onPostExecute(aVoid);
+            Toast.makeText(CameraViewer.this, "사진을 저장하였습니다.", Toast.LENGTH_SHORT).show();
         }
     }
 
