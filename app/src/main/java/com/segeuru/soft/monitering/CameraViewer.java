@@ -191,49 +191,24 @@ public class CameraViewer extends AppCompatActivity {
             Log.d(DEBUG_TAG, String.format("device rotaion is %d", rotation));
 
             captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, ORIENTATIONS.get(rotation));
-            final File file = new File(Environment.getExternalStorageDirectory() + "/pic.jpg");
             ImageReader.OnImageAvailableListener readerListener = new ImageReader.OnImageAvailableListener() {
                 @Override
                 public void onImageAvailable(ImageReader imageReader) {
                     Image image = null;
                     try {
-                        image = reader.acquireLatestImage();
+                        image = reader.acquireNextImage();
                         ByteBuffer buffer = image.getPlanes()[0].getBuffer();
                         byte[] bytes = new byte[buffer.capacity()];
                         buffer.get(bytes);
-                        save(bytes);
 
-                    } catch (IOException e) {
+                        Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                        new saveThread().execute(bitmap);
+
+                    } catch (Exception e) {
                         e.printStackTrace();
                     } finally {
                         if(null != image) image.close();
                     }
-                }
-
-                public void save(byte[] bytes) throws IOException {
-
-
-                    ContentResolver contentResolver = getContentResolver();
-                    ContentValues values = new ContentValues();
-                    values.put(MediaStore.Images.Media.TITLE, "test picture");
-                    values.put(MediaStore.Images.Media.DISPLAY_NAME, "---- test ----");
-                    values.put(MediaStore.Images.Media.MIME_TYPE, "image/jpeg");
-                    values.put(MediaStore.Images.Media.DATE_ADDED, System.currentTimeMillis());
-                    values.put(MediaStore.Images.Media.DATE_TAKEN, System.currentTimeMillis());
-
-                    Uri uri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
-                    OutputStream imageOut = contentResolver.openOutputStream(uri);
-                    Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                    bitmap.compress(Bitmap.CompressFormat.JPEG, 50, imageOut);
-
-
-//                    OutputStream output = null;
-//                    try {
-//                        output = new FileOutputStream(file);
-//                        output.write(bytes);
-//                    } finally {
-//                        if(null != output) output.close();
-//                    }
                 }
             };
             reader.setOnImageAvailableListener(readerListener, null);
@@ -242,8 +217,7 @@ public class CameraViewer extends AppCompatActivity {
                 @Override
                 public void onCaptureCompleted(@NonNull CameraCaptureSession session, @NonNull CaptureRequest request, @NonNull TotalCaptureResult result) {
                     super.onCaptureCompleted(session, request, result);
-                    Toast.makeText(CameraViewer.this, "Saved:" + file, Toast.LENGTH_SHORT).show();
-                    createCameraPreview(); //<------------------------???????
+                    createCameraPreview();
                 }
             };
             m_cameraDevice.createCaptureSession(outputSurface, new CameraCaptureSession.StateCallback() {
@@ -268,10 +242,9 @@ public class CameraViewer extends AppCompatActivity {
         }
     }
 
-    private class saveThread extends AsyncTask<byte[], Void, Void> {
+    private class saveThread extends AsyncTask<Bitmap, Void, Void> {
         @Override
-        protected Void doInBackground(byte[]... bytes) {
-            ContentResolver contentResolver = getContentResolver();
+        protected Void doInBackground(Bitmap... data) {
             ContentValues values = new ContentValues();
             values.put(MediaStore.Images.Media.TITLE, "test picture");
             values.put(MediaStore.Images.Media.DISPLAY_NAME, "---- test ----");
@@ -279,11 +252,15 @@ public class CameraViewer extends AppCompatActivity {
             values.put(MediaStore.Images.Media.DATE_ADDED, System.currentTimeMillis());
             values.put(MediaStore.Images.Media.DATE_TAKEN, System.currentTimeMillis());
 
+            ContentResolver contentResolver = getContentResolver();
+            Uri uri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
+
+            Bitmap bitmap = data[0];
+            OutputStream imageOut = null;
             try {
-                Uri uri = contentResolver.insert(MediaStore.Images.Media.EXTERNAL_CONTENT_URI, values);
-                OutputStream imageOut = contentResolver.openOutputStream(uri);
-                Bitmap bitmap = BitmapFactory.decodeByteArray(bytes[0], 0, bytes.length);
+                imageOut = contentResolver.openOutputStream(uri);
                 bitmap.compress(Bitmap.CompressFormat.JPEG, 50, imageOut);
+
             } catch(IOException e) {
                 e.printStackTrace();
             }
