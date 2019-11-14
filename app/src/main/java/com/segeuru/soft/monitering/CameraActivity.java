@@ -67,7 +67,7 @@ public class CameraActivity extends AppCompatActivity {
         ORIENTATIONS.append(ExifInterface.ORIENTATION_ROTATE_270, 270);
     }
 
-    private CameraCaptureSession m_cameraCaptureSession;
+    private CameraCaptureSession m_captureSession;
     private ImageReader m_imageReader;
     private SurfaceView m_surfaceView;
     private SurfaceHolder m_surfaceHolder;
@@ -77,7 +77,6 @@ public class CameraActivity extends AppCompatActivity {
     private int m_DSI_height, m_DSI_width;
     private CameraDevice m_cameraDevice;
     private CaptureRequest.Builder m_previewBuilder;
-    private CameraCaptureSession m_captureSession;
     private Handler m_handler;
 
     private CameraCaptureSession.StateCallback m_sessionStateCallback = new CameraCaptureSession.StateCallback() {
@@ -103,14 +102,12 @@ public class CameraActivity extends AppCompatActivity {
         @Override
         public void onCaptureCompleted(@NonNull CameraCaptureSession session, @NonNull CaptureRequest request, @NonNull TotalCaptureResult result) {
             super.onCaptureCompleted(session, request, result);
-            m_cameraCaptureSession = session;
             unlockFocus();
         }
 
         @Override
         public void onCaptureProgressed(@NonNull CameraCaptureSession session, @NonNull CaptureRequest request, @NonNull CaptureResult partialResult) {
             super.onCaptureProgressed(session, request, partialResult);
-            m_cameraCaptureSession = session;
         }
 
         @Override
