@@ -10,6 +10,8 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.provider.MediaStore;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -50,6 +52,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
             finish();
         }
 
+        Log.d("segeuru.com", MediaStore.Images.Media.EXTERNAL_CONTENT_URI.toString());
     }
 
     private boolean hasPermissions(String[] permissions) {
