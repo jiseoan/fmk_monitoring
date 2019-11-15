@@ -8,6 +8,7 @@ import android.util.Log;
 import android.webkit.JavascriptInterface;
 import android.webkit.WebChromeClient;
 import android.webkit.WebView;
+import android.webkit.WebViewClient;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -42,7 +43,8 @@ public class BaseAtivity extends AppCompatActivity {
         m_webview.getSettings().setAllowFileAccessFromFileURLs(true);
         m_webview.getSettings().setAllowUniversalAccessFromFileURLs(true);
         m_webview.getSettings().setDomStorageEnabled(true);
-        m_webview.setWebChromeClient(new WebChromeClient());
+        //m_webview.setWebChromeClient(new WebChromeClient());
+        m_webview.setWebViewClient(new WebViweCustom());
     }
 
     protected class AndroidBridge {

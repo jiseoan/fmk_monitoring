@@ -5,9 +5,11 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="../vendor/bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" href="../vendor/jquery-confirm/dist/jquery-confirm.min.css">
   <script src="../vendor/jquery/jquery-3.1.1.min.js"></script>
   <script src="../vendor/bootstrap/js/bootstrap.min.js"></script>
   <script src="../vendor/vue/vue.js"></script>
+  <script src="../vendor/jquery-confirm/dist/jquery-confirm.min.js"></script>
   <script src="../vendor/common/common.js"></script>
 </head>
 <body>
@@ -31,6 +33,7 @@
 </html>
 
 <script language="javascript" type="text/javascript">
+
 var localAgentCode = window.localStorage.getItem("agent_code");
 var appMobileCode = null;
 $(document).ready(function(){
@@ -82,12 +85,12 @@ $(document).ready(function(){
             window.localStorage.setItem("agent_code", userData.agent_code);
             location.replace("main.html");
           } else {
-            alert(result.data);
+            $.alert(result.data);
           }
         })
         .fail(function() {
           console.log('failed');
-          alert("로그인에 실패하였습니다.\n인터넷연결상태를 확인해주세요.")
+          $.alert("로그인에 실패하였습니다.\n인터넷연결상태를 확인해주세요.")
         });
       }
     }
