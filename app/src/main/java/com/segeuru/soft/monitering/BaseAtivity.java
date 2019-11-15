@@ -15,6 +15,8 @@ import org.json.JSONObject;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
+import static com.segeuru.soft.monitering.MoniteringApp.dbHelper;
+
 public class BaseAtivity extends AppCompatActivity {
 
     protected WebView m_webview = null;
@@ -24,7 +26,7 @@ public class BaseAtivity extends AppCompatActivity {
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        m_db = MoniteringApp.dbHelper().getWritableDatabase();
+        m_db = dbHelper().getWritableDatabase();
     }
 
     @Override
