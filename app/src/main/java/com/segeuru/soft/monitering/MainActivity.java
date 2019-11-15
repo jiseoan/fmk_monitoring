@@ -40,7 +40,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         btn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(MainActivity.this, CameraActivity.class);
+                Intent intent = new Intent(MainActivity.this, CameraViewer.class);
                 startActivity(intent);
             }
         });
