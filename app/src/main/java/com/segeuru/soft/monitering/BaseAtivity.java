@@ -37,6 +37,9 @@ public class BaseAtivity extends AppCompatActivity {
         m_webview = findViewById(id);
         m_webview.addJavascriptInterface(new AndroidBridge(), "android");
         m_webview.getSettings().setJavaScriptEnabled(true);
+        m_webview.getSettings().setAllowFileAccessFromFileURLs(true);
+        m_webview.getSettings().setAllowUniversalAccessFromFileURLs(true);
+        m_webview.getSettings().setDomStorageEnabled(true);
         m_webview.setWebChromeClient(new WebChromeClient());
     }
 

@@ -13,7 +13,7 @@ public class WebviewActivity extends BaseAtivity {
         setSupportActionBar(toolbar);
 
         initWebview(R.id.webview);
-        m_webview.loadUrl("file:///android_asset/public/test.html");
+        m_webview.loadUrl("file:///android_asset/public/login.html");
     }
 
 }
