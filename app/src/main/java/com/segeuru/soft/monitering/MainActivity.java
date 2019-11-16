@@ -1,6 +1,7 @@
 package com.segeuru.soft.monitering;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.app.ActivityCompat;
 import androidx.core.content.ContextCompat;
@@ -13,6 +14,9 @@ import android.os.Bundle;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
+
+import com.google.zxing.integration.android.IntentIntegrator;
+import com.google.zxing.integration.android.IntentResult;
 
 public class MainActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
 
@@ -43,6 +47,18 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
             }
         });
 
+        btn = findViewById(R.id.btn_qr);
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                IntentIntegrator intentIntegrator = new IntentIntegrator(MainActivity.this);
+                intentIntegrator.setBeepEnabled(true);
+                intentIntegrator.setCaptureActivity(QrReaderActivity.class);
+                intentIntegrator.initiateScan();
+
+            }
+        });
+
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if(!hasPermissions(PERMISSIONS))
                 requestPermissions(PERMISSIONS, REQUEST_PERMISSION_CODE);
@@ -50,6 +66,13 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
             finish();
         }
 
+    }
+
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+        Toast.makeText(this, "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show();
     }
 
     private boolean hasPermissions(String[] permissions) {
