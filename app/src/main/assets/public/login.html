@@ -83,7 +83,7 @@ $(document).ready(function(){
             console.log(res);
 
             window.localStorage.setItem("agent_code", userData.agent_code);
-            location.replace("main.html");
+            location.replace("main.html?mode=activity&bottombar=sample");
           } else {
             $.alert(result.data);
           }

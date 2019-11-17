@@ -10,11 +10,31 @@
   <script src="../vendor/vue/vue.js"></script>
   <script src="../vendor/common/common.js"></script>
 </head>
+
+<style type="text/css">
+  .header {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+}
+</style>
+
 <body>
 
-<div class="container">
-  <div id="main">
+<div class="header" style="width: 100%;height: 50px;background-color: red;">
+</div>
+
+<div style="width: 100%;height: 50px;">
+  <!-- blank -->
+</div>
+
+<div class="container" style="background-color: #e6e6e6;">
+  <div id="main" style="width: 100%;height: 900px;">
     <p>메인입니다.</p>
+  </div>
+  <div style="width: 100%;background-color: yellow;">
+    <span>마지막줄</span>
   </div>
 </div>
 
