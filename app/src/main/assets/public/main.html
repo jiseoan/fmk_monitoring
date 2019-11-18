@@ -35,7 +35,6 @@
     <br />
     <button id="btnMainSetShowButtonList"> 메인 하단바 목록 버튼 보이기 </button>
     <button id="btnMainSetShowButtonJobQrStart"> 메인 하단바 작업시작(QR코드) 버튼 보이기 </button>
-    <button id="btnMainSetShowButtonJobCameraStart"> 메인 하단바 작업시작(카메라 - 모니터링) 버튼 보이기 </button>
     <button id="btnMainSetShowButtonAsProcessingRegistration"> 메인 하단바 AS처리 등록 버튼 보이기 </button>
     <button id="btnMainSetShowButtonAsProcessingReRegistration"> 메인 하단바 AS처리 재등록 버튼 보이기 </button>
     <br />
@@ -49,6 +48,7 @@
     <br />
     <button id="btnMainSetHideButtonAll"> 팝업 하단바 모든 버튼 숨기기 </button>
     <br />
+    <button id="btnMainSetShowButtonJobCameraStart"> 팝업 하단바 작업시작(카메라 - 모니터링) 버튼 보이기 </button>
     <button id="btnPopupSetShowButtonRetake"> 팝업 하단바 재촬영 버튼 보이기 </button>
     <button id="btnPopupSetShowButtonAsRequest"> 팝업 하단바 AS요청 버튼 보이기 </button>
     <button id="btnPopupSetShowButtonAsRequestRegistration"> 팝업 하단바 AS요청 등록 버튼 보이기 </button>
@@ -133,10 +133,6 @@ $(document).ready(function(){
       callNative("setMainButton", "jobQrStart");
     })
 
-    $("#btnMainSetShowButtonJobCameraStart").on('click', function() {
-      callNative("setMainButton", "jobCameraStart");
-    })
-
 
     $("#btnMainSetShowButtonAsProcessingRegistration").on('click', function() {
       callNative("setMainButton", "asProcessingRegistration");
@@ -171,6 +167,11 @@ $(document).ready(function(){
 
     $("#btnPopupSetHideButtonAll").on('click', function() {
       callNative("resetPopupAllButton");
+    })
+
+
+    $("#btnPopupSetShowButtonJobCameraStart").on('click', function() {
+      callNative("setPopupButton", "jobCameraStart");
     })
 
     $("#btnPopupSetShowButtonRetake").on('click', function() {
