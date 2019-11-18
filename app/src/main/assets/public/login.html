@@ -79,7 +79,7 @@ $(document).ready(function(){
             param['job_area'] = userData.job_area;
             param['job_week'] = userData.job_week;
             param['mobile_code'] = appMobileCode;
-            var res = dbMerge("user", param);
+            var res = dbMerge("agent", param);
             console.log(res);
 
             window.localStorage.setItem("agent_code", userData.agent_code);

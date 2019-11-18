@@ -62,13 +62,18 @@ function dbMerge(table, param) {
       }
     };
 
-    result = dbSql("insert or replace into " + table + " (" + fields + ") values (" + values + ")");
+    result = dbSql("INSERT OR REPLACE INTO " + table + " (" + fields + ") VALUES (" + values + ")");
   }
   return result;
 }
 
-function dbSelect(field, table, where)
+function dbSelect(field, table, where, orderBy)
 {
-  result = dbSql("SELECT " + field + " FROM " + table + " WHERE " + where);
+  if (typeof(where) === "undefined") where = "";
+  if (typeof(orderBy) === "undefined") orderBy = "";
+  var query = "SELECT " + field + " FROM " + table;
+  if (where) query += " WHERE " + where;
+  if (orderBy) query += " ORDER BY " + orderBy;
+  result = dbSql(query);
   return result;
 }

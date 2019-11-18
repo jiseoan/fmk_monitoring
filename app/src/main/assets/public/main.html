@@ -38,6 +38,8 @@
     <button id="btnMainSetShowButtonAsProcessingRegistration"> 메인 하단바 AS처리 등록 버튼 보이기 </button>
     <button id="btnMainSetShowButtonAsProcessingReRegistration"> 메인 하단바 AS처리 재등록 버튼 보이기 </button>
     <br />
+    <button id="btnOpenPopup"> 팝업 띄우기 </button>
+    <br />
     <button id="btnShowPopupLayoutTop"> 팝업 상단바 보이기 </button>
     <button id="btnHidePopupLayoutTop"> 팝업 상단바 숨기기 </button>
     <br />
@@ -56,6 +58,8 @@
     <button id="btnPopupSetShowButtonComplete"> 팝업 하단바 완료 버튼 보이기 </button>
     <button id="btnPopupSetShowButtonCancel"> 팝업 하단바 취소 버튼 보이기 </button>
     <br />
+    <button id="btnContentActionClosePopup"> 팝업 닫기 </button>
+    <br />
     <button id="btnShowLoading"> 로딩 보이기 </button>
     <button id="btnHideLoading"> 로딩 숨기기 </button>
   </div>
@@ -67,8 +71,10 @@
 <script language="javascript" type="text/javascript">
 var localAgentCode = window.localStorage.getItem("agent_code");
 $(document).ready(function(){
-  var userData = dbSelect("*", "agent", "agent_code=" + localAgentCode);
+  var userData = dbSelect("*", "agent", "agent_code='" + localAgentCode + "'");
   console.log(userData);
+  var noticeData = dbSelect("*", "notice", "", "notice_id DESC");
+  console.log(noticeData);
   initEvents();
 
   // 이벤트 등록
@@ -143,6 +149,11 @@ $(document).ready(function(){
     })
 
 
+    $("#btnOpenPopup").on('click', function() {
+      callNative("openPopup", "popup.html");
+    })
+
+
     $("#btnShowPopupLayoutTop").on('click', function() {
       callNative("setPopupLayoutTop", "true");
     })
@@ -196,6 +207,10 @@ $(document).ready(function(){
 
     $("#btnPopupSetShowButtonCancel").on('click', function() {
       callNative("setPopupButton", "cancel");
+    })
+
+    $("#btnContentActionClosePopup").on('click', function() {
+      callNative("closePopup", "opener.reload");
     })
 
 
