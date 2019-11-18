@@ -31,15 +31,6 @@ public class WebViweCustom extends WebViewClient {
     @Override
     public void onPageStarted(WebView view, String url, Bitmap favicon) {
         super.onPageStarted(view, url, favicon);
-
-        Uri uri = Uri.parse(url);
-        String bottombar = uri.getQueryParameter("bottombar");
-        if(bottombar != null) {
-            ((WebviewActivity)view.getContext()).showBottomBar(true);
-        } else {
-            ((WebviewActivity)view.getContext()).showBottomBar(false);
-        }
-
     }
 
 }

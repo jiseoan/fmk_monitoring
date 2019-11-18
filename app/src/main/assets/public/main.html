@@ -5,10 +5,12 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <link rel="stylesheet" href="../vendor/bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" href="../vendor/jquery-confirm/dist/jquery-confirm.min.css">
   <script src="../vendor/jquery/jquery-3.1.1.min.js"></script>
   <script src="../vendor/bootstrap/js/bootstrap.min.js"></script>
   <script src="../vendor/vue/vue.js"></script>
   <script src="../vendor/common/common.js"></script>
+  <script src="../vendor/jquery-confirm/dist/jquery-confirm.min.js"></script>
 </head>
 <body>
 
@@ -17,7 +19,7 @@
     <p>메인입니다.</p>
     <button id="btnRefresh"> 새로 고침 </button>
     <br />
-    <button id="btnGetMobileCode"> 핸드폰 고유코드 가져오기 </button>
+    <button id="btnGetMobileCode"> *핸드폰 고유코드 가져오기 </button>
     <br />
     <button id="btnContentActionMonitoringCamera"> 모니터링촬영 카메라 열기 (1장 사진) </button>
     <button id="btnContentActionBuildingCamera"> 단지촬영 카메라 열기 (1장 사진) </button>
@@ -34,8 +36,8 @@
     <button id="btnMainSetHideButtonAll"> 메인 하단바 모든 버튼 숨기기 </button>
     <br />
     <button id="btnMainSetShowButtonList"> 메인 하단바 목록 버튼 보이기 </button>
-    <button id="btnMainSetShowButtonJobQrStart"> 메인 하단바 작업시작(QR코드) 버튼 보이기 </button>
-    <button id="btnMainSetShowButtonAsProcessingRegistration"> 메인 하단바 AS처리 등록 버튼 보이기 </button>
+    <button id="btnMainSetShowButtonJobQrStart"> *메인 하단바 작업시작(QR코드) 버튼 보이기 </button>
+    <button id="btnMainSetShowButtonAsProcessingRegistration"> *메인 하단바 AS처리 등록 버튼 보이기 </button>
     <button id="btnMainSetShowButtonAsProcessingReRegistration"> 메인 하단바 AS처리 재등록 버튼 보이기 </button>
     <br />
     <button id="btnOpenPopup"> 팝업 띄우기 </button>
@@ -87,7 +89,7 @@ $(document).ready(function(){
     
 
     $("#btnGetMobileCode").on('click', function() {
-      callNative("mobileCode");
+      $.alert(window.android.deviceUniq());
     })
 
 
@@ -136,12 +138,13 @@ $(document).ready(function(){
     })
 
     $("#btnMainSetShowButtonJobQrStart").on('click', function() {
-      callNative("setMainButton", "jobQrStart");
+      window.android.showQrCameraBar("setMainButton", "jobQrStart");
     })
 
 
     $("#btnMainSetShowButtonAsProcessingRegistration").on('click', function() {
-      callNative("setMainButton", "asProcessingRegistration");
+      //callNative("setMainButton", "asProcessingRegistration");
+      window.android.showActionBar("setMainButton", "jobQrStart");
     })
 
     $("#btnMainSetShowButtonAsProcessingReRegistration").on('click', function() {
