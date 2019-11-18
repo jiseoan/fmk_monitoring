@@ -19,32 +19,6 @@ function parseResult(result)
   return resultObj;
 }
 
-function getPlatform()
-{
-  var platform = "Unknown";
-  if (/android/i.test(navigator.userAgent)) {
-    platform = "Android";
-  }
-  if (/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream) {
-    platform = "iOS";
-  }
-  return platform;
-}
-
-
-function callNative(command, param) {
-  if (typeof(param) === "undefined") param = "";
-  var checkOS = getPlatform();
-  try {
-    if (checkOS == "Android") {
-      window.android.callNative(command, param);
-    } else {
-      console.log("ignore callNative('" + command + "', '" + param + "')");
-    }
-  } catch (e) { 
-    console.log("ignore callNative('" + command + "', '" + param + "')");
-  }
-}
 function dbSql(query) {
   var result = null;
   console.log(query);

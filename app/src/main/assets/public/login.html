@@ -38,7 +38,7 @@ var localAgentCode = window.localStorage.getItem("agent_code");
 var appMobileCode = null;
 $(document).ready(function(){
   if (localAgentCode) {
-    //location.href = "main.html";
+    //location.replace("main.html");
     //return;
   }
   var login = new Vue({
@@ -83,7 +83,7 @@ $(document).ready(function(){
             console.log(res);
 
             window.localStorage.setItem("agent_code", userData.agent_code);
-            location.replace("main.html?mode=activity&bottombar=sample");
+            location.replace("main.html");
           } else {
             $.alert(result.data);
           }

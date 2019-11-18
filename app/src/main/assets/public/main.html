@@ -10,31 +10,54 @@
   <script src="../vendor/vue/vue.js"></script>
   <script src="../vendor/common/common.js"></script>
 </head>
-
-<style type="text/css">
-  .header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-}
-</style>
-
 <body>
 
-<div class="header" style="width: 100%;height: 50px;background-color: red;">
-</div>
-
-<div style="width: 100%;height: 50px;">
-  <!-- blank -->
-</div>
-
-<div class="container" style="background-color: #e6e6e6;">
-  <div id="main" style="width: 100%;height: 900px;">
+<div class="container">
+  <div id="main">
     <p>메인입니다.</p>
-  </div>
-  <div style="width: 100%;background-color: yellow;">
-    <span>마지막줄</span>
+    <button id="btnRefresh"> 새로 고침 </button>
+    <br />
+    <button id="btnGetMobileCode"> 핸드폰 고유코드 가져오기 </button>
+    <br />
+    <button id="btnContentActionMonitoringCamera"> 모니터링촬영 카메라 열기 (1장 사진) </button>
+    <button id="btnContentActionBuildingCamera"> 단지촬영 카메라 열기 (1장 사진) </button>
+    <button id="btnContentActionAdCheckCamera"> 게첨촬영 카메라 열기 (5장 사진) </button>
+    <br />
+    <button id="btnShowMainLayoutTop"> 메인 상단바 보이기 </button>
+    <button id="btnHideMainLayoutTop"> 메인 상단바 숨기기 </button>
+    <br />
+    <button id="btnMainChangeTitle"> 메인 상단바 타이틀 변경 </button>
+    <br />
+    <button id="btnShowMainLayoutBottom"> 메인 하단바 보이기 </button>
+    <button id="btnHideMainLayoutBottom"> 메인 하단바 숨기기 </button>
+    <br />
+    <button id="btnMainSetHideButtonAll"> 메인 하단바 모든 버튼 숨기기 </button>
+    <br />
+    <button id="btnMainSetShowButtonList"> 메인 하단바 목록 버튼 보이기 </button>
+    <button id="btnMainSetShowButtonJobQrStart"> 메인 하단바 작업시작(QR코드) 버튼 보이기 </button>
+    <button id="btnMainSetShowButtonJobCameraStart"> 메인 하단바 작업시작(카메라 - 모니터링) 버튼 보이기 </button>
+    <button id="btnMainSetShowButtonAsProcessingRegistration"> 메인 하단바 AS처리 등록 버튼 보이기 </button>
+    <button id="btnMainSetShowButtonAsProcessingReRegistration"> 메인 하단바 AS처리 재등록 버튼 보이기 </button>
+    <br />
+    <button id="btnShowPopupLayoutTop"> 팝업 상단바 보이기 </button>
+    <button id="btnHidePopupLayoutTop"> 팝업 상단바 숨기기 </button>
+    <br />
+    <button id="btnPopupChangeTitle"> 팝업 상단바 타이틀 변경 </button>
+    <br />
+    <button id="btnShowPopupLayoutBottom"> 팝업 하단바 보이기 </button>
+    <button id="btnHidePopupLayoutBottom"> 팝업 하단바 숨기기 </button>
+    <br />
+    <button id="btnMainSetHideButtonAll"> 팝업 하단바 모든 버튼 숨기기 </button>
+    <br />
+    <button id="btnPopupSetShowButtonRetake"> 팝업 하단바 재촬영 버튼 보이기 </button>
+    <button id="btnPopupSetShowButtonAsRequest"> 팝업 하단바 AS요청 버튼 보이기 </button>
+    <button id="btnPopupSetShowButtonAsRequestRegistration"> 팝업 하단바 AS요청 등록 버튼 보이기 </button>
+    <button id="btnPopupSetShowButtonConfirm"> 팝업 하단바 확인 버튼 보이기 </button>
+    <button id="btnPopupSetShowButtonComplete"> 팝업 하단바 완료 버튼 보이기 </button>
+    <button id="btnPopupSetShowButtonCancel"> 팝업 하단바 취소 버튼 보이기 </button>
+    <br />
+    <button id="btnShowLoading"> 로딩 보이기 </button>
+    <button id="btnHideLoading"> 로딩 숨기기 </button>
   </div>
 </div>
 
@@ -46,5 +69,181 @@ var localAgentCode = window.localStorage.getItem("agent_code");
 $(document).ready(function(){
   var userData = dbSelect("*", "agent", "agent_code=" + localAgentCode);
   console.log(userData);
+  initEvents();
+
+  // 이벤트 등록
+  function initEvents()
+  {
+    // 새로 고침
+    $("#btnRefresh").on('click', function() {
+      location.reload();
+    });
+    
+
+    $("#btnGetMobileCode").on('click', function() {
+      callNative("mobileCode");
+    })
+
+
+    $("#btnContentActionMonitoringCamera").on('click', function() {
+      callNative("monitoringCamera");
+    })
+
+    $("#btnContentActionBuildingCamera").on('click', function() {
+      callNative("buildingCamera");
+    })
+
+    $("#btnContentActionAdCheckCamera").on('click', function() {
+      callNative("adCheckCamera");
+    })
+
+
+    $("#btnShowMainLayoutTop").on('click', function() {
+      callNative("setMainLayoutTop", "true");
+    })
+
+    $("#btnHideMainLayoutTop").on('click', function() {
+      callNative("setMainLayoutTop", "false");
+    })
+
+
+    $("#btnMainChangeTitle").on('click', function() {
+      callNative("setMainTitle", "테스트메인타이틀");
+    })
+
+
+    $("#btnShowMainLayoutBottom").on('click', function() {
+      callNative("setMainLayoutBottom", "true");
+    })
+    $("#btnHideMainLayoutBottom").on('click', function() {
+      callNative("setMainLayoutBottom", "false");
+    })
+
+
+    $("#btnMainSetHideButtonAll").on('click', function() {
+      callNative("resetMainAllButton");
+    })
+
+
+    $("#btnMainSetShowButtonList").on('click', function() {
+      callNative("setMainButton", "list");
+    })
+
+    $("#btnMainSetShowButtonJobQrStart").on('click', function() {
+      callNative("setMainButton", "jobQrStart");
+    })
+
+    $("#btnMainSetShowButtonJobCameraStart").on('click', function() {
+      callNative("setMainButton", "jobCameraStart");
+    })
+
+
+    $("#btnMainSetShowButtonAsProcessingRegistration").on('click', function() {
+      callNative("setMainButton", "asProcessingRegistration");
+    })
+
+    $("#btnMainSetShowButtonAsProcessingReRegistration").on('click', function() {
+      callNative("setMainButton", "asProcessingReRegistration");
+    })
+
+
+    $("#btnShowPopupLayoutTop").on('click', function() {
+      callNative("setPopupLayoutTop", "true");
+    })
+
+    $("#btnHidePopupLayoutTop").on('click', function() {
+      callNative("setPopupLayoutTop", "false");
+    })
+
+
+    $("#btnPopupChangeTitle").on('click', function() {
+      callNative("setPopupTitle", "테스트팝업타이틀");
+    })
+
+
+    $("#btnShowPopupLayoutBottom").on('click', function() {
+      callNative("setPopupLayoutBottom", "true");
+    })
+    $("#btnHidePopupLayoutBottom").on('click', function() {
+      callNative("setPopupLayoutBottom", "false");
+    })
+
+
+    $("#btnPopupSetHideButtonAll").on('click', function() {
+      callNative("resetPopupAllButton");
+    })
+
+    $("#btnPopupSetShowButtonRetake").on('click', function() {
+      callNative("setPopupButton", "retake");
+    })
+
+    $("#btnPopupSetShowButtonAsRequest").on('click', function() {
+      callNative("setPopupButton", "asRequest");
+    })
+
+    $("#btnPopupSetShowButtonAsRequestRegistration").on('click', function() {
+      callNative("setPopupButton", "asRequestRegistration");
+    })
+
+    $("#btnPopupSetShowButtonConfirm").on('click', function() {
+      callNative("setPopupButton", "confirm");
+    })
+
+    $("#btnPopupSetShowButtonComplete").on('click', function() {
+      callNative("setPopupButton", "complete");
+    })
+
+    $("#btnPopupSetShowButtonCancel").on('click', function() {
+      callNative("setPopupButton", "cancel");
+    })
+
+
+    $("#btnShowLoading").on('click', function() {
+      callNative("showLoading");
+    })
+    $("#btnHideLoading").on('click', function() {
+      callNative("hideLoading");
+    })
+    
+  }
 });
+
+function getPlatform()
+{
+  var platform = "Unknown";
+  if (/android/i.test(navigator.userAgent)) {
+    platform = "Android";
+  }
+  if (/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream) {
+    platform = "iOS";
+  }
+  return platform;
+}
+
+
+function callNative(command, param) {
+  if (typeof(param) === "undefined") param = "";
+  var checkOS = getPlatform();
+  try {
+    if (checkOS == "Android") {
+      window.android.callNative(command, param);
+    } else {
+      console.log("ignore callNative('" + command + "', '" + param + "')");
+    }
+  } catch (e) { 
+    console.log("ignore callNative('" + command + "', '" + param + "')");
+  }
+}
+
+function NativeCallback(command, param, result)
+{
+  if (typeof(param) === "undefined") param = "";
+  if (typeof(result) === "undefined") result = "";
+  console.log("[INFO] NativeCallback: " + command + ", " + param+ ", " + result);
+
+  if (command === "mobileCode")
+  {
+    console.log("[DATA] result: " + result);
+  }
+}
 </script>
