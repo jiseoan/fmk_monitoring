@@ -19,6 +19,18 @@ function parseResult(result)
   return resultObj;
 }
 
+function getPlatform()
+{
+  var platform = "Unknown";
+  if (/android/i.test(navigator.userAgent)) {
+    platform = "Android";
+  }
+  if (/iPad|iPhone|iPod/.test(navigator.userAgent) && !window.MSStream) {
+    platform = "iOS";
+  }
+  return platform;
+}
+
 function dbSql(query) {
   var result = null;
   console.log(query);
