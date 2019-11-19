@@ -16,16 +16,19 @@ import androidx.appcompat.widget.Toolbar;
 public class WebviewActivity extends BaseAtivity {
 
     private String DEBUG_TAG = "segeuru.com";
+    protected Toolbar m_toolBar;
     protected LinearLayout m_qr_camera_layer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_webview);
-        Toolbar toolbar = findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
+        m_toolBar = findViewById(R.id.toolbar);
+        Toolbar toolbar2 = findViewById(R.id.toolbar2);
+        //setSupportActionBar(m_toolBar);
 
-        toolbar.setVisibility(View.GONE);
+        m_toolBar.setVisibility(View.GONE);
+        toolbar2.setVisibility(View.GONE);
 
         m_qr_camera_layer = findViewById(R.id.qr_camera_layout);
         m_qr_camera_layer.setVisibility(View.GONE);

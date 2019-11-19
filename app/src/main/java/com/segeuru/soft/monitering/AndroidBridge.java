@@ -81,4 +81,15 @@ public class AndroidBridge {
         });
     }
 
+    @JavascriptInterface
+    public void showHideToolBar(String str1, String str2) {
+        m_webViewActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                m_webViewActivity.m_toolBar.setVisibility(View.VISIBLE);
+                m_webViewActivity.setSupportActionBar(m_webViewActivity.m_toolBar);
+            }
+        });
+    }
+
 }

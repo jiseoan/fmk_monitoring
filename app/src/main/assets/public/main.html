@@ -42,7 +42,7 @@
     <br />
     <button id="btnOpenPopup"> 팝업 띄우기 </button>
     <br />
-    <button id="btnShowPopupLayoutTop"> 팝업 상단바 보이기 </button>
+    <button id="btnShowPopupLayoutTop"> *팝업 상단바 보이기 </button>
     <button id="btnHidePopupLayoutTop"> 팝업 상단바 숨기기 </button>
     <br />
     <button id="btnPopupChangeTitle"> 팝업 상단바 타이틀 변경 </button>
@@ -158,7 +158,8 @@ $(document).ready(function(){
 
 
     $("#btnShowPopupLayoutTop").on('click', function() {
-      callNative("setPopupLayoutTop", "true");
+      //callNative("setPopupLayoutTop", "true");
+      window.android.showHideToolBar("","");
     })
 
     $("#btnHidePopupLayoutTop").on('click', function() {
