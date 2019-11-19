@@ -34,7 +34,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, WebviewActivity.class);
-                intent.putExtra("url", "file:///android_asset/public/test.html");
+                intent.putExtra("url", "file:///android_asset/public/login.html");
                 startActivity(intent);
             }
         });

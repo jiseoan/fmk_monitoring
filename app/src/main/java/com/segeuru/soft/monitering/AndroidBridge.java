@@ -25,7 +25,9 @@ public class AndroidBridge {
     @JavascriptInterface
     public String DBSQL(final String sql) {
 
-        if(sql.substring(0, 6).compareTo("select") == 0) {
+        Log.d(DEBUG_TAG, sql);
+
+        if(sql.substring(0, 6).toLowerCase().compareTo("select") == 0) {
             return m_webViewActivity.selectSQL(sql);
         }
 
