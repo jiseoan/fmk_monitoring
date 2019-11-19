@@ -1,5 +1,6 @@
 package com.segeuru.soft.monitering;
 
+import android.database.SQLException;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
@@ -25,14 +26,16 @@ public class AndroidBridge {
     @JavascriptInterface
     public String DBSQL(final String sql) {
 
-        Log.d(DEBUG_TAG, sql);
-
         if(sql.substring(0, 6).toLowerCase().compareTo("select") == 0) {
             return m_webViewActivity.selectSQL(sql);
         }
 
-        m_webViewActivity.m_db.execSQL(sql);
-        return null;
+        try {
+            m_webViewActivity.m_db.execSQL(sql);
+        } catch (SQLException e) {
+            return "failed";
+        }
+        return "success";
     }
 
     @JavascriptInterface
