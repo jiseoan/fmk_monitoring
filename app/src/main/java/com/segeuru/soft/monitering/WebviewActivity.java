@@ -16,31 +16,31 @@ import androidx.appcompat.widget.Toolbar;
 public class WebviewActivity extends BaseAtivity {
 
     private String DEBUG_TAG = "segeuru.com";
-    protected Toolbar m_toolBar;
-    protected LinearLayout m_qr_camera_layer;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_webview);
-        m_toolBar = findViewById(R.id.toolbar);
-        Toolbar toolbar2 = findViewById(R.id.toolbar2);
+        findViewById(R.id.top_actionbar_A1).setVisibility(View.GONE);
+        findViewById(R.id.top_actionbar_A2).setVisibility(View.GONE);
         //setSupportActionBar(m_toolBar);
 
-        m_toolBar.setVisibility(View.GONE);
-        toolbar2.setVisibility(View.GONE);
-
-        m_qr_camera_layer = findViewById(R.id.qr_camera_layout);
-        m_qr_camera_layer.setVisibility(View.GONE);
-
-        findViewById(R.id.actionBar_layout).setVisibility(View.GONE);
+        findViewById(R.id.bottom_actionbar_A1).setVisibility(View.GONE);
+        findViewById(R.id.bottom_actionbar_A2).setVisibility(View.GONE);
+        findViewById(R.id.bottom_actionbar_A3).setVisibility(View.GONE);
+        findViewById(R.id.bottom_actionbar_B1).setVisibility(View.GONE);
+        findViewById(R.id.bottom_actionbar_B2).setVisibility(View.GONE);
+        findViewById(R.id.bottom_actionbar_C1).setVisibility(View.GONE);
+        findViewById(R.id.bottom_actionbar_C2).setVisibility(View.GONE);
+        findViewById(R.id.bottom_actionbar_D1).setVisibility(View.GONE);
+        findViewById(R.id.bottom_actionbar_D2).setVisibility(View.GONE);
 
         initWebview(R.id.webview);
         m_webview.addJavascriptInterface(new AndroidBridge(this, m_webview), "android");
         m_webview.loadUrl(getIntent().getStringExtra("url"));
     }
 
-    public void showBottomBar(boolean show) {
-        m_qr_camera_layer.setVisibility(show ? View.VISIBLE : View.GONE);
-    }
+//    public void showBottomBar(boolean show) {
+//        m_qr_camera_layer.setVisibility(show ? View.VISIBLE : View.GONE);
+//    }
 }

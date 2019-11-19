@@ -1,16 +1,17 @@
 package com.segeuru.soft.monitering;
 
+import android.content.Context;
+import android.content.res.Resources;
 import android.database.SQLException;
 import android.provider.Settings;
-import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
 import android.webkit.JavascriptInterface;
 import android.widget.LinearLayout;
 
+import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
-import androidx.constraintlayout.widget.Constraints;
 
 public class AndroidBridge {
 
@@ -44,52 +45,66 @@ public class AndroidBridge {
     }
 
     @JavascriptInterface
-    public void showQrCameraBar(String str1, String str2) {
-        m_webViewActivity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                WebView webView = m_webViewActivity.findViewById(R.id.webview);
-                webView.getLayoutParams().height = 0;
-                ConstraintSet constraintSet = new ConstraintSet();
-                ConstraintLayout constraintLayout = m_webViewActivity.findViewById(R.id.constraint_layout_webActivity);
-                constraintSet.clone(constraintLayout);
-                constraintSet.connect(webView.getId(), ConstraintSet.BOTTOM, R.id.qr_camera_layout, ConstraintSet.TOP);
-                constraintSet.applyTo(constraintLayout);
+    public void toolBar(String resourceName, boolean show) {
+        Resources res = null;
 
-                LinearLayout linearLayout = m_webViewActivity.findViewById(R.id.qr_camera_layout);
-                linearLayout.setVisibility(View.VISIBLE);
-            }
-        });
+        try {
+            Context resContext = m_webView.getContext().createPackageContext(m_webView.getContext().getPackageName(), 0);
+            res = resContext.getResources();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
+        final int id = res.getIdentifier(resourceName, "id", m_webView.getContext().getPackageName());
+
+        if(show) {
+            m_webViewActivity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    Toolbar toolbar = m_webViewActivity.findViewById(id);
+                    toolbar.setVisibility(View.VISIBLE);
+                    m_webViewActivity.setSupportActionBar(toolbar);
+                }
+            });
+        } else {
+            m_webViewActivity.findViewById(id).setVisibility(View.GONE);
+            m_webViewActivity.setSupportActionBar(null);
+        }
     }
 
     @JavascriptInterface
-    public void showActionBar(String str1, String str2) {
-        m_webViewActivity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                WebView webView = m_webViewActivity.findViewById(R.id.webview);
-                webView.getLayoutParams().height = 0;
-                ConstraintSet constraintSet = new ConstraintSet();
-                ConstraintLayout constraintLayout = m_webViewActivity.findViewById(R.id.constraint_layout_webActivity);
-                constraintSet.clone(constraintLayout);
-                constraintSet.connect(webView.getId(), ConstraintSet.BOTTOM, R.id.actionBar_layout, ConstraintSet.TOP);
-                constraintSet.applyTo(constraintLayout);
+    public void bottomActionBar(String resourceName, boolean show) {
+        Resources res = null;
 
-                LinearLayout linearLayout = m_webViewActivity.findViewById(R.id.actionBar_layout);
-                linearLayout.setVisibility(View.VISIBLE);
-            }
-        });
-    }
+        try {
+            Context resContext = m_webView.getContext().createPackageContext(m_webView.getContext().getPackageName(), 0);
+            res = resContext.getResources();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
 
-    @JavascriptInterface
-    public void showHideToolBar(String str1, String str2) {
-        m_webViewActivity.runOnUiThread(new Runnable() {
-            @Override
-            public void run() {
-                m_webViewActivity.m_toolBar.setVisibility(View.VISIBLE);
-                m_webViewActivity.setSupportActionBar(m_webViewActivity.m_toolBar);
-            }
-        });
+        final int id = res.getIdentifier(resourceName, "id", m_webView.getContext().getPackageName());
+
+        if(show) {
+            m_webViewActivity.runOnUiThread(new Runnable() {
+                @Override
+                public void run() {
+                    WebView webView = m_webViewActivity.findViewById(R.id.webview);
+                    webView.getLayoutParams().height = 0;
+                    ConstraintSet constraintSet = new ConstraintSet();
+                    ConstraintLayout constraintLayout = m_webViewActivity.findViewById(R.id.constraint_layout_webActivity);
+                    constraintSet.clone(constraintLayout);
+                    constraintSet.connect(webView.getId(), ConstraintSet.BOTTOM, id, ConstraintSet.TOP);
+                    constraintSet.applyTo(constraintLayout);
+
+                    LinearLayout linearLayout = m_webViewActivity.findViewById(id);
+                    linearLayout.setVisibility(View.VISIBLE);
+                }
+            });
+        } else {
+            LinearLayout linearLayout = m_webViewActivity.findViewById(id);
+            linearLayout.setVisibility(View.GONE);
+        }
     }
 
 }

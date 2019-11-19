@@ -19,8 +19,19 @@
     <p>메인입니다.</p>
     <button id="btnRefresh"> 새로 고침 </button>
     <br />
-    <button id="btnGetMobileCode"> *핸드폰 고유코드 가져오기 </button>
-    <br />
+    <button id="btnGetMobileCode"> *핸드폰 고유코드 가져오기 </button><br />
+    <button id="bottomBarA1"> *bottom-actionbar-A1 보이기 </button><br />
+    <button id="bottomBarA2"> *bottom-actionbar-A2 보이기 </button><br />
+    <button id="bottomBarA3"> *bottom-actionbar-A3 보이기 </button><br />
+    <button id="bottomBarB1"> *bottom-actionbar-B1 보이기 </button><br />
+    <button id="bottomBarB2"> *bottom-actionbar-B2 보이기 </button><br />
+    <button id="bottomBarC1"> *bottom-actionbar-C1 보이기 </button><br />
+    <button id="bottomBarC2"> *bottom-actionbar-C2 보이기 </button><br />
+    <button id="bottomBarD1"> *bottom-actionbar-D1 보이기 </button><br />
+    <button id="bottomBarD2"> *bottom-actionbar-D2 보이기 </button><br />
+<br/>
+    <button id="toolBarA1"> *top-actionbar-A1 보이기 </button><br />
+<br/>
     <button id="btnContentActionMonitoringCamera"> 모니터링촬영 카메라 열기 (1장 사진) </button>
     <button id="btnContentActionBuildingCamera"> 단지촬영 카메라 열기 (1장 사진) </button>
     <button id="btnContentActionAdCheckCamera"> 게첨촬영 카메라 열기 (5장 사진) </button>
@@ -36,8 +47,8 @@
     <button id="btnMainSetHideButtonAll"> 메인 하단바 모든 버튼 숨기기 </button>
     <br />
     <button id="btnMainSetShowButtonList"> 메인 하단바 목록 버튼 보이기 </button>
-    <button id="btnMainSetShowButtonJobQrStart"> *메인 하단바 작업시작(QR코드) 버튼 보이기 </button>
-    <button id="btnMainSetShowButtonAsProcessingRegistration"> *메인 하단바 AS처리 등록 버튼 보이기 </button>
+    <button id="btnMainSetShowButtonJobQrStart"> 메인 하단바 작업시작(QR코드) 버튼 보이기 </button>
+    <button id="btnMainSetShowButtonAsProcessingRegistration"> 메인 하단바 AS처리 등록 버튼 보이기 </button>
     <button id="btnMainSetShowButtonAsProcessingReRegistration"> 메인 하단바 AS처리 재등록 버튼 보이기 </button>
     <br />
     <button id="btnOpenPopup"> 팝업 띄우기 </button>
@@ -92,6 +103,53 @@ $(document).ready(function(){
       $.alert(window.android.deviceUniq());
     })
 
+    $("#bottomBarA1").on('click', function() {
+      window.android.bottomActionBar("bottom_actionbar_A1", true);
+    })
+
+    $("#bottomBarA2").on('click', function() {
+      window.android.bottomActionBar("bottom_actionbar_A2", true);
+    })
+
+    $("#bottomBarA3").on('click', function() {
+      window.android.bottomActionBar("bottom_actionbar_A3", true);
+    })
+
+    $("#bottomBarB1").on('click', function() {
+      window.android.bottomActionBar("bottom_actionbar_B1", true);
+    })
+
+    $("#bottomBarB2").on('click', function() {
+      window.android.bottomActionBar("bottom_actionbar_B2", true);
+    })
+
+    $("#bottomBarC1").on('click', function() {
+      window.android.bottomActionBar("bottom_actionbar_C1", true);
+    })
+
+    $("#bottomBarC2").on('click', function() {
+      window.android.bottomActionBar("bottom_actionbar_C2", true);
+    })
+
+    $("#bottomBarD1").on('click', function() {
+      window.android.bottomActionBar("bottom_actionbar_D1", true);
+    })
+
+    $("#bottomBarD2").on('click', function() {
+      window.android.bottomActionBar("bottom_actionbar_D2", true);
+    })
+
+    $("#toolBarA1").on('click', function() {
+      window.android.toolBar("top_actionbar_A1", true);
+    })
+
+
+
+
+
+
+
+
 
     $("#btnContentActionMonitoringCamera").on('click', function() {
       callNative("monitoringCamera");
@@ -138,13 +196,11 @@ $(document).ready(function(){
     })
 
     $("#btnMainSetShowButtonJobQrStart").on('click', function() {
-      window.android.showQrCameraBar("setMainButton", "jobQrStart");
+      callNative("setMainButton", "list");
     })
 
-
     $("#btnMainSetShowButtonAsProcessingRegistration").on('click', function() {
-      //callNative("setMainButton", "asProcessingRegistration");
-      window.android.showActionBar("setMainButton", "jobQrStart");
+      callNative("setMainButton", "asProcessingRegistration");
     })
 
     $("#btnMainSetShowButtonAsProcessingReRegistration").on('click', function() {
