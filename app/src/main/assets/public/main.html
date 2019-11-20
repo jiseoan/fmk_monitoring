@@ -17,6 +17,18 @@
 <div class="container">
   <div id="main">
     <p>메인입니다.</p>
+
+    <div>
+      <!-- 미리보기 리스트 START -->
+      <ul id="list" style="display: none;">
+        <li id="item" data-path="[path]">
+          <img tag="data:image/jpg;base64,[base64]" width="80" height="80">
+        </li>
+      </ul>
+      <!-- 미리보기 리스트 END -->
+    </div>
+    <button id="btnUpload"> 업로드 </button>
+    <br />
     <button id="btnRefresh"> 새로 고침 </button>
     <br />
     <button id="btnGetMobileCode"> *핸드폰 고유코드 가져오기 </button><br />
@@ -82,6 +94,7 @@
 </html>
 
 <script language="javascript" type="text/javascript">
+var MOBILE_UPLOAD_URL = "https://fmksystem.focusmediakorea.com/fmksystem/mobile/upload";
 var localAgentCode = window.localStorage.getItem("agent_code");
 $(document).ready(function(){
   var userData = dbSelect("*", "agent", "agent_code='" + localAgentCode + "'");
@@ -280,6 +293,35 @@ $(document).ready(function(){
     $("#btnHideLoading").on('click', function() {
       callNative("hideLoading");
     })
+
+    // 업로드
+    $("#btnUpload").on('click', function() {
+      console.log("업로드");
+
+      var uploadData = {};
+      uploadData['url'] = MOBILE_UPLOAD_URL;
+      var uploadList = [];
+
+      var itemList = $("#list").children();
+      if (itemList.length === 0) // 사진 첨부가 필수라면
+      {
+        messageBox("첨부된 사진이 없습니다.");
+        return;
+      }
+      $.each(itemList, function(index)
+      {
+        var item = {};
+        item['path'] = $(itemList.get(index)).data("path");
+        uploadList.push(item);
+      });
+      uploadData['fileData'] = uploadList;
+      var param = {};
+      param['custom_data1'] = 1;
+      param['custom_data2'] = { name: "test" };
+      param['custom_data1'] = "한글테스트!!@%!123";
+      uploadData['data'] = JSON.stringify(param);
+      callNative("uploadMedia", JSON.stringify(uploadData));
+    });
     
   }
 });
@@ -304,9 +346,22 @@ function NativeCallback(command, param, result)
   if (typeof(result) === "undefined") result = "";
   console.log("[INFO] NativeCallback: " + command + ", " + param+ ", " + result);
 
-  if (command === "mobileCode")
+  if (command === "cameraMedia")
   {
-    console.log("[DATA] result: " + result);
+    // 찍은사진을 받아서 보여주는 부분
+    var list = JSON.parse(result);
+
+    // getView 처리
+    addAjaxSkin("#list");
+    var skin = getAjaxSkin("#list");
+    var html = replaceDom(skin, list);
+    $("#list").html(html);
+    $("#list").css("display", "block");
+  }
+  else if (command === "uploadMedia")
+  {
+    // /fmksystem/mobile/upload 페이지 결과가 뿌려짐
+    console.log(result);
   }
 }
 </script>
