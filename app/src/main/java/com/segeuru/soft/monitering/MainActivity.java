@@ -11,6 +11,7 @@ import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
 import android.os.Bundle;
+import android.util.Log;
 import android.view.View;
 import android.widget.Button;
 import android.widget.Toast;
@@ -34,7 +35,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, WebviewActivity.class);
-                intent.putExtra("url", "file:///android_asset/public/login.html");
+                intent.putExtra("url", "file:///android_asset/public/main.html");
                 startActivity(intent);
             }
         });

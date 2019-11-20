@@ -346,22 +346,51 @@ function NativeCallback(command, param, result)
   if (typeof(result) === "undefined") result = "";
   console.log("[INFO] NativeCallback: " + command + ", " + param+ ", " + result);
 
-  if (command === "cameraMedia")
-  {
-    // 찍은사진을 받아서 보여주는 부분
-    var list = JSON.parse(result);
+  switch(command) {
+    case "cameraMedia":
+    {
+        // 찍은사진을 받아서 보여주는 부분
+        var list = JSON.parse(result);
 
-    // getView 처리
-    addAjaxSkin("#list");
-    var skin = getAjaxSkin("#list");
-    var html = replaceDom(skin, list);
-    $("#list").html(html);
-    $("#list").css("display", "block");
+        // getView 처리
+        addAjaxSkin("#list");
+        var skin = getAjaxSkin("#list");
+        var html = replaceDom(skin, list);
+        $("#list").html(html);
+        $("#list").css("display", "block");
+    }
+    break;
+    case "uploadMedia":
+    {
+      // /fmksystem/mobile/upload 페이지 결과가 뿌려짐
+      console.log(result);
+    }
+    break;
+    case "qr.result":
+    {
+      $.alert(result);
+    }
+    break;
   }
-  else if (command === "uploadMedia")
-  {
-    // /fmksystem/mobile/upload 페이지 결과가 뿌려짐
-    console.log(result);
-  }
+
+
+
+  // if (command === "cameraMedia")
+  // {
+  //   // 찍은사진을 받아서 보여주는 부분
+  //   var list = JSON.parse(result);
+
+  //   // getView 처리
+  //   addAjaxSkin("#list");
+  //   var skin = getAjaxSkin("#list");
+  //   var html = replaceDom(skin, list);
+  //   $("#list").html(html);
+  //   $("#list").css("display", "block");
+  // }
+  // else if (command === "uploadMedia")
+  // {
+  //   // /fmksystem/mobile/upload 페이지 결과가 뿌려짐
+  //   console.log(result);
+  // }
 }
 </script>

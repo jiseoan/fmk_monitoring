@@ -2,7 +2,6 @@ package com.segeuru.soft.monitering;
 
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.net.Uri;
 import android.util.Log;
 import android.webkit.WebResourceRequest;
 import android.webkit.WebView;
