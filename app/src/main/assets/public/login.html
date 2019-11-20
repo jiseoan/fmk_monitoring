@@ -35,7 +35,6 @@
 <script language="javascript" type="text/javascript">
 
 var localAgentCode = window.localStorage.getItem("agent_code");
-var appMobileCode = null;
 $(document).ready(function(){
   if (localAgentCode) {
     //location.href = "main.html";
@@ -78,7 +77,7 @@ $(document).ready(function(){
             param['agent_type'] = userData.agent_type;
             param['job_area'] = userData.job_area;
             param['job_week'] = userData.job_week;
-            param['mobile_code'] = appMobileCode;
+            param['mobile_code'] = window.android.deviceUniq();
             var res = dbMerge("agent", param);
             console.log(res);
 
@@ -96,8 +95,4 @@ $(document).ready(function(){
     }
   });
 });
-
-function setAppMobileCode(code) {
-  appMobileCode = code;
-}
 </script>
