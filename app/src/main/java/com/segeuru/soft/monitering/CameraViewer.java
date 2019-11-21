@@ -7,6 +7,7 @@ import android.annotation.SuppressLint;
 import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.ImageFormat;
@@ -135,8 +136,10 @@ public class CameraViewer extends AppCompatActivity {
                         byte[] bytes = new byte[buffer.capacity()];
                         buffer.get(bytes);
 
-                        Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
-                        new saveThread().execute(bitmap);
+                        save(bytes);
+
+                        //Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                        //new saveThread().execute(bitmap);
 
                     } catch (Exception e) {
                         e.printStackTrace();
@@ -207,6 +210,7 @@ public class CameraViewer extends AppCompatActivity {
             final CaptureRequest.Builder captureBuilder = m_cameraDevice.createCaptureRequest(CameraDevice.TEMPLATE_STILL_CAPTURE);
             captureBuilder.addTarget(m_imageReader.getSurface());
             captureBuilder.set(CaptureRequest.CONTROL_MODE, CameraMetadata.CONTROL_MODE_AUTO);
+            captureBuilder.set(CaptureRequest.JPEG_ORIENTATION, ORIENTATIONS.get(getWindowManager().getDefaultDisplay().getRotation()));
 
             m_captureSession.capture(captureBuilder.build(), new CameraCaptureSession.CaptureCallback() {
                 @Override
@@ -234,6 +238,25 @@ public class CameraViewer extends AppCompatActivity {
         Matrix matrix = new Matrix();
         matrix.postRotate(angle);
         return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix, true);
+    }
+
+    private void save(byte[] bytes) throws IOException {
+        final File file = new File(MoniteringApp.APP_STORE_PATH + "/" + System.currentTimeMillis() + ".jpg");
+        Log.d(DEBUG_TAG, file.getAbsolutePath());
+
+        OutputStream output = null;
+        try {
+            output = new FileOutputStream(file);
+            output.write(bytes);
+        } finally {
+            if (null != output) {
+                output.close();
+
+                //scan gallery.
+                sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse("file://" + file.getAbsolutePath())));
+                Toast.makeText(CameraViewer.this, "사진을 저장하였습니다.", Toast.LENGTH_SHORT).show();
+            }
+        }
     }
 
     private class saveThread extends AsyncTask<Bitmap, Void, Void> {

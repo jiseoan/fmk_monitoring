@@ -1,14 +1,16 @@
 package com.segeuru.soft.monitering;
 
 import android.app.Application;
-import android.content.ContentValues;
-import android.database.sqlite.SQLiteDatabase;
+import android.os.Environment;
 import android.util.Log;
+
+import java.io.File;
 
 public class MoniteringApp extends Application {
 
     private static float scale = 0;
     private static DBHelper m_dbHlper = null;
+    public static final String APP_STORE_PATH = Environment.getExternalStorageDirectory().getAbsolutePath() + "/fmk";
 
     @Override
     public void onCreate() {
@@ -18,6 +20,10 @@ public class MoniteringApp extends Application {
         if(null == m_dbHlper) {
             m_dbHlper = new DBHelper(getApplicationContext(), "monitering.db", null, 4);
         }
+
+        //create folder.
+        File dir = new File(MoniteringApp.APP_STORE_PATH);
+        if(!dir.exists()) dir.mkdirs();
 
 //        SQLiteDatabase db = m_dbHlper.getWritableDatabase();
 //        ContentValues cv = new ContentValues();
