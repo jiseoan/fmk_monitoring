@@ -366,6 +366,11 @@ function NativeCallback(command, param, result)
       console.log(result);
     }
     break;
+    case "jobStart":
+    {
+      window.android.runQrCamera();
+    }
+    break;
     case "qr.result":
     {
       $.alert(result);

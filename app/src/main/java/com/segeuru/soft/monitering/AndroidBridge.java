@@ -9,6 +9,8 @@ import android.webkit.WebView;
 import android.webkit.JavascriptInterface;
 import android.widget.LinearLayout;
 
+import com.google.zxing.integration.android.IntentIntegrator;
+
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
@@ -105,6 +107,14 @@ public class AndroidBridge {
             LinearLayout linearLayout = m_webViewActivity.findViewById(id);
             linearLayout.setVisibility(View.GONE);
         }
+    }
+
+    @JavascriptInterface
+    public void runQrCamera() {
+        IntentIntegrator intentIntegrator = new IntentIntegrator(m_webViewActivity);
+        intentIntegrator.setBeepEnabled(true);
+        intentIntegrator.setCaptureActivity(QrReaderActivity.class);
+        intentIntegrator.initiateScan();
     }
 
 }

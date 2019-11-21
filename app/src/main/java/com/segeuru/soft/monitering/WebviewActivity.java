@@ -43,7 +43,7 @@ public class WebviewActivity extends BaseAtivity {
         m_webview.loadUrl(getIntent().getStringExtra("url"));
     }
 
-    protected void JavaScriptCallback(String command, String param, String result) {
+    protected void javaScriptCallback(String command, String param, String result) {
         m_webview.loadUrl(String.format("Javascript:NativeCallback(\"%s\", \"%s\", \"%s\")", command, param, result));
     }
 
@@ -52,17 +52,14 @@ public class WebviewActivity extends BaseAtivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-        JavaScriptCallback("qr.result", "null", result.getContents());
+        javaScriptCallback("qr.result", "null", result.getContents());
         Toast.makeText(this, "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show();
     }
 
     final View.OnClickListener qr_button_clickLisener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            IntentIntegrator intentIntegrator = new IntentIntegrator(WebviewActivity.this);
-            intentIntegrator.setBeepEnabled(true);
-            intentIntegrator.setCaptureActivity(QrReaderActivity.class);
-            intentIntegrator.initiateScan();
+         javaScriptCallback("jobStart", "", "job.start.clicked");
         }
     };
 
