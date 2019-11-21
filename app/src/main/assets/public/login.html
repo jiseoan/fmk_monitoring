@@ -77,7 +77,7 @@ $(document).ready(function(){
             param['agent_type'] = userData.agent_type;
             param['job_area'] = userData.job_area;
             param['job_week'] = userData.job_week;
-            param['mobile_code'] = window.android.deviceUniq();
+            param['mobile_code'] = callNative("deviceUniq");
             var res = dbMerge("agent", param);
             console.log(res);
 

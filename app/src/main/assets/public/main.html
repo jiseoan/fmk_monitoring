@@ -9,84 +9,38 @@
   <script src="../vendor/jquery/jquery-3.1.1.min.js"></script>
   <script src="../vendor/bootstrap/js/bootstrap.min.js"></script>
   <script src="../vendor/vue/vue.js"></script>
-  <script src="../vendor/common/common.js"></script>
   <script src="../vendor/jquery-confirm/dist/jquery-confirm.min.js"></script>
+  <script src="../vendor/common/common.js"></script>
 </head>
 <body>
 
 <div class="container">
   <div id="main">
-    <p>메인입니다.</p>
-
     <div>
-      <!-- 미리보기 리스트 START -->
-      <ul id="list" style="display: none;">
-        <li id="item" data-path="[path]">
-          <img tag="data:image/jpg;base64,[base64]" width="80" height="80">
+      <button id="btnRefresh"> 새로고침 </button>
+      <button id="btnLogout"> 로그아웃 </button>
+    </div>
+    <div>
+      <a href="noticeList.html"> [공지] 모니터링앱 튜토리얼 </a>
+    </div>
+    <div>
+      <ul>
+        <li>
+          <div class="list-item" style="cursor: pointer;">
+            <p>송내 자이 아파트</p>
+            <p>경기도 부천시 소사구 송내동 409</p>
+            <p>[반려] 모니터링</p>
+          </div>
+        </li>
+        <li>
+          <div class="list-item" style="background:#efefef;cursor: pointer;">
+            <p>송내 자이 아파트</p>
+            <p>경기도 부천시 소사구 송내동 409</p>
+            <p>[미완료] 모니터링</p>
+          </div>
         </li>
       </ul>
-      <!-- 미리보기 리스트 END -->
     </div>
-    <button id="btnUpload"> 업로드 </button>
-    <br />
-    <button id="btnRefresh"> 새로 고침 </button>
-    <br />
-    <button id="btnGetMobileCode"> *핸드폰 고유코드 가져오기 </button><br />
-    <button id="bottomBarA1"> *bottom-actionbar-A1 보이기 </button><br />
-    <button id="bottomBarA2"> *bottom-actionbar-A2 보이기 </button><br />
-    <button id="bottomBarA3"> *bottom-actionbar-A3 보이기 </button><br />
-    <button id="bottomBarB1"> *bottom-actionbar-B1 보이기 </button><br />
-    <button id="bottomBarB2"> *bottom-actionbar-B2 보이기 </button><br />
-    <button id="bottomBarC1"> *bottom-actionbar-C1 보이기 </button><br />
-    <button id="bottomBarC2"> *bottom-actionbar-C2 보이기 </button><br />
-    <button id="bottomBarD1"> *bottom-actionbar-D1 보이기 </button><br />
-    <button id="bottomBarD2"> *bottom-actionbar-D2 보이기 </button><br />
-<br/>
-    <button id="toolBarA1"> *top-actionbar-A1 보이기 </button><br />
-<br/>
-    <button id="btnContentActionMonitoringCamera"> 모니터링촬영 카메라 열기 (1장 사진) </button>
-    <button id="btnContentActionBuildingCamera"> 단지촬영 카메라 열기 (1장 사진) </button>
-    <button id="btnContentActionAdCheckCamera"> 게첨촬영 카메라 열기 (5장 사진) </button>
-    <br />
-    <button id="btnShowMainLayoutTop"> 메인 상단바 보이기 </button>
-    <button id="btnHideMainLayoutTop"> 메인 상단바 숨기기 </button>
-    <br />
-    <button id="btnMainChangeTitle"> 메인 상단바 타이틀 변경 </button>
-    <br />
-    <button id="btnShowMainLayoutBottom"> 메인 하단바 보이기 </button>
-    <button id="btnHideMainLayoutBottom"> 메인 하단바 숨기기 </button>
-    <br />
-    <button id="btnMainSetHideButtonAll"> 메인 하단바 모든 버튼 숨기기 </button>
-    <br />
-    <button id="btnMainSetShowButtonList"> 메인 하단바 목록 버튼 보이기 </button>
-    <button id="btnMainSetShowButtonJobQrStart"> 메인 하단바 작업시작(QR코드) 버튼 보이기 </button>
-    <button id="btnMainSetShowButtonAsProcessingRegistration"> 메인 하단바 AS처리 등록 버튼 보이기 </button>
-    <button id="btnMainSetShowButtonAsProcessingReRegistration"> 메인 하단바 AS처리 재등록 버튼 보이기 </button>
-    <br />
-    <button id="btnOpenPopup"> 팝업 띄우기 </button>
-    <br />
-    <button id="btnShowPopupLayoutTop"> *팝업 상단바 보이기 </button>
-    <button id="btnHidePopupLayoutTop"> 팝업 상단바 숨기기 </button>
-    <br />
-    <button id="btnPopupChangeTitle"> 팝업 상단바 타이틀 변경 </button>
-    <br />
-    <button id="btnShowPopupLayoutBottom"> 팝업 하단바 보이기 </button>
-    <button id="btnHidePopupLayoutBottom"> 팝업 하단바 숨기기 </button>
-    <br />
-    <button id="btnMainSetHideButtonAll"> 팝업 하단바 모든 버튼 숨기기 </button>
-    <br />
-    <button id="btnMainSetShowButtonJobCameraStart"> 팝업 하단바 작업시작(카메라 - 모니터링) 버튼 보이기 </button>
-    <button id="btnPopupSetShowButtonRetake"> 팝업 하단바 재촬영 버튼 보이기 </button>
-    <button id="btnPopupSetShowButtonAsRequest"> 팝업 하단바 AS요청 버튼 보이기 </button>
-    <button id="btnPopupSetShowButtonAsRequestRegistration"> 팝업 하단바 AS요청 등록 버튼 보이기 </button>
-    <button id="btnPopupSetShowButtonConfirm"> 팝업 하단바 확인 버튼 보이기 </button>
-    <button id="btnPopupSetShowButtonComplete"> 팝업 하단바 완료 버튼 보이기 </button>
-    <button id="btnPopupSetShowButtonCancel"> 팝업 하단바 취소 버튼 보이기 </button>
-    <br />
-    <button id="btnContentActionClosePopup"> 팝업 닫기 </button>
-    <br />
-    <button id="btnShowLoading"> 로딩 보이기 </button>
-    <button id="btnHideLoading"> 로딩 숨기기 </button>
   </div>
 </div>
 
@@ -94,308 +48,12 @@
 </html>
 
 <script language="javascript" type="text/javascript">
-var MOBILE_UPLOAD_URL = "https://fmksystem.focusmediakorea.com/fmksystem/mobile/upload";
-var localAgentCode = window.localStorage.getItem("agent_code");
 $(document).ready(function(){
-  var userData = dbSelect("*", "agent", "agent_code='" + localAgentCode + "'");
-  console.log(userData);
-  var noticeData = dbSelect("*", "notice", "", "notice_id DESC");
-  console.log(noticeData);
-  initEvents();
-
-  // 이벤트 등록
-  function initEvents()
-  {
-    // 새로 고침
-    $("#btnRefresh").on('click', function() {
-      location.reload();
-    });
-    
-
-    $("#btnGetMobileCode").on('click', function() {
-      $.alert(window.android.deviceUniq());
-    })
-
-    $("#bottomBarA1").on('click', function() {
-      window.android.bottomActionBar("bottom_actionbar_A1", true);
-    })
-
-    $("#bottomBarA2").on('click', function() {
-      window.android.bottomActionBar("bottom_actionbar_A2", true);
-    })
-
-    $("#bottomBarA3").on('click', function() {
-      window.android.bottomActionBar("bottom_actionbar_A3", true);
-    })
-
-    $("#bottomBarB1").on('click', function() {
-      window.android.bottomActionBar("bottom_actionbar_B1", true);
-    })
-
-    $("#bottomBarB2").on('click', function() {
-      window.android.bottomActionBar("bottom_actionbar_B2", true);
-    })
-
-    $("#bottomBarC1").on('click', function() {
-      window.android.bottomActionBar("bottom_actionbar_C1", true);
-    })
-
-    $("#bottomBarC2").on('click', function() {
-      window.android.bottomActionBar("bottom_actionbar_C2", true);
-    })
-
-    $("#bottomBarD1").on('click', function() {
-      window.android.bottomActionBar("bottom_actionbar_D1", true);
-    })
-
-    $("#bottomBarD2").on('click', function() {
-      window.android.bottomActionBar("bottom_actionbar_D2", true);
-    })
-
-    $("#toolBarA1").on('click', function() {
-      window.android.toolBar("top_actionbar_A1", true);
-    })
-
-
-
-
-
-
-
-
-
-    $("#btnContentActionMonitoringCamera").on('click', function() {
-      callNative("monitoringCamera");
-    })
-
-    $("#btnContentActionBuildingCamera").on('click', function() {
-      callNative("buildingCamera");
-    })
-
-    $("#btnContentActionAdCheckCamera").on('click', function() {
-      callNative("adCheckCamera");
-    })
-
-
-    $("#btnShowMainLayoutTop").on('click', function() {
-      callNative("setMainLayoutTop", "true");
-    })
-
-    $("#btnHideMainLayoutTop").on('click', function() {
-      callNative("setMainLayoutTop", "false");
-    })
-
-
-    $("#btnMainChangeTitle").on('click', function() {
-      callNative("setMainTitle", "테스트메인타이틀");
-    })
-
-
-    $("#btnShowMainLayoutBottom").on('click', function() {
-      callNative("setMainLayoutBottom", "true");
-    })
-    $("#btnHideMainLayoutBottom").on('click', function() {
-      callNative("setMainLayoutBottom", "false");
-    })
-
-
-    $("#btnMainSetHideButtonAll").on('click', function() {
-      callNative("resetMainAllButton");
-    })
-
-
-    $("#btnMainSetShowButtonList").on('click', function() {
-      callNative("setMainButton", "list");
-    })
-
-    $("#btnMainSetShowButtonJobQrStart").on('click', function() {
-      callNative("setMainButton", "list");
-    })
-
-    $("#btnMainSetShowButtonAsProcessingRegistration").on('click', function() {
-      callNative("setMainButton", "asProcessingRegistration");
-    })
-
-    $("#btnMainSetShowButtonAsProcessingReRegistration").on('click', function() {
-      callNative("setMainButton", "asProcessingReRegistration");
-    })
-
-
-    $("#btnOpenPopup").on('click', function() {
-      callNative("openPopup", "popup.html");
-    })
-
-
-    $("#btnShowPopupLayoutTop").on('click', function() {
-      //callNative("setPopupLayoutTop", "true");
-      window.android.showHideToolBar("","");
-    })
-
-    $("#btnHidePopupLayoutTop").on('click', function() {
-      callNative("setPopupLayoutTop", "false");
-    })
-
-
-    $("#btnPopupChangeTitle").on('click', function() {
-      callNative("setPopupTitle", "테스트팝업타이틀");
-    })
-
-
-    $("#btnShowPopupLayoutBottom").on('click', function() {
-      callNative("setPopupLayoutBottom", "true");
-    })
-    $("#btnHidePopupLayoutBottom").on('click', function() {
-      callNative("setPopupLayoutBottom", "false");
-    })
-
-
-    $("#btnPopupSetHideButtonAll").on('click', function() {
-      callNative("resetPopupAllButton");
-    })
-
-
-    $("#btnPopupSetShowButtonJobCameraStart").on('click', function() {
-      callNative("setPopupButton", "jobCameraStart");
-    })
-
-    $("#btnPopupSetShowButtonRetake").on('click', function() {
-      callNative("setPopupButton", "retake");
-    })
-
-    $("#btnPopupSetShowButtonAsRequest").on('click', function() {
-      callNative("setPopupButton", "asRequest");
-    })
-
-    $("#btnPopupSetShowButtonAsRequestRegistration").on('click', function() {
-      callNative("setPopupButton", "asRequestRegistration");
-    })
-
-    $("#btnPopupSetShowButtonConfirm").on('click', function() {
-      callNative("setPopupButton", "confirm");
-    })
-
-    $("#btnPopupSetShowButtonComplete").on('click', function() {
-      callNative("setPopupButton", "complete");
-    })
-
-    $("#btnPopupSetShowButtonCancel").on('click', function() {
-      callNative("setPopupButton", "cancel");
-    })
-
-    $("#btnContentActionClosePopup").on('click', function() {
-      callNative("closePopup", "opener.reload");
-    })
-
-
-    $("#btnShowLoading").on('click', function() {
-      callNative("showLoading");
-    })
-    $("#btnHideLoading").on('click', function() {
-      callNative("hideLoading");
-    })
-
-    // 업로드
-    $("#btnUpload").on('click', function() {
-      console.log("업로드");
-
-      var uploadData = {};
-      uploadData['url'] = MOBILE_UPLOAD_URL;
-      var uploadList = [];
-
-      var itemList = $("#list").children();
-      if (itemList.length === 0) // 사진 첨부가 필수라면
-      {
-        messageBox("첨부된 사진이 없습니다.");
-        return;
-      }
-      $.each(itemList, function(index)
-      {
-        var item = {};
-        item['path'] = $(itemList.get(index)).data("path");
-        uploadList.push(item);
-      });
-      uploadData['fileData'] = uploadList;
-      var param = {};
-      param['custom_data1'] = 1;
-      param['custom_data2'] = { name: "test" };
-      param['custom_data1'] = "한글테스트!!@%!123";
-      uploadData['data'] = JSON.stringify(param);
-      callNative("uploadMedia", JSON.stringify(uploadData));
-    });
-    
-  }
+  $('#btnRefresh').on('click', function() {
+    // 데이터를 동기화하여 받는다.
+  });
+  $('#btnLogout').on('click', function() {
+    // 로그아웃한다.
+  });
 });
-
-function callNative(command, param) {
-  if (typeof(param) === "undefined") param = "";
-  var checkOS = getPlatform();
-  try {
-    if (checkOS == "Android") {
-      window.android.callNative(command, param);
-    } else {
-      console.log("ignore callNative('" + command + "', '" + param + "')");
-    }
-  } catch (e) { 
-    console.log("ignore callNative('" + command + "', '" + param + "')");
-  }
-}
-
-function NativeCallback(command, param, result)
-{
-  if (typeof(param) === "undefined") param = "";
-  if (typeof(result) === "undefined") result = "";
-  console.log("[INFO] NativeCallback: " + command + ", " + param+ ", " + result);
-
-  switch(command) {
-    case "cameraMedia":
-    {
-        // 찍은사진을 받아서 보여주는 부분
-        var list = JSON.parse(result);
-
-        // getView 처리
-        addAjaxSkin("#list");
-        var skin = getAjaxSkin("#list");
-        var html = replaceDom(skin, list);
-        $("#list").html(html);
-        $("#list").css("display", "block");
-    }
-    break;
-    case "uploadMedia":
-    {
-      // /fmksystem/mobile/upload 페이지 결과가 뿌려짐
-      console.log(result);
-    }
-    break;
-    case "jobStart":
-    {
-      window.android.runQrCamera();
-    }
-    break;
-    case "qr.result":
-    {
-      $.alert(result);
-    }
-    break;
-  }
-
-
-
-  // if (command === "cameraMedia")
-  // {
-  //   // 찍은사진을 받아서 보여주는 부분
-  //   var list = JSON.parse(result);
-
-  //   // getView 처리
-  //   addAjaxSkin("#list");
-  //   var skin = getAjaxSkin("#list");
-  //   var html = replaceDom(skin, list);
-  //   $("#list").html(html);
-  //   $("#list").css("display", "block");
-  // }
-  // else if (command === "uploadMedia")
-  // {
-  //   // /fmksystem/mobile/upload 페이지 결과가 뿌려짐
-  //   console.log(result);
-  // }
-}
 </script>
