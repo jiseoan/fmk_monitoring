@@ -18,7 +18,7 @@
         app:layout_constraintRight_toRightOf="parent" />
 
     <LinearLayout
-        android:id="@+id/bottom_actionbar_A1"
+        android:id="@+id/jobStart"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
@@ -36,7 +36,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/bottom_actionbar_A2"
+        android:id="@+id/jobStartAndCancel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
@@ -59,7 +59,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/bottom_actionbar_A3"
+        android:id="@+id/reTakeAndAsAndConfirm"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
@@ -88,7 +88,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/bottom_actionbar_B1"
+        android:id="@+id/list"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
@@ -105,7 +105,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/bottom_actionbar_B2"
+        android:id="@+id/insertAndCancel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
@@ -128,7 +128,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/bottom_actionbar_C1"
+        android:id="@+id/reAsProcessing"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
@@ -145,7 +145,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/bottom_actionbar_C2"
+        android:id="@+id/reTakeAndAndConfirm"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
@@ -168,7 +168,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/bottom_actionbar_D1"
+        android:id="@+id/asProcessing"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
@@ -185,7 +185,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/bottom_actionbar_D2"
+        android:id="@+id/completeAndCancel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"

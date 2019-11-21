@@ -47,7 +47,7 @@ public class AndroidBridge {
     }
 
     @JavascriptInterface
-    public void toolBar(String resourceName, boolean show) {
+    public void toolBar(String resourceName, final String title) {
         Resources res = null;
 
         try {
@@ -58,24 +58,22 @@ public class AndroidBridge {
         }
 
         final int id = res.getIdentifier(resourceName, "id", m_webView.getContext().getPackageName());
+        final boolean is_show = true;
 
-        if(show) {
-            m_webViewActivity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    Toolbar toolbar = m_webViewActivity.findViewById(id);
-                    toolbar.setVisibility(View.VISIBLE);
-                    m_webViewActivity.setSupportActionBar(toolbar);
-                }
-            });
-        } else {
-            m_webViewActivity.findViewById(id).setVisibility(View.GONE);
-            m_webViewActivity.setSupportActionBar(null);
-        }
+        m_webViewActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                m_webViewActivity.hideAllToolBars();
+                Toolbar toolbar = m_webViewActivity.findViewById(id);
+                toolbar.setVisibility(is_show ? View.VISIBLE : View.GONE);
+                m_webViewActivity.setSupportActionBar(is_show ? toolbar : null);
+                m_webViewActivity.getSupportActionBar().setTitle(title);
+            }
+        });
     }
 
     @JavascriptInterface
-    public void bottomActionBar(String resourceName, boolean show) {
+    public void bottomActionBar(String resourceName) {
         Resources res = null;
 
         try {
@@ -86,27 +84,34 @@ public class AndroidBridge {
         }
 
         final int id = res.getIdentifier(resourceName, "id", m_webView.getContext().getPackageName());
+        final boolean is_show = true;
 
-        if(show) {
-            m_webViewActivity.runOnUiThread(new Runnable() {
-                @Override
-                public void run() {
-                    WebView webView = m_webViewActivity.findViewById(R.id.webview);
-                    webView.getLayoutParams().height = 0;
-                    ConstraintSet constraintSet = new ConstraintSet();
-                    ConstraintLayout constraintLayout = m_webViewActivity.findViewById(R.id.constraint_layout_webActivity);
-                    constraintSet.clone(constraintLayout);
-                    constraintSet.connect(webView.getId(), ConstraintSet.BOTTOM, id, ConstraintSet.TOP);
-                    constraintSet.applyTo(constraintLayout);
+        m_webViewActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                m_webViewActivity.hideAllBottomActionBars();
+                WebView webView = m_webViewActivity.findViewById(R.id.webview);
+                webView.getLayoutParams().height = 0;
+                ConstraintSet constraintSet = new ConstraintSet();
+                ConstraintLayout constraintLayout = m_webViewActivity.findViewById(R.id.constraint_layout_webActivity);
+                constraintSet.clone(constraintLayout);
+                constraintSet.connect(webView.getId(), ConstraintSet.BOTTOM, id, ConstraintSet.TOP);
+                constraintSet.applyTo(constraintLayout);
 
-                    LinearLayout linearLayout = m_webViewActivity.findViewById(id);
-                    linearLayout.setVisibility(View.VISIBLE);
-                }
-            });
-        } else {
-            LinearLayout linearLayout = m_webViewActivity.findViewById(id);
-            linearLayout.setVisibility(View.GONE);
-        }
+                LinearLayout linearLayout = m_webViewActivity.findViewById(id);
+                linearLayout.setVisibility(is_show ? View.VISIBLE : View.GONE);
+            }
+        });
+    }
+
+    @JavascriptInterface
+    public void hideAllActionBars() {
+        m_webViewActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                m_webViewActivity.hideAllActionBars();
+            }
+        });
     }
 
     @JavascriptInterface

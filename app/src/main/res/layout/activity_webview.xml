@@ -12,7 +12,7 @@
         android:theme="@style/AppTheme.AppBarOverlay">
 
         <androidx.appcompat.widget.Toolbar
-            android:id="@+id/top_actionbar_A1"
+            android:id="@+id/main"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorPrimary"
@@ -21,6 +21,7 @@
             >
 
             <ImageView
+                android:id="@+id/btn_home"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right"
@@ -33,13 +34,14 @@
         </androidx.appcompat.widget.Toolbar>
 
         <androidx.appcompat.widget.Toolbar
-            android:id="@+id/top_actionbar_A2"
+            android:id="@+id/popup"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
             android:background="?attr/colorControlActivated"
             app:popupTheme="@style/AppTheme.PopupOverlay">
 
             <ImageView
+                android:id="@+id/btn_close"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right"

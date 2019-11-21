@@ -188,6 +188,9 @@
     <button id="bottomBarD2"> *bottom-actionbar-D2 보이기 </button><br />
 <br/>
     <button id="toolBarA1"> *top-actionbar-A1 보이기 </button><br />
+    <button id="toolBarA2"> *top-actionbar-A2 보이기 </button><br />
+    <button id="hideAllActionBars"> *전체 액션바 숨기기 </button><br />
+    <button id="link"> *Active 링크 이동 </button><br />
 <br/>
     <button id="btnContentActionMonitoringCamera"> 모니터링촬영 카메라 열기 (1장 사진) </button>
     <button id="btnContentActionBuildingCamera"> 단지촬영 카메라 열기 (1장 사진) </button>
@@ -280,44 +283,56 @@ $(document).ready(function(){
     })
 
     $("#bottomBarA1").on('click', function() {
-      window.android.bottomActionBar("bottom_actionbar_A1", true);
+      window.android.bottomActionBar("jobStart");
     })
 
     $("#bottomBarA2").on('click', function() {
-      window.android.bottomActionBar("bottom_actionbar_A2", true);
+      window.android.bottomActionBar("jobStartAndCancel");
     })
 
     $("#bottomBarA3").on('click', function() {
-      window.android.bottomActionBar("bottom_actionbar_A3", true);
+      window.android.bottomActionBar("reTakeAndAsAndConfirm");
     })
 
     $("#bottomBarB1").on('click', function() {
-      window.android.bottomActionBar("bottom_actionbar_B1", true);
+      window.android.bottomActionBar("list");
     })
 
     $("#bottomBarB2").on('click', function() {
-      window.android.bottomActionBar("bottom_actionbar_B2", true);
+      window.android.bottomActionBar("insertAndCancel");
     })
 
     $("#bottomBarC1").on('click', function() {
-      window.android.bottomActionBar("bottom_actionbar_C1", true);
+      window.android.bottomActionBar("reAsProcessing");
     })
 
     $("#bottomBarC2").on('click', function() {
-      window.android.bottomActionBar("bottom_actionbar_C2", true);
+      window.android.bottomActionBar("reTakeAndAndConfirm");
     })
 
     $("#bottomBarD1").on('click', function() {
-      window.android.bottomActionBar("bottom_actionbar_D1", true);
+      window.android.bottomActionBar("asProcessing");
     })
 
     $("#bottomBarD2").on('click', function() {
-      window.android.bottomActionBar("bottom_actionbar_D2", true);
+      window.android.bottomActionBar("completeAndCancel");
     })
 
     $("#toolBarA1").on('click', function() {
-      window.android.toolBar("top_actionbar_A1", true);
+      window.android.toolBar("main", "경기도 부천시");
     })
+
+    $("#toolBarA2").on('click', function() {
+      window.android.toolBar("popup", "서울 송파구");
+    })
+
+    $('#hideAllActionBars').on('click', function() {
+      window.android.hideAllActionBars();
+    });
+
+    $('#link').on('click', function() {
+      location.href = "test.html?mode=activity";
+    });
 
 
 
@@ -538,12 +553,21 @@ function NativeCallback(command, param, result)
       console.log(result);
     }
     break;
+    case "back":
+      $.alert("back");
+    break;
+    case "home":
+      $.alert("home");
+    break;
+    case "close":
+      $.alert("close");
+    break;
     case "jobStart":
     {
       window.android.runQrCamera();
     }
     break;
-    case "qr.result":
+    case "qrResult":
     {
       $.alert(result);
     }
