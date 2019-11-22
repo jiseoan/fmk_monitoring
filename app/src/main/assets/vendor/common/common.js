@@ -38,7 +38,13 @@ function callNative(command, param, param2) {
   var checkOS = getPlatform();
   try {
     if (checkOS == "Android") {
-      if (command == "deviceUniq") {
+      if (command == "hideToolBar") {
+        // 상단바 안보이기
+        result = window.android.hideToolBar();
+      } else if (command == "hideBottomActionBar") {
+        // 하단바 안보이기
+        result = window.android.hideBottomActionBar();
+      } else if (command == "deviceUniq") {
         // 디바이스 고유값 가져오기
         result = window.android.deviceUniq();
       } else if (command == "bottomActionBar") {
@@ -61,6 +67,9 @@ function callNative(command, param, param2) {
         // 상단바 레이아웃별 보이기
         // main : 뒤로가기 | 타이틀명 | 홈
         // popup : 타이틀명 | 닫기
+        window.android.toolBar(param, param2);
+      } else if (command == "setTitle") {
+        // 타이틀명 변경하기
         window.android.toolBar(param);
       } else if (command == "newWebView") {
         // 새로운 웹뷰 보이기
