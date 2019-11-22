@@ -31,9 +31,10 @@ function getPlatform()
   return platform;
 }
 
-function callNative(command, param) {
+function callNative(command, param, param2) {
   var result  = null;
   if (typeof(param) === "undefined") param = "";
+  if (typeof(param2) === "undefined") param2 = "";
   var checkOS = getPlatform();
   try {
     if (checkOS == "Android") {
@@ -42,30 +43,176 @@ function callNative(command, param) {
         result = window.android.deviceUniq();
       } else if (command == "bottomActionBar") {
         // 하단바 레이아웃별 보이기
-        // bottom_actionbar_A1 : 작업시작 (QR코드스킨 열기)
-        // bottom_actionbar_A2 : 작업시작 (카메라 열기 - 모니터링용) | 취소
-        // bottom_actionbar_A3 : 재촬영 | AS요청 | 확인
-        // bottom_actionbar_B1 : 목록
-        // bottom_actionbar_B2 : 등록 | 취소
-        // bottom_actionbar_C1 : AS처리 재등록
-        // bottom_actionbar_C2 : 재촬영 | 확인
-        // bottom_actionbar_D1 : AS처리등록
-        // bottom_actionbar_D2 : 완료 | 취소
-
-        window.android.bottomActionBar(param, true);
+        // jobStart : 작업시작 (QR코드스킨 열기)
+        // jobStartAndCancel : 작업시작 (카메라 열기 - 모니터링용) | 취소
+        // retakeAndAsAndConfirm : 재촬영 | AS요청 | 확인
+        // list : 목록
+        // insertAndCancel : 등록 | 취소
+        // reAsProcessing : AS처리 재등록
+        // retakeAndConfirm : 재촬영 | 확인 <- ad: 광고재촬영, building: 단지 대표 이미지 재촬영
+        // asProcessing : AS처리등록
+        // completeAndCancel : 완료 | 취소
+        if (param == "retakeAndConfirm") {
+          window.android.bottomActionBar(param, param2);
+        } else {
+          window.android.bottomActionBar(param);
+        }
       } else if (command == "toolBar") {
         // 상단바 레이아웃별 보이기
-        // top_actionbar_A1 : 메인 상단바 열기
-        window.android.toolBar(param, true);
+        // main : 뒤로가기 | 타이틀명 | 홈
+        // popup : 타이틀명 | 닫기
+        window.android.toolBar(param);
+      } else if (command == "newWebView") {
+        // 새로운 웹뷰 보이기
+        window.android.newWebView(param);
+      } else if (command == "camera") {
+        // 카메라 촬영 보이기
+        window.android.camera(param, param2);
       }
     } else {
-      console.log("ignore callNative('" + command + "', '" + param + "')");
+      console.log("ignore callNative('" + command + "', '" + param + "', '" + param2 + "')");
     }
   } catch (e) { 
-    console.log("ignore callNative('" + command + "', '" + param + "')");
+    console.log("ignore callNative('" + command + "', '" + param + "', '" + param2 + "')");
   }
 
   return result;
+}
+
+function NativeCallback(command, param, result)
+{
+  if (typeof(param) === "undefined") param = "";
+  if (typeof(result) === "undefined") result = "";
+  console.log("[INFO] NativeCallback: " + command + ", " + param+ ", " + result);
+
+  switch(command) {    
+    case "back":
+    {
+      // 뒤로가기
+      history.back(-1);
+    }
+    break;
+    case "home":
+    {
+      // 홈
+      location.href = "main.html";
+    }
+    break;
+    case "close":
+    {
+      // 닫기
+      window.android.webViewClose();
+    }
+    break;
+    case "qrScan":
+    {
+      // qr 스케너
+      window.android.qrCode();
+    }
+    break;
+    case "qrScanResult":
+    {
+      // qr 스케너 결과
+      var qrCode = result;
+      if (typeof window["qrScanResult"] === "function") {
+        qrScanResult(qrCode);
+      } else {
+        console.log("no function qrScanResult()");
+      }
+    }
+    break;
+    case "monitoringCamera":
+    case "reMonitoringCamera":
+    case "reBuildingCamera":
+    case "reAdCamera":
+    {
+      // 모니터링 촬영, 모니터링 재촬영, 단지 대표이미지 재촬영, 광고 재촬영
+      var param = null;
+      var param2 = null;
+
+      if (typeof window["paramData"] === "function") {
+        param2 = paramData();
+      }
+
+      if(command == "monitoringCamera" || command == "reMonitoringCamera") param = "monitoring";
+      if (command == "reBuildingCamera") param = "building";
+      if (command == "reAdCamera") param = "ad";
+      window.android.camera(param, param2);
+    }
+    break;
+    case "cameraResult":
+    {
+      // 카메라 촬영 결과
+      if (typeof window["cameraResult"] === "function") {
+        cameraResult(param, result);
+      } else {
+        console.log("no function cameraResult()");
+      }
+    }
+    break;
+    case "cancel":
+    {
+      // 취소
+      history.back(-1);
+    }
+    break;
+    case "asRequest":
+    {
+      // as요청
+      // post로 asRequest.html 페이지로 데이터값을 보냄
+      if (typeof window["asRequest"] === "function") {
+        asRequest();
+      } else {
+        console.log("no function asRequest()");
+      }
+    }
+    break;
+    case "confirm":
+    {
+      // 확인
+      // 데이터를 저장하는 프로세스 진행 <- 네이티브로 값을 보내어 서버로 저장되도록 해야 함
+      if (typeof window["dataSaveProcess"] === "function") {
+        dataSaveProcess();
+      } else {
+        console.log("no function dataSaveProcess()");
+      }
+    }
+    break;
+    case "registration":
+    {
+      // 등록
+      // 데이터를 저장하는 프로세스 진행
+      if (typeof window["dataSaveProcess"] === "function") {
+        dataSaveProcess();
+      } else {
+        console.log("no function dataSaveProcess()");
+      }
+    }
+    break;
+    case "list":
+    {
+      // 목록
+      history.back(-1);
+    }
+    break;
+    case "asProcessingRegistration":
+    case "asProcessingReRegistration":
+    {
+      // as처리 등록, as처리 재등록
+      // asProcessingEdit.html 로 이동
+      if (typeof window["asProcessingRegistration"] === "function") {
+        asProcessingRegistration();
+      } else {
+        console.log("no function asProcessingRegistration()");
+      }
+    }
+    break;
+    case "complete":
+    { 
+      // 데이터를 저장하는 프로세스 진행
+    }
+    break;
+  }
 }
 
 function dbSql(query) {
