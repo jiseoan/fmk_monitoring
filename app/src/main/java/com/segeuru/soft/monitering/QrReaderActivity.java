@@ -21,15 +21,15 @@ public class QrReaderActivity extends AppCompatActivity implements DecoratedBarc
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_qr_reader);
 
-
         findViewById(R.id.btn_skip_qr).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent(QrReaderActivity.this, WebviewActivity.class);
-                intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                //Intent intent = new Intent(QrReaderActivity.this, WebviewActivity.class);
+                //intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
+                //startActivityForResult(intent, REQUEST_CODE);
+                Intent intent = new Intent();
                 intent.putExtra(Intents.Scan.RESULT, "http://test.com");
                 setResult(Activity.RESULT_OK, intent);
-                startActivityForResult(intent, REQUEST_CODE);
                 finish();
             }
         });

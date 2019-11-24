@@ -84,6 +84,7 @@ public class CameraViewer extends AppCompatActivity {
     private TextureView m_textureViewer;
     private Surface m_surface;
     private Button m_btnTakePicture;
+    private String m_requestId;
     private ArrayList<String> m_filePath;
     private int m_needPic_count;
     private int m_currentPic_count;
@@ -98,6 +99,8 @@ public class CameraViewer extends AppCompatActivity {
         m_currentPic_count = 0;
 
         Intent intent = getIntent();
+        m_requestId = intent.getStringExtra("request_id");
+
         setSupportActionBar((Toolbar)findViewById(R.id.camera_toolbar));
         m_needPic_count = intent.getIntExtra("take_count", 0);
 
@@ -332,6 +335,7 @@ public class CameraViewer extends AppCompatActivity {
 
                 if(m_currentPic_count >= m_needPic_count) {
                     Intent intent = new Intent();
+                    intent.putExtra("request_id", m_requestId);
                     intent.putExtra("pics", jsonArray.toString());
                     setResult(WebviewActivity.REQUEST_CODE, intent);
                     finish();

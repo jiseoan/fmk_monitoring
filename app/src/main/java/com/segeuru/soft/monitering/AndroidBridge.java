@@ -91,7 +91,7 @@ public class AndroidBridge {
     }
 
     @JavascriptInterface
-    public void bottomActionBar(String resourceName) {
+    public void bottomActionBar(String resourceName, String style) {
         Resources res = null;
 
         try {
@@ -141,13 +141,14 @@ public class AndroidBridge {
     }
 
     @JavascriptInterface
-    public void Camera(String commandId, String jsonParams) {
+    public void Camera(String requestId, String jsonParams) {
 //        Log.d(DEBUG_TAG, jsonParams);
         JSONObject jsonObject = null;
         try {
             jsonObject = new JSONObject(jsonParams);
 //            Log.d(DEBUG_TAG, jsonObject.getString("address"));
             Intent intent = new Intent(m_webViewActivity, CameraViewer.class);
+            intent.putExtra("request_id", requestId);
             intent.putExtra("take_count", jsonObject.getInt("take_count"));
             intent.putExtra("title", jsonObject.getString("building_name"));
             intent.putExtra("address", jsonObject.getString("address"));

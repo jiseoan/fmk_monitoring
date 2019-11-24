@@ -285,39 +285,39 @@ $(document).ready(function(){
     })
 
     $("#jobStart").on('click', function() {
-      window.android.bottomActionBar("jobStart");
+      window.android.bottomActionBar("jobStart", "");
     })
 
     $("#jobStartAndCancel").on('click', function() {
-      window.android.bottomActionBar("jobStartAndCancel");
+      window.android.bottomActionBar("jobStartAndCancel", "");
     })
 
     $("#reTakeAndAsAndConfirm").on('click', function() {
-      window.android.bottomActionBar("reTakeAndAsAndConfirm");
+      window.android.bottomActionBar("reTakeAndAsAndConfirm", "");
     })
 
     $("#list").on('click', function() {
-      window.android.bottomActionBar("list");
+      window.android.bottomActionBar("list", "");
     })
 
     $("#insertAndCancel").on('click', function() {
-      window.android.bottomActionBar("insertAndCancel");
+      window.android.bottomActionBar("insertAndCancel", "");
     })
 
     $("#reAsProcessing").on('click', function() {
-      window.android.bottomActionBar("reAsProcessing");
+      window.android.bottomActionBar("reAsProcessing", "");
     })
 
     $("#reTakeAndAndConfirm").on('click', function() {
-      window.android.bottomActionBar("reTakeAndAndConfirm");
+      window.android.bottomActionBar("reTakeAndAndConfirm", "");
     })
 
     $("#asProcessing").on('click', function() {
-      window.android.bottomActionBar("asProcessing");
+      window.android.bottomActionBar("asProcessing", "");
     })
 
     $("#completeAndCancel").on('click', function() {
-      window.android.bottomActionBar("completeAndCancel");
+      window.android.bottomActionBar("completeAndCancel", "");
     })
 
     $("#main").on('click', function() {
@@ -567,11 +567,39 @@ function NativeCallback(command, param, result)
     case "close":
       $.alert("close");
     break;
+    case "moniteringCamera":
+      console.log("moniteringCamera");
+    break;
+    case "cancel":
+      console.log("cancel");
+    break;
     case "reMoniteringCamera":
-      window.android.Camera("monitering", "{take_count: 5, building_name:'송내 자이 아파트', address:'경기도 부천시 소사구 ...'}");
+      window.android.Camera("monitering", "{take_count: 2, building_name:'송내 자이 아파트', address:'경기도 부천시 소사구 ...'}");
     break;
     case "cameraResult":
+      console.log(param);
       console.log(result);
+    break;
+    case "registration":
+      console.log("registration");
+    break;
+    case "reBuildingCamera":
+      console.log("reBuildingCamera");
+    break;
+    case "asProcessingReRegistration":
+      console.log("asProcessingReRegistration");
+    break;
+    case "asProcessingRegistration":
+      console.log("asProcessingRegistration");
+    break;
+    case "complete":
+      console.log("complete");
+    break;
+    case "asRequest":
+      console.log("asRequest");
+    break;
+    case "confirm":
+      console.log("confirm");
     break;
     case "qrScan":
     {

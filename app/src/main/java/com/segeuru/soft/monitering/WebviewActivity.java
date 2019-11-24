@@ -26,6 +26,18 @@ public class WebviewActivity extends BaseAtivity {
         findViewById(R.id.btn_close).setOnClickListener(close_button_clickLisener);
         findViewById(R.id.btn_qr).setOnClickListener(qr_button_clickLisener);
         findViewById(R.id.btn_retakePicture).setOnClickListener(retake_button_clickLisener);
+        findViewById(R.id.btn_request_as).setOnClickListener(requestAs_button_clickLisener);
+        findViewById(R.id.btn_confirm).setOnClickListener(confirm_button_clickLisener);
+        findViewById(R.id.btn_moniteringCamera).setOnClickListener(moniteringCamera_button_clickLisener);
+        findViewById(R.id.btn_cancel).setOnClickListener(cancel_button_clickLisener);
+        findViewById(R.id.btn_registration).setOnClickListener(registration_button_clickLisener);
+        findViewById(R.id.btn_cancel_registration).setOnClickListener(cancel_button_clickLisener);
+        findViewById(R.id.btn_rebuildingCamera).setOnClickListener(rebuildingCamera_button_clickLisener);
+        findViewById(R.id.btn_confirm_rebuilding).setOnClickListener(confirm_button_clickLisener);
+        findViewById(R.id.btn_asProcessingReRegistration).setOnClickListener(reregistrationAs_button_clickLisener);
+        findViewById(R.id.btn_complete).setOnClickListener(complete_button_clickLisener);
+        findViewById(R.id.btn_cancel_complete).setOnClickListener(cancel_button_clickLisener);
+        findViewById(R.id.btn_asProcessingRegistration).setOnClickListener(asProcessRegistration_button_clickLisener);
         hideAllActionBars();
 
         initWebview(R.id.webview);
@@ -67,7 +79,7 @@ public class WebviewActivity extends BaseAtivity {
             case WebviewActivity.REQUEST_CODE: {
                 Log.d(DEBUG_TAG, data.getStringExtra("pics"));
                 String result = data.getStringExtra("pics");
-                javaScriptCallback("cameraResult", "null", result);
+                javaScriptCallback("cameraResult", data.getStringExtra("request_id"), result);
             }
                 break;
             case com.google.zxing.integration.android.IntentIntegrator.REQUEST_CODE: {
@@ -105,6 +117,76 @@ public class WebviewActivity extends BaseAtivity {
         @Override
         public void onClick(View view) {
             javaScriptCallback("reMoniteringCamera", "", "clicked");
+        }
+    };
+
+    final View.OnClickListener requestAs_button_clickLisener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            javaScriptCallback("asRequest", "", "clicked");
+        }
+    };
+
+    final View.OnClickListener confirm_button_clickLisener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            javaScriptCallback("confirm", "", "clicked");
+        }
+    };
+
+    final View.OnClickListener moniteringCamera_button_clickLisener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            javaScriptCallback("moniteringCamera", "", "clicked");
+        }
+    };
+
+    final View.OnClickListener cancel_button_clickLisener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            javaScriptCallback("cancel", "", "clicked");
+        }
+    };
+
+    final View.OnClickListener registration_button_clickLisener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            javaScriptCallback("registration", "", "clicked");
+        }
+    };
+
+    final View.OnClickListener rebuildingCamera_button_clickLisener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            javaScriptCallback("reBuildingCamera", "", "clicked");
+        }
+    };
+
+    final View.OnClickListener cancel_rebuilding_button_clickLisener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            javaScriptCallback("cancel", "", "clicked");
+        }
+    };
+
+    final View.OnClickListener reregistrationAs_button_clickLisener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            javaScriptCallback("asProcessingReRegistration", "", "clicked");
+        }
+    };
+
+    final View.OnClickListener complete_button_clickLisener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            javaScriptCallback("complete", "", "clicked");
+        }
+    };
+
+    final View.OnClickListener asProcessRegistration_button_clickLisener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            javaScriptCallback("asProcessingRegistration", "", "clicked");
         }
     };
 

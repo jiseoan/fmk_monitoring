@@ -45,12 +45,14 @@
         >
 
         <Button
+            android:id="@+id/btn_moniteringCamera"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="작업시작"
             />
 
         <Button
+            android:id="@+id/btn_cancel"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="취소"
@@ -75,12 +77,14 @@
             />
 
         <Button
+            android:id="@+id/btn_request_as"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="AS요청"
             />
 
         <Button
+            android:id="@+id/btn_confirm"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="확인"
@@ -115,12 +119,14 @@
         >
 
         <Button
+            android:id="@+id/btn_registration"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="등록"
             />
 
         <Button
+            android:id="@+id/btn_cancel_registration"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="취소"
@@ -138,6 +144,7 @@
         >
 
         <Button
+            android:id="@+id/btn_asProcessingReRegistration"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="AS 처리 재등록"
@@ -155,12 +162,14 @@
         >
 
         <Button
+            android:id="@+id/btn_rebuildingCamera"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="재촬영"
             />
 
         <Button
+            android:id="@+id/btn_confirm_rebuilding"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="확인"
@@ -178,6 +187,7 @@
         >
 
         <Button
+            android:id="@+id/btn_asProcessingRegistration"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="AS 처리등록"
@@ -195,12 +205,14 @@
         >
 
         <Button
+            android:id="@+id/btn_complete"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="완료"
             />
 
         <Button
+            android:id="@+id/btn_cancel_complete"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="취소"
