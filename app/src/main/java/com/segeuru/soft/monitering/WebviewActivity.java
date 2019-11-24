@@ -15,6 +15,7 @@ import androidx.annotation.Nullable;
 public class WebviewActivity extends BaseAtivity {
 
     private String DEBUG_TAG = "segeuru.com";
+    public static final int REQUEST_CODE = 0x0000c0dd;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -24,6 +25,7 @@ public class WebviewActivity extends BaseAtivity {
         findViewById(R.id.btn_home).setOnClickListener(home_button_clickLisener);
         findViewById(R.id.btn_close).setOnClickListener(close_button_clickLisener);
         findViewById(R.id.btn_qr).setOnClickListener(qr_button_clickLisener);
+        findViewById(R.id.btn_retakePicture).setOnClickListener(retake_button_clickLisener);
         hideAllActionBars();
 
         initWebview(R.id.webview);
@@ -32,7 +34,7 @@ public class WebviewActivity extends BaseAtivity {
     }
 
     protected void javaScriptCallback(String command, String param, String result) {
-        m_webview.loadUrl(String.format("Javascript:NativeCallback(\"%s\", \"%s\", \"%s\")", command, param, result));
+        m_webview.loadUrl(String.format("Javascript:NativeCallback(\'%s\', \'%s\', \'%s\')", command, param, result));
     }
 
     protected void hideAllToolBars() {
@@ -61,9 +63,21 @@ public class WebviewActivity extends BaseAtivity {
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-        javaScriptCallback("qrResult", "null", result.getContents());
-        Toast.makeText(this, "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show();
+        switch (requestCode) {
+            case WebviewActivity.REQUEST_CODE: {
+                Log.d(DEBUG_TAG, data.getStringExtra("pics"));
+                String result = data.getStringExtra("pics");
+                javaScriptCallback("cameraResult", "null", result);
+            }
+                break;
+            case com.google.zxing.integration.android.IntentIntegrator.REQUEST_CODE: {
+                IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+                javaScriptCallback("qrScanResult", "null", result.getContents());
+                Toast.makeText(this, "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show();
+            }
+                break;
+        }
+
     }
 
     final View.OnClickListener home_button_clickLisener = new View.OnClickListener() {
@@ -83,7 +97,14 @@ public class WebviewActivity extends BaseAtivity {
     final View.OnClickListener qr_button_clickLisener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            javaScriptCallback("jobStart", "", "job.start.clicked");
+            javaScriptCallback("qrScan", "", "clicked");
+        }
+    };
+
+    final View.OnClickListener retake_button_clickLisener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            javaScriptCallback("reMoniteringCamera", "", "clicked");
         }
     };
 

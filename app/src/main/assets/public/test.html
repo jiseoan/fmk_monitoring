@@ -156,7 +156,7 @@
 <body>
 
 <div class="container">
-  <div id="main">
+  <div id="__main__">
     <p>메인입니다.</p>
 
     <div>
@@ -176,19 +176,21 @@
     <br />
     <button id="btnRefresh"> 새로 고침 </button>
     <br />
-    <button id="btnGetMobileCode"> *핸드폰 고유코드 가져오기 </button><br />
-    <button id="bottomBarA1"> *bottom-actionbar-A1 보이기 </button><br />
-    <button id="bottomBarA2"> *bottom-actionbar-A2 보이기 </button><br />
-    <button id="bottomBarA3"> *bottom-actionbar-A3 보이기 </button><br />
-    <button id="bottomBarB1"> *bottom-actionbar-B1 보이기 </button><br />
-    <button id="bottomBarB2"> *bottom-actionbar-B2 보이기 </button><br />
-    <button id="bottomBarC1"> *bottom-actionbar-C1 보이기 </button><br />
-    <button id="bottomBarC2"> *bottom-actionbar-C2 보이기 </button><br />
-    <button id="bottomBarD1"> *bottom-actionbar-D1 보이기 </button><br />
-    <button id="bottomBarD2"> *bottom-actionbar-D2 보이기 </button><br />
+    <button id="btnGetMobileCode"> 핸드폰 고유코드 가져오기 </button><br />
+  <br>    
+    <button id="jobStart"> [작업시작] </button><br />
+    <button id="jobStartAndCancel"> [작업시작] [취소] </button><br />
+    <button id="reTakeAndAsAndConfirm"> [재촬영] [AS요청] [확인] </button><br />
+    <button id="list"> [목록] </button><br />
+    <button id="insertAndCancel"> [등록] [취소] </button><br />
+    <button id="reAsProcessing"> [AS처리 재등록] </button><br />
+    <button id="reTakeAndAndConfirm"> [재촬영] [확인] </button><br />
+    <button id="asProcessing"> [AS처리등록] </button><br />
+    <button id="completeAndCancel"> [완료] [취소] </button><br />
 <br/>
-    <button id="toolBarA1"> *top-actionbar-A1 보이기 </button><br />
-    <button id="toolBarA2"> *top-actionbar-A2 보이기 </button><br />
+    <button id="main"> *top-actionbar-A1 보이기 </button><br />
+    <button id="popup"> *top-actionbar-A2 보이기 </button><br />
+    <button id="setTitle">*타이틀 입력</button><br>
     <button id="hideAllActionBars"> *전체 액션바 숨기기 </button><br />
     <button id="link"> *Active 링크 이동 </button><br />
 <br/>
@@ -282,47 +284,47 @@ $(document).ready(function(){
       $.alert(window.android.deviceUniq());
     })
 
-    $("#bottomBarA1").on('click', function() {
+    $("#jobStart").on('click', function() {
       window.android.bottomActionBar("jobStart");
     })
 
-    $("#bottomBarA2").on('click', function() {
+    $("#jobStartAndCancel").on('click', function() {
       window.android.bottomActionBar("jobStartAndCancel");
     })
 
-    $("#bottomBarA3").on('click', function() {
+    $("#reTakeAndAsAndConfirm").on('click', function() {
       window.android.bottomActionBar("reTakeAndAsAndConfirm");
     })
 
-    $("#bottomBarB1").on('click', function() {
+    $("#list").on('click', function() {
       window.android.bottomActionBar("list");
     })
 
-    $("#bottomBarB2").on('click', function() {
+    $("#insertAndCancel").on('click', function() {
       window.android.bottomActionBar("insertAndCancel");
     })
 
-    $("#bottomBarC1").on('click', function() {
+    $("#reAsProcessing").on('click', function() {
       window.android.bottomActionBar("reAsProcessing");
     })
 
-    $("#bottomBarC2").on('click', function() {
+    $("#reTakeAndAndConfirm").on('click', function() {
       window.android.bottomActionBar("reTakeAndAndConfirm");
     })
 
-    $("#bottomBarD1").on('click', function() {
+    $("#asProcessing").on('click', function() {
       window.android.bottomActionBar("asProcessing");
     })
 
-    $("#bottomBarD2").on('click', function() {
+    $("#completeAndCancel").on('click', function() {
       window.android.bottomActionBar("completeAndCancel");
     })
 
-    $("#toolBarA1").on('click', function() {
+    $("#main").on('click', function() {
       window.android.toolBar("main", "경기도 부천시");
     })
 
-    $("#toolBarA2").on('click', function() {
+    $("#popup").on('click', function() {
       window.android.toolBar("popup", "서울 송파구");
     })
 
@@ -330,10 +332,13 @@ $(document).ready(function(){
       window.android.hideAllActionBars();
     });
 
+    $('#setTitle').on('click', function() {
+      window.android.setTitle("타이틀입력");
+    });
+
     $('#link').on('click', function() {
       location.href = "test.html?mode=activity";
     });
-
 
 
 
@@ -562,12 +567,18 @@ function NativeCallback(command, param, result)
     case "close":
       $.alert("close");
     break;
-    case "jobStart":
+    case "reMoniteringCamera":
+      window.android.Camera("monitering", "{take_count: 5, building_name:'송내 자이 아파트', address:'경기도 부천시 소사구 ...'}");
+    break;
+    case "cameraResult":
+      console.log(result);
+    break;
+    case "qrScan":
     {
-      window.android.runQrCamera();
+      window.android.qrCode();
     }
     break;
-    case "qrResult":
+    case "qrScanResult":
     {
       $.alert(result);
     }

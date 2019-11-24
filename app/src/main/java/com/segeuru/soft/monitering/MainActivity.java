@@ -69,13 +69,6 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
 
     }
 
-    @Override
-    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
-        super.onActivityResult(requestCode, resultCode, data);
-        IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
-        Toast.makeText(this, "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show();
-    }
-
     private boolean hasPermissions(String[] permissions) {
         int result;
         for(String perms : permissions) {

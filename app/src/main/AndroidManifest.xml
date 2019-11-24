@@ -22,6 +22,7 @@
             android:theme="@style/AppTheme.NoActionBar"></activity>
         <activity
             android:name=".CameraViewer"
+            android:theme="@style/AppTheme.NoActionBar"
             android:screenOrientation="portrait"></activity>
         <activity
             android:name=".WebviewActivity"

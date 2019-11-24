@@ -1,7 +1,9 @@
 package com.segeuru.soft.monitering;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.appcompat.widget.Toolbar;
 
 import android.annotation.SuppressLint;
 import android.content.ContentResolver;
@@ -10,8 +12,13 @@ import android.content.Context;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Color;
 import android.graphics.ImageFormat;
 import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
 import android.graphics.SurfaceTexture;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
@@ -19,39 +26,41 @@ import android.hardware.camera2.CameraCharacteristics;
 import android.hardware.camera2.CameraDevice;
 import android.hardware.camera2.CameraManager;
 import android.hardware.camera2.CameraMetadata;
-import android.hardware.camera2.CaptureFailure;
 import android.hardware.camera2.CaptureRequest;
-import android.hardware.camera2.CaptureResult;
 import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.StreamConfigurationMap;
+import android.media.ExifInterface;
 import android.media.Image;
 import android.media.ImageReader;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
-import android.os.Environment;
-import android.os.Handler;
-import android.os.HandlerThread;
 import android.provider.MediaStore;
 import android.util.Log;
 import android.util.Size;
 import android.util.SparseIntArray;
-import android.view.OrientationEventListener;
 import android.view.Surface;
 import android.view.TextureView;
 import android.view.View;
+import android.webkit.WebView;
 import android.widget.Button;
+import android.widget.TextView;
 import android.widget.Toast;
 
+import org.json.JSONArray;
+import org.json.JSONObject;
+
 import java.io.File;
-import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
 import java.nio.ByteBuffer;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.List;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.Locale;
 
 public class CameraViewer extends AppCompatActivity {
 
@@ -75,12 +84,32 @@ public class CameraViewer extends AppCompatActivity {
     private TextureView m_textureViewer;
     private Surface m_surface;
     private Button m_btnTakePicture;
-
+    private ArrayList<String> m_filePath;
+    private int m_needPic_count;
+    private int m_currentPic_count;
+    private TextView m_textView_count;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_camera_viewer);
+
+        m_filePath = new ArrayList<>();
+        m_currentPic_count = 0;
+
+        Intent intent = getIntent();
+        setSupportActionBar((Toolbar)findViewById(R.id.camera_toolbar));
+        m_needPic_count = intent.getIntExtra("take_count", 0);
+
+        getSupportActionBar().setTitle(intent.getStringExtra("title"));
+        ((TextView)findViewById(R.id.txt_address)).setText(intent.getStringExtra("address"));
+
+        Date currentTime = Calendar.getInstance().getTime();
+        String dateTime = new SimpleDateFormat("yyyy년 MM월 dd일 hh:mm", Locale.getDefault()).format(currentTime);
+        ((TextView)findViewById(R.id.txt_datetime)).setText(dateTime);
+
+        m_textView_count = findViewById(R.id.take_picture_count);
+        updateTakeCount();
 
         m_textureViewer = findViewById(R.id.texture);
         assert m_textureViewer != null;
@@ -95,6 +124,10 @@ public class CameraViewer extends AppCompatActivity {
                 takePicture();
             }
         });
+    }
+
+    private void updateTakeCount() {
+        m_textView_count.setText(String.format("%d/%d", m_currentPic_count, m_needPic_count));
     }
 
     @SuppressLint("MissingPermission")
@@ -136,9 +169,9 @@ public class CameraViewer extends AppCompatActivity {
                         byte[] bytes = new byte[buffer.capacity()];
                         buffer.get(bytes);
 
-                        save(bytes);
-
-                        //Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                        Bitmap bitmap = BitmapFactory.decodeByteArray(bytes, 0, bytes.length);
+                        save(bitmap);
+                        //save(bytes);
                         //new saveThread().execute(bitmap);
 
                     } catch (Exception e) {
@@ -217,6 +250,7 @@ public class CameraViewer extends AppCompatActivity {
                 public void onCaptureCompleted(@NonNull CameraCaptureSession session, @NonNull CaptureRequest request, @NonNull TotalCaptureResult result) {
                     super.onCaptureCompleted(session, request, result);
                     UnlockFocus();
+
                 }
             }, null);
 
@@ -240,6 +274,72 @@ public class CameraViewer extends AppCompatActivity {
         return Bitmap.createBitmap(source, 0, 0, source.getWidth(), source.getHeight(), matrix, true);
     }
 
+    private void save(Bitmap bitmap) throws IOException {
+
+        final File file = new File(MoniteringApp.APP_STORE_PATH + "/" + System.currentTimeMillis() + ".jpg");
+        OutputStream output = null;
+
+        try {
+//            Bitmap bitmapTmp = bitmap.copy(bitmap.getConfig(), true);
+            Bitmap bitmapTmp = rotateImage(bitmap, 90);
+            Canvas canvas = new Canvas(bitmapTmp);
+
+            Paint paint = new Paint();
+            paint.setColor(Color.WHITE); // Text Color
+            paint.setTextSize(100); // Text Size
+            paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_OVER));
+            canvas.drawBitmap(bitmapTmp, 0, 0, paint);
+
+            String txtAddress = ((TextView)findViewById(R.id.txt_address)).getText().toString();
+            String txtDatetime = ((TextView)findViewById(R.id.txt_datetime)).getText().toString();
+            canvas.drawText(txtAddress, 20, 80, paint);
+            canvas.drawText(txtDatetime, 20, 200, paint);
+
+            output = new FileOutputStream(file);
+            bitmapTmp.compress(Bitmap.CompressFormat.JPEG, 60, output);
+
+//            ExifInterface exif = new ExifInterface(file.getPath());
+//            exif.setAttribute(ExifInterface.TAG_ORIENTATION, "90");
+//            exif.saveAttributes();
+
+        } finally {
+            if (null != output) {
+                output.close();
+
+//                ExifInterface exif = new ExifInterface(file.getPath());
+//                Log.d(DEBUG_TAG, exif.getAttribute(ExifInterface.TAG_ORIENTATION));
+
+                String filePath = "file://" + file.getAbsolutePath();
+                m_filePath.add(filePath);
+
+                //scan gallery.
+                sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse(filePath)));
+                Toast.makeText(CameraViewer.this, "사진을 저장하였습니다.", Toast.LENGTH_SHORT).show();
+
+                JSONArray jsonArray = new JSONArray();
+                for (int i=0; i < m_filePath.size(); i++) {
+                    JSONObject json = new JSONObject();
+                    try {
+                        json.put("filepath", m_filePath.get(i));
+                        jsonArray.put(json);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+                }
+
+                m_currentPic_count++;
+                updateTakeCount();
+
+                if(m_currentPic_count >= m_needPic_count) {
+                    Intent intent = new Intent();
+                    intent.putExtra("pics", jsonArray.toString());
+                    setResult(WebviewActivity.REQUEST_CODE, intent);
+                    finish();
+                }
+            }
+        }
+    }
+
     private void save(byte[] bytes) throws IOException {
         final File file = new File(MoniteringApp.APP_STORE_PATH + "/" + System.currentTimeMillis() + ".jpg");
         Log.d(DEBUG_TAG, file.getAbsolutePath());
@@ -248,6 +348,7 @@ public class CameraViewer extends AppCompatActivity {
         try {
             output = new FileOutputStream(file);
             output.write(bytes);
+
         } finally {
             if (null != output) {
                 output.close();
@@ -356,5 +457,12 @@ public class CameraViewer extends AppCompatActivity {
         super.onPause();
         Log.d(DEBUG_TAG, "onPause");
     }
-}
 
+    @Override
+    protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+
+        Log.d(DEBUG_TAG, "caneraView onActivityResult");
+    }
+
+}

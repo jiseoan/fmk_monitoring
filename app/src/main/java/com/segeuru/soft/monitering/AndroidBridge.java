@@ -1,9 +1,11 @@
 package com.segeuru.soft.monitering;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.res.Resources;
 import android.database.SQLException;
 import android.provider.Settings;
+import android.util.Log;
 import android.view.View;
 import android.webkit.WebView;
 import android.webkit.JavascriptInterface;
@@ -11,6 +13,9 @@ import android.widget.LinearLayout;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 
+import org.json.JSONObject;
+
+import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
@@ -44,6 +49,19 @@ public class AndroidBridge {
     @JavascriptInterface
     public String deviceUniq() {
         return Settings.Secure.getString(m_webView.getContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+    }
+
+    @JavascriptInterface
+    public void setTitle(String title) {
+        final String actionBarTitle = title;
+        m_webViewActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                ActionBar actionBar = m_webViewActivity.getSupportActionBar();
+                if(null != actionBar)
+                    actionBar.setTitle(actionBarTitle);
+            }
+        });
     }
 
     @JavascriptInterface
@@ -115,11 +133,30 @@ public class AndroidBridge {
     }
 
     @JavascriptInterface
-    public void runQrCamera() {
+    public void qrCode() {
         IntentIntegrator intentIntegrator = new IntentIntegrator(m_webViewActivity);
         intentIntegrator.setBeepEnabled(true);
         intentIntegrator.setCaptureActivity(QrReaderActivity.class);
         intentIntegrator.initiateScan();
+    }
+
+    @JavascriptInterface
+    public void Camera(String commandId, String jsonParams) {
+//        Log.d(DEBUG_TAG, jsonParams);
+        JSONObject jsonObject = null;
+        try {
+            jsonObject = new JSONObject(jsonParams);
+//            Log.d(DEBUG_TAG, jsonObject.getString("address"));
+            Intent intent = new Intent(m_webViewActivity, CameraViewer.class);
+            intent.putExtra("take_count", jsonObject.getInt("take_count"));
+            intent.putExtra("title", jsonObject.getString("building_name"));
+            intent.putExtra("address", jsonObject.getString("address"));
+            m_webViewActivity.startActivityForResult(intent, WebviewActivity.REQUEST_CODE);
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
     }
 
 }
