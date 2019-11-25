@@ -185,7 +185,8 @@
     <button id="onlyList"> [목록] </button><br />
     <button id="insertAndCancel"> [등록] [취소] </button><br />
     <button id="reAsProcessing"> [AS처리 재등록] </button><br />
-    <button id="reTakeAndAndConfirm"> [재촬영] [확인] </button><br />
+    <button id="reTakeAndConfirm"> [재촬영] [확인] </button><br />
+    <button id="reTakeAndConfirm_AD"> [재촬영] [확인] AD</button><br />
     <button id="asProcessing"> [AS처리등록] </button><br />
     <button id="completeAndCancel"> [완료] [취소] </button><br />
 <br/>
@@ -295,7 +296,7 @@ $(document).ready(function(){
     })
 
     $("#reTakeAndAsAndConfirm").on('click', function() {
-      window.android.bottomActionBar("reTakeAndAsAndConfirm", "");
+      window.android.bottomActionBar("retakeAndAsAndConfirm", "");
     })
 
     $("#onlyList").on('click', function() {
@@ -310,8 +311,12 @@ $(document).ready(function(){
       window.android.bottomActionBar("reAsProcessing", "");
     })
 
-    $("#reTakeAndAndConfirm").on('click', function() {
-      window.android.bottomActionBar("reTakeAndAndConfirm", "");
+    $("#reTakeAndConfirm").on('click', function() {
+      window.android.bottomActionBar("retakeAndConfirm", "");
+    })
+
+    $("#reTakeAndConfirm_AD").on('click', function() {
+      window.android.bottomActionBar("retakeAndConfirm", "ad");
     })
 
     $("#asProcessing").on('click', function() {
@@ -592,6 +597,10 @@ function NativeCallback(command, param, result)
     case "reBuildingCamera":
       console.log("reBuildingCamera");
     break;
+    case "reAdCamera":
+      console.log("reAdCamera");
+      window.android.camera("ad", "{ad_name:'E편한 세상'}");
+    break;
     case "asProcessingReRegistration":
       console.log("asProcessingReRegistration");
     break;
@@ -616,6 +625,9 @@ function NativeCallback(command, param, result)
     {
       $.alert(result);
     }
+    break;
+    case "list":
+      console.log("list");
     break;
   }
 

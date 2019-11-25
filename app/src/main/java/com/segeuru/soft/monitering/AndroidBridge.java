@@ -184,9 +184,10 @@ public class AndroidBridge {
 //            Log.d(DEBUG_TAG, jsonObject.getString("address"));
             Intent intent = new Intent(m_webViewActivity, CameraViewer.class);
             intent.putExtra("request_id", requestId);
-            intent.putExtra("take_count", jsonObject.getInt("take_count"));
-            intent.putExtra("title", jsonObject.getString("building_name"));
-            intent.putExtra("address", jsonObject.getString("address"));
+            intent.putExtra("take_count", jsonObject.optInt("take_count", 1));
+            intent.putExtra("title", jsonObject.optString("building_name"));
+            intent.putExtra("address", jsonObject.optString("address"));
+            intent.putExtra("ad_name", jsonObject.optString("ad_name"));
             m_webViewActivity.startActivityForResult(intent, WebviewActivity.REQUEST_CODE);
 
         } catch (Exception e) {

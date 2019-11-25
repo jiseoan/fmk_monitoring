@@ -135,23 +135,23 @@ public class CameraViewer extends AppCompatActivity {
 
     @SuppressLint("MissingPermission")
     private void openCamera() {
-        Log.d(DEBUG_TAG, "open camera now");
+        //Log.i(DEBUG_TAG, "open camera now");
         CameraManager cameraManager = (CameraManager)getSystemService(Context.CAMERA_SERVICE);
 
         try {
-            Log.d(DEBUG_TAG, Arrays.toString(cameraManager.getCameraIdList()));
+            //Log.i(DEBUG_TAG, Arrays.toString(cameraManager.getCameraIdList()));
             m_cameraId = cameraManager.getCameraIdList()[0];
             m_cameraCharacteristics = cameraManager.getCameraCharacteristics(m_cameraId);
             StreamConfigurationMap map = m_cameraCharacteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP);
             assert map != null;
 
             m_imageDimension = map.getOutputSizes(SurfaceTexture.class)[0];
-            Log.d(DEBUG_TAG, m_imageDimension.toString());
+            //Log.i(DEBUG_TAG, m_imageDimension.toString());
 
             Size[] jpegSizes = null;
             if(null != m_cameraCharacteristics) {
                 jpegSizes = m_cameraCharacteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP).getOutputSizes(ImageFormat.JPEG);
-                Log.d(DEBUG_TAG, Arrays.toString(jpegSizes));
+                //Log.i(DEBUG_TAG, Arrays.toString(jpegSizes));
             }
 
             int width = 640;
@@ -236,7 +236,7 @@ public class CameraViewer extends AppCompatActivity {
     }
 
     private void takePicture() {
-        Log.d(DEBUG_TAG, "take a picture");
+        //Log.i(DEBUG_TAG, "take a picture");
         if(null == m_cameraDevice) {
             Log.e(DEBUG_TAG, "cemeraDevuce is null");
             return;
@@ -310,7 +310,7 @@ public class CameraViewer extends AppCompatActivity {
                 output.close();
 
 //                ExifInterface exif = new ExifInterface(file.getPath());
-//                Log.d(DEBUG_TAG, exif.getAttribute(ExifInterface.TAG_ORIENTATION));
+//                Log.i(DEBUG_TAG, exif.getAttribute(ExifInterface.TAG_ORIENTATION));
 
                 String filePath = "file://" + file.getAbsolutePath();
                 m_filePath.add(filePath);
@@ -346,7 +346,7 @@ public class CameraViewer extends AppCompatActivity {
 
     private void save(byte[] bytes) throws IOException {
         final File file = new File(MoniteringApp.APP_STORE_PATH + "/" + System.currentTimeMillis() + ".jpg");
-        Log.d(DEBUG_TAG, file.getAbsolutePath());
+        //Log.i(DEBUG_TAG, file.getAbsolutePath());
 
         OutputStream output = null;
         try {
@@ -370,7 +370,7 @@ public class CameraViewer extends AppCompatActivity {
 
             //orientation
             int rotation = getWindowManager().getDefaultDisplay().getRotation();
-            Log.d(DEBUG_TAG, String.format("device rotaion is %d", rotation));
+            //Log.i(DEBUG_TAG, String.format("device rotaion is %d", rotation));
 
             ContentValues values = new ContentValues();
             values.put(MediaStore.Images.Media.TITLE, "test picture");
@@ -408,17 +408,17 @@ public class CameraViewer extends AppCompatActivity {
         @Override
         public void onSurfaceTextureAvailable(SurfaceTexture surfaceTexture, int i, int i1) {
             openCamera();
-            Log.d(DEBUG_TAG, "onSurfaceTextureAvailable");
+            //Log.i(DEBUG_TAG, "onSurfaceTextureAvailable");
         }
 
         @Override
         public void onSurfaceTextureSizeChanged(SurfaceTexture surfaceTexture, int i, int i1) {
-            Log.d(DEBUG_TAG, "onSurfaceTextureSizeChanged");
+            //Log.i(DEBUG_TAG, "onSurfaceTextureSizeChanged");
         }
 
         @Override
         public boolean onSurfaceTextureDestroyed(SurfaceTexture surfaceTexture) {
-            Log.d(DEBUG_TAG, "onSurfaceTextureDestroyed");
+            //Log.i(DEBUG_TAG, "onSurfaceTextureDestroyed");
             return false;
         }
 
@@ -430,21 +430,27 @@ public class CameraViewer extends AppCompatActivity {
 
     private final CameraDevice.StateCallback m_stateCallback = new CameraDevice.StateCallback() {
         @Override
+        public void onClosed(@NonNull CameraDevice camera) {
+            super.onClosed(camera);
+        }
+
+        @Override
         public void onOpened(@NonNull CameraDevice cameraDevice) {
-            Log.d(DEBUG_TAG, "onOpened");
+            Log.i(DEBUG_TAG, "onOpened");
             m_cameraDevice = cameraDevice;
             createCameraPreview();
         }
 
         @Override
         public void onDisconnected(@NonNull CameraDevice cameraDevice) {
-            Log.d(DEBUG_TAG, "onDisconnected");
+            //Log.i(DEBUG_TAG, "onDisconnected");
             m_cameraDevice.close();
+            m_cameraDevice = null;
         }
 
         @Override
         public void onError(@NonNull CameraDevice cameraDevice, int i) {
-            Log.d(DEBUG_TAG, "onError");
+            Log.i(DEBUG_TAG, "onError");
             m_cameraDevice.close();
             m_cameraDevice = null;
         }
@@ -453,20 +459,27 @@ public class CameraViewer extends AppCompatActivity {
     @Override
     protected void onResume() {
         super.onResume();
-        Log.d(DEBUG_TAG, "onResume");
+        //Log.i(DEBUG_TAG, "onResume");
     }
 
     @Override
     protected void onPause() {
         super.onPause();
-        Log.d(DEBUG_TAG, "onPause");
+        //Log.i(DEBUG_TAG, "onPause");
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, @Nullable Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
 
-        Log.d(DEBUG_TAG, "caneraView onActivityResult");
+        //Log.i(DEBUG_TAG, "caneraView onActivityResult");
     }
 
+    @Override
+    protected void onDestroy() {
+        super.onDestroy();
+
+        m_cameraDevice.close();
+        m_cameraDevice = null;
+    }
 }

@@ -39,6 +39,7 @@ public class WebviewActivity extends BaseAtivity {
         findViewById(R.id.btn_complete).setOnClickListener(complete_button_clickLisener);
         findViewById(R.id.btn_cancel_complete).setOnClickListener(cancel_button_clickLisener);
         findViewById(R.id.btn_asProcessingRegistration).setOnClickListener(asProcessRegistration_button_clickLisener);
+        findViewById(R.id.btn_list).setOnClickListener(list_button_clickLisener);
         hideAllActionBars();
 
         initWebview(R.id.webview);
@@ -161,6 +162,11 @@ public class WebviewActivity extends BaseAtivity {
     final View.OnClickListener rebuildingCamera_button_clickLisener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
+            if(m_bottomBar_style.toLowerCase().compareTo("ad") == 0) {
+                javaScriptCallback("reAdCamera", "", "clicked");
+                return;
+            }
+
             javaScriptCallback("reBuildingCamera", "", "clicked");
         }
     };
@@ -190,6 +196,13 @@ public class WebviewActivity extends BaseAtivity {
         @Override
         public void onClick(View view) {
             javaScriptCallback("asProcessingRegistration", "", "clicked");
+        }
+    };
+
+    final View.OnClickListener list_button_clickLisener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            javaScriptCallback("list", "", "clicked");
         }
     };
 
