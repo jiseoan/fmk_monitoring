@@ -15,15 +15,9 @@
 <body>
 
 <div class="container">
-  <div id="buildingJobList">
-    <h2>2019. 11. 4</h2>
-    <P>업무를 선택해 주세요.<p>
+  <div id="buildingJobProcess">
     <div>
-      <ul>
-        <li><button class="btnMonitoringShot">모니터링 촬영</button></li>
-        <li><button class="btnBuildidngShot">단지 대표 이미지 촬영</button></li>
-        <li><button class="btnAdShot">광고촬영<설화수 이영애 2차> 촬영</button><button class="btnAdView">광고보기</button></li>
-      </ul>
+      이미지가 미리보기로 나오는 화면
     </div>
   </div>
 </div>
@@ -34,32 +28,38 @@
 <script language="javascript" type="text/javascript">
 var param2 = {take_count: 1, building_name : "송내 자이 아파트", address: "경기도 부천시 소사구 송내동 409"};
 var param3 = {take_count: 5, ad_name : "설화수 이영애 2차"};
+var shotMode = window.localStorage.getItem("shot_mode");
+var shotResult = window.localStorage.getItem("shot_result");
 $(document).ready(function(){
-  callNative('toolBar', 'main', '송내xx 자이 아파트');
-  callNative("hideBottomActionBar");
-
-  $('.btnMonitoringShot').on('click', function() {
-    // 모니터링 촬영촬영용 카메라를 연다
-    callNative('camera', 'monitoring', param2);
-  });
-  $('.btnBuildidngShot').on('click', function() {
-    // 단지 대표 이미지 촬영용 카메라를 연다.
-    callNative('camera', 'building', param2);
-  });
-  $('.btnAdShot').on('click', function() {
-    // 광고촬영용 카메라를 연다.
-    callNative('camera', 'ad', param3);
-  });
-  $('.btnAdView').on('click', function() {
-    // 광고 보기를 새웹뷰로 연다.
-    callNative('newWebView', 'moviePlayer.html?url=&title=광고촬영<설화수 이영애 2차>');
-  });
+  callNative('toolBar', 'main', '송내 자이 아파트');
+  if (shotMode == "monitoring") {
+    // 모니터링 촬영촬영용 설정을 한다.
+    callNative('bottomActionBar', 'retakeAndAsAndConfirm');
+  } else if (shotMode == "building") {
+    // 단지 대표 이미지 촬영용 설정을 한다.
+    callNative('bottomActionBar', 'retakeAndConfirm', shotMode);
+  } else if (shotMode == "ad") {
+    // 광고촬영용 설정을 한다.
+    callNative('bottomActionBar', 'retakeAndConfirm', shotMode);
+  }
 });
+
+function paramData() {
+  if (shotMode == "ad") {
+    return param3;
+  } else {
+    return param2;
+  }
+}
 
 function cameraResult(param, result) {
   // 촬영 타입과 결과이미지를 저장후 이동한다.
   window.localStorage.setItem("shot_mode", param);
   window.localStorage.setItem("shot_result", JSON.stringify(result));
-  location.href = "buildingJobProcess.html";
+
+  shotMode = window.localStorage.getItem("shot_mode");
+  shotResult = window.localStorage.getItem("shot_result");
+
+  // 이미지 미리보는 화면을 재갱신한다.
 }
 </script>
