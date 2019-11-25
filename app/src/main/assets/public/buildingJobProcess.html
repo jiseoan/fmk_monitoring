@@ -34,7 +34,7 @@ $(document).ready(function(){
   callNative('toolBar', 'main', '송내 자이 아파트 101동 1호기');
   if (shotMode == "monitoring") {
     // 모니터링 촬영촬영용 설정을 한다.
-    callNative('bottomActionBar', 'retakeAndAsAndConfirm');
+    callNative('bottomActionBar', 'retakeAndAsAndConfirm', shotMode);
   } else if (shotMode == "building") {
     // 단지 대표 이미지 촬영용 설정을 한다.
     callNative('bottomActionBar', 'retakeAndConfirm', shotMode);
@@ -61,5 +61,10 @@ function cameraResult(param, result) {
   shotResult = window.localStorage.getItem("shot_result");
 
   // 이미지 미리보는 화면을 재갱신한다.
+}
+
+function asRequest() {
+  //AS요청으로 이동한다.
+  location.href = "asRequest.html";
 }
 </script>
