@@ -338,7 +338,8 @@ $(document).ready(function(){
     });
 
     $('#link').on('click', function() {
-      location.href = "test.html?mode=activity";
+      //location.href = "test.html?mode=activity";
+      window.android.newActivity("test.html");
     });
 
     $('#closeActivity').on('click', function() {
