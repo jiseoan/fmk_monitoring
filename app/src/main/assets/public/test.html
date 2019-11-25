@@ -572,14 +572,14 @@ function NativeCallback(command, param, result)
     case "close":
       $.alert("close");
     break;
-    case "moniteringCamera":
-      console.log("moniteringCamera");
+    case "monitoringCamera":
+      console.log("monitoringCamera");
     break;
     case "cancel":
       console.log("cancel");
     break;
-    case "reMoniteringCamera":
-      window.android.camera("monitering", "{take_count: 2, building_name:'송내 자이 아파트', address:'경기도 부천시 소사구 ...'}");
+    case "reMonitoringCamera":
+      window.android.camera("monitoring", "{take_count: 2, building_name:'송내 자이 아파트', address:'경기도 부천시 소사구 ...'}");
     break;
     case "cameraResult":
       console.log(param);

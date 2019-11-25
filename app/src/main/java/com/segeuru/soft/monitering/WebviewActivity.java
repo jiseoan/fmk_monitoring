@@ -28,7 +28,7 @@ public class WebviewActivity extends BaseAtivity {
         findViewById(R.id.btn_retakePicture).setOnClickListener(retake_button_clickLisener);
         findViewById(R.id.btn_request_as).setOnClickListener(requestAs_button_clickLisener);
         findViewById(R.id.btn_confirm).setOnClickListener(confirm_button_clickLisener);
-        findViewById(R.id.btn_moniteringCamera).setOnClickListener(moniteringCamera_button_clickLisener);
+        findViewById(R.id.btn_monitoringCamera).setOnClickListener(monitoringCamera_button_clickLisener);
         findViewById(R.id.btn_cancel).setOnClickListener(cancel_button_clickLisener);
         findViewById(R.id.btn_registration).setOnClickListener(registration_button_clickLisener);
         findViewById(R.id.btn_cancel_registration).setOnClickListener(cancel_button_clickLisener);
@@ -116,7 +116,7 @@ public class WebviewActivity extends BaseAtivity {
     final View.OnClickListener retake_button_clickLisener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            javaScriptCallback("reMoniteringCamera", "", "clicked");
+            javaScriptCallback("reMonitoringCamera", "", "clicked");
         }
     };
 
@@ -134,10 +134,10 @@ public class WebviewActivity extends BaseAtivity {
         }
     };
 
-    final View.OnClickListener moniteringCamera_button_clickLisener = new View.OnClickListener() {
+    final View.OnClickListener monitoringCamera_button_clickLisener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            javaScriptCallback("moniteringCamera", "", "clicked");
+            javaScriptCallback("monitoringCamera", "", "clicked");
         }
     };
 
