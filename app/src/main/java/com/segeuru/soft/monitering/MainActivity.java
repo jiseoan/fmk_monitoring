@@ -16,7 +16,6 @@ import android.widget.Button;
 import android.widget.Toast;
 
 import com.google.zxing.integration.android.IntentIntegrator;
-import com.google.zxing.integration.android.IntentResult;
 
 public class MainActivity extends AppCompatActivity implements ActivityCompat.OnRequestPermissionsResultCallback {
 
@@ -34,7 +33,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
             @Override
             public void onClick(View view) {
                 Intent intent = new Intent(MainActivity.this, WebviewActivity.class);
-                intent.putExtra("url", "file:///android_asset/public/test.html");
+                intent.putExtra("url", "test.html");
                 startActivity(intent);
             }
         });
