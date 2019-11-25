@@ -58,11 +58,7 @@ function callNative(command, param, param2) {
         // retakeAndConfirm : 재촬영 | 확인 <- ad: 광고재촬영, building: 단지 대표 이미지 재촬영
         // asProcessing : AS처리등록
         // completeAndCancel : 완료 | 취소
-        if (param == "retakeAndConfirm") {
-          window.android.bottomActionBar(param, param2);
-        } else {
-          window.android.bottomActionBar(param);
-        }
+        window.android.bottomActionBar(param, param2);
       } else if (command == "toolBar") {
         // 상단바 레이아웃별 보이기
         // main : 뒤로가기 | 타이틀명 | 홈
@@ -136,8 +132,8 @@ function NativeCallback(command, param, result)
     case "reAdCamera":
     {
       // 모니터링 촬영, 모니터링 재촬영, 단지 대표이미지 재촬영, 광고 재촬영
-      var param = null;
-      var param2 = null;
+      var param = "";
+      var param2 = "";
 
       if (typeof window["paramData"] === "function") {
         param2 = paramData();
