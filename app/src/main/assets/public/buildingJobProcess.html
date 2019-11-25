@@ -26,12 +26,12 @@
 </html>
 
 <script language="javascript" type="text/javascript">
-var param2 = {take_count: 1, building_name : "송내 자이 아파트", address: "경기도 부천시 소사구 송내동 409"};
+var param2 = {take_count: 1, building_name : "송내 자이 아파트 101동 1호기", address: "경기도 부천시 소사구 송내동 409"};
 var param3 = {take_count: 5, ad_name : "설화수 이영애 2차"};
 var shotMode = window.localStorage.getItem("shot_mode");
 var shotResult = window.localStorage.getItem("shot_result");
 $(document).ready(function(){
-  callNative('toolBar', 'main', '송내 자이 아파트');
+  callNative('toolBar', 'main', '송내 자이 아파트 101동 1호기');
   if (shotMode == "monitoring") {
     // 모니터링 촬영촬영용 설정을 한다.
     callNative('bottomActionBar', 'retakeAndAsAndConfirm');
