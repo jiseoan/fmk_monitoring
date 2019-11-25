@@ -123,6 +123,26 @@ public class AndroidBridge {
     }
 
     @JavascriptInterface
+    public void hideBottomActionBar() {
+        m_webViewActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                m_webViewActivity.hideAllBottomActionBars();
+            }
+        });
+    }
+
+    @JavascriptInterface
+    public void hideToolBar() {
+        m_webViewActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                m_webViewActivity.hideAllToolBars();
+            }
+        });
+    }
+
+    @JavascriptInterface
     public void hideAllActionBars() {
         m_webViewActivity.runOnUiThread(new Runnable() {
             @Override
@@ -130,6 +150,12 @@ public class AndroidBridge {
                 m_webViewActivity.hideAllActionBars();
             }
         });
+    }
+
+    @JavascriptInterface
+    public void webViewClose() {
+        //현재 웹뷰 닫기
+        m_webViewActivity.finish();
     }
 
     @JavascriptInterface
@@ -141,7 +167,7 @@ public class AndroidBridge {
     }
 
     @JavascriptInterface
-    public void Camera(String requestId, String jsonParams) {
+    public void camera(String requestId, String jsonParams) {
 //        Log.d(DEBUG_TAG, jsonParams);
         JSONObject jsonObject = null;
         try {

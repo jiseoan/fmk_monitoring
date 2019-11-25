@@ -64,7 +64,7 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
             if(!hasPermissions(PERMISSIONS))
                 requestPermissions(PERMISSIONS, REQUEST_PERMISSION_CODE);
         } else {
-            finish();
+            //finish();
         }
 
     }

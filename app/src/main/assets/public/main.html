@@ -50,7 +50,8 @@
 <script language="javascript" type="text/javascript">
 $(document).ready(function(){
   callNative("hideToolBar");
-  callNative("jobStart");
+  //callNative("jobStart");
+  callNative("bottomActionBar", "jobStart", "");
 
   $('#btnRefresh').on('click', function() {
     // 데이터를 동기화하여 받는다.
@@ -64,7 +65,7 @@ $(document).ready(function(){
   });
 });
 
-function  qrScanResult(qrCode) {
+function qrScanResult(qrCode) {
   // 모니터링, 광고촬영에 있는지 체크
   window.localStorage.setItem("qr_code", qrCode);
   location.href = "buildingJobList.html";
