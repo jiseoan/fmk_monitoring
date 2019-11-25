@@ -49,10 +49,9 @@
 
 <script language="javascript" type="text/javascript">
 $(document).ready(function(){
-  //callNative("hideToolBar");
+  callNative("hideToolBar");
   //callNative("jobStart");
-  window.android.bottomActionBar("jobStart", "");
-
+  callNative("bottomActionBar", "jobStart", "");
 
   $('#btnRefresh').on('click', function() {
     // 데이터를 동기화하여 받는다.
