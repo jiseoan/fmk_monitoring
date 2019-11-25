@@ -181,7 +181,7 @@
     <button id="jobStart"> [작업시작] </button><br />
     <button id="jobStartAndCancel"> [작업시작] [취소] </button><br />
     <button id="reTakeAndAsAndConfirm"> [재촬영] [AS요청] [확인] </button><br />
-    <button id="list"> [목록] </button><br />
+    <button id="onlyList"> [목록] </button><br />
     <button id="insertAndCancel"> [등록] [취소] </button><br />
     <button id="reAsProcessing"> [AS처리 재등록] </button><br />
     <button id="reTakeAndAndConfirm"> [재촬영] [확인] </button><br />
@@ -193,6 +193,7 @@
     <button id="setTitle">*타이틀 입력</button><br>
     <button id="hideAllActionBars"> *전체 액션바 숨기기 </button><br />
     <button id="link"> *Active 링크 이동 </button><br />
+    <button id="closeActivity"> *Active 닫기 </button><br />
 <br/>
     <button id="btnContentActionMonitoringCamera"> 모니터링촬영 카메라 열기 (1장 사진) </button>
     <button id="btnContentActionBuildingCamera"> 단지촬영 카메라 열기 (1장 사진) </button>
@@ -296,7 +297,7 @@ $(document).ready(function(){
       window.android.bottomActionBar("reTakeAndAsAndConfirm", "");
     })
 
-    $("#list").on('click', function() {
+    $("#onlyList").on('click', function() {
       window.android.bottomActionBar("list", "");
     })
 
@@ -340,6 +341,9 @@ $(document).ready(function(){
       location.href = "test.html?mode=activity";
     });
 
+    $('#closeActivity').on('click', function() {
+      window.android.webViewClose();
+    });
 
 
 
@@ -574,7 +578,7 @@ function NativeCallback(command, param, result)
       console.log("cancel");
     break;
     case "reMoniteringCamera":
-      window.android.Camera("monitering", "{take_count: 2, building_name:'송내 자이 아파트', address:'경기도 부천시 소사구 ...'}");
+      window.android.camera("monitering", "{take_count: 2, building_name:'송내 자이 아파트', address:'경기도 부천시 소사구 ...'}");
     break;
     case "cameraResult":
       console.log(param);

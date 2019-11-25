@@ -13,7 +13,7 @@ public class WebViweCustom extends WebViewClient {
 
     @Override
     public boolean shouldOverrideUrlLoading(WebView view, WebResourceRequest request) {
-
+        Log.i(DEBUG_TAG, "shouldOverrideUrlLoading");
         String mode = request.getUrl().getQueryParameter("mode");
         if(mode != null) {
             if(mode.compareTo("activity") == 0) {
