@@ -57,11 +57,11 @@ public class WebviewActivity extends BaseAtivity {
     protected void hideAllBottomActionBars() {
         findViewById(R.id.jobStart).setVisibility(View.GONE);
         findViewById(R.id.jobStartAndCancel).setVisibility(View.GONE);
-        findViewById(R.id.reTakeAndAsAndConfirm).setVisibility(View.GONE);
+        findViewById(R.id.retakeAndAsAndConfirm).setVisibility(View.GONE);
         findViewById(R.id.list).setVisibility(View.GONE);
         findViewById(R.id.insertAndCancel).setVisibility(View.GONE);
         findViewById(R.id.reAsProcessing).setVisibility(View.GONE);
-        findViewById(R.id.reTakeAndAndConfirm).setVisibility(View.GONE);
+        findViewById(R.id.retakeAndConfirm).setVisibility(View.GONE);
         findViewById(R.id.asProcessing).setVisibility(View.GONE);
         findViewById(R.id.completeAndCancel).setVisibility(View.GONE);
     }
@@ -77,9 +77,11 @@ public class WebviewActivity extends BaseAtivity {
 
         switch (requestCode) {
             case WebviewActivity.REQUEST_CODE: {
-                Log.d(DEBUG_TAG, data.getStringExtra("pics"));
-                String result = data.getStringExtra("pics");
-                javaScriptCallback("cameraResult", data.getStringExtra("request_id"), result);
+                if(null != data) {
+                    Log.i(DEBUG_TAG, data.getStringExtra("pics"));
+                    String result = data.getStringExtra("pics");
+                    javaScriptCallback("cameraResult", data.getStringExtra("request_id"), result);
+                }
             }
                 break;
             case com.google.zxing.integration.android.IntentIntegrator.REQUEST_CODE: {

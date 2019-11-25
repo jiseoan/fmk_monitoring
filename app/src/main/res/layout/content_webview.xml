@@ -61,7 +61,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/reTakeAndAsAndConfirm"
+        android:id="@+id/retakeAndAsAndConfirm"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"
@@ -153,7 +153,7 @@
     </LinearLayout>
 
     <LinearLayout
-        android:id="@+id/reTakeAndAndConfirm"
+        android:id="@+id/retakeAndConfirm"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         android:gravity="center"

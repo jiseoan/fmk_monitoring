@@ -10,6 +10,7 @@ import android.view.View;
 import android.webkit.WebView;
 import android.webkit.JavascriptInterface;
 import android.widget.LinearLayout;
+import android.widget.Toast;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 
@@ -78,6 +79,10 @@ public class AndroidBridge {
         final int id = res.getIdentifier(resourceName, "id", m_webView.getContext().getPackageName());
         final boolean is_show = true;
 
+        if(null == m_webViewActivity.findViewById(id)) {
+            Log.i("chromium", String.format("%s 아이디를 찾을 수 없습니다.", resourceName));
+            return;
+        }
         m_webViewActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -104,6 +109,10 @@ public class AndroidBridge {
         final int id = res.getIdentifier(resourceName, "id", m_webView.getContext().getPackageName());
         final boolean is_show = true;
 
+        if(null == m_webViewActivity.findViewById(id)) {
+            Log.i("chromium", String.format("%s 아이디를 찾을 수 없습니다.", resourceName));
+            return;
+        }
         m_webViewActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
@@ -168,7 +177,6 @@ public class AndroidBridge {
 
     @JavascriptInterface
     public void camera(String requestId, String jsonParams) {
-//        Log.d(DEBUG_TAG, jsonParams);
         JSONObject jsonObject = null;
         try {
             jsonObject = new JSONObject(jsonParams);
