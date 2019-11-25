@@ -23,7 +23,7 @@
     <div>
       <a href="noticeList.html"> [공지] 모니터링앱 튜토리얼 </a>
     </div>
-    <div>
+    <div id="jobList">
       <ul>
         <li>
           <div class="list-item" style="cursor: pointer;">
@@ -58,6 +58,10 @@ $(document).ready(function(){
   });
   $('#btnLogout').on('click', function() {
     // 로그아웃한다.
+  });
+  $("#jobList .list-item").on('click', function() {
+    // 모니터링/광고촬영 처리 리스트로 이동한다.
+    location.href = "buildingJobProcessList.html";
   });
 });
 
