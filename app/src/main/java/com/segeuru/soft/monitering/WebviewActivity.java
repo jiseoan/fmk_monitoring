@@ -60,7 +60,7 @@ public class WebviewActivity extends BaseAtivity {
         findViewById(R.id.jobStart).setVisibility(View.GONE);
         findViewById(R.id.jobStartAndCancel).setVisibility(View.GONE);
         findViewById(R.id.retakeAndAsAndConfirm).setVisibility(View.GONE);
-        findViewById(R.id.list).setVisibility(View.GONE);
+        findViewById(R.id.onlyList).setVisibility(View.GONE);
         findViewById(R.id.insertAndCancel).setVisibility(View.GONE);
         findViewById(R.id.reAsProcessing).setVisibility(View.GONE);
         findViewById(R.id.retakeAndConfirm).setVisibility(View.GONE);

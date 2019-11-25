@@ -300,7 +300,7 @@ $(document).ready(function(){
     })
 
     $("#onlyList").on('click', function() {
-      window.android.bottomActionBar("list", "");
+      window.android.bottomActionBar("onlyList", "");
     })
 
     $("#insertAndCancel").on('click', function() {
@@ -599,7 +599,7 @@ function NativeCallback(command, param, result)
     break;
     case "reAdCamera":
       console.log("reAdCamera");
-      window.android.camera("ad", "{ad_name:'E편한 세상'}");
+      window.android.camera("ad", "{take_count:3, ad_name:'E편한 세상'}");
     break;
     case "asProcessingReRegistration":
       console.log("asProcessingReRegistration");
