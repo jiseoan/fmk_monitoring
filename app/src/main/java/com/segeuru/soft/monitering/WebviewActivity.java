@@ -16,6 +16,7 @@ public class WebviewActivity extends BaseAtivity {
 
     private String DEBUG_TAG = "segeuru.com";
     public static final int REQUEST_CODE = 0x0000c0dd;
+    public String m_bottomBar_style;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {

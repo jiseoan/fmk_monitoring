@@ -96,7 +96,7 @@ public class AndroidBridge {
     }
 
     @JavascriptInterface
-    public void bottomActionBar(String resourceName, String style) {
+    public void bottomActionBar(String resourceName, final String style) {
         Resources res = null;
 
         try {
@@ -127,6 +127,7 @@ public class AndroidBridge {
 
                 LinearLayout linearLayout = m_webViewActivity.findViewById(id);
                 linearLayout.setVisibility(is_show ? View.VISIBLE : View.GONE);
+                m_webViewActivity.m_bottomBar_style = style;
             }
         });
     }
