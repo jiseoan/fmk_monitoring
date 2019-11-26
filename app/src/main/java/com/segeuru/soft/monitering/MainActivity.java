@@ -60,6 +60,15 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
             }
         });
 
+        btn = findViewById(R.id.btn_downloader);
+        btn.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent(MainActivity.this, DownloadActivity.class);
+                startActivity(intent);
+            }
+        });
+
         if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
             if(!hasPermissions(PERMISSIONS))
                 requestPermissions(PERMISSIONS, REQUEST_PERMISSION_CODE);
