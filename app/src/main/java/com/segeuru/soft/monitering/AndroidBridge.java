@@ -196,7 +196,7 @@ public class AndroidBridge {
     }
 
     @JavascriptInterface
-    public void newActivity(String url) {
+    public void newWebView(String url) {
         Intent intent = new Intent(m_webViewActivity, WebviewActivity.class);
         intent.putExtra("url", url);
         m_webViewActivity.startActivity(intent);

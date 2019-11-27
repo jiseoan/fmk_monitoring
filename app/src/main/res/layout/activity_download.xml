@@ -19,8 +19,8 @@
             android:id="@+id/download_progressBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:theme="@style/Widget.AppCompat.ProgressBar.Horizontal"
-            style="@style/Widget.AppCompat.ProgressBar.Horizontal"
+            android:indeterminate="true"
+            style="@style/SegeuruProgressBar"
             android:max="100"/>
 
     </RelativeLayout>
