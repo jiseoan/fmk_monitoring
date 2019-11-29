@@ -37,8 +37,8 @@
 var localAgentCode = window.localStorage.getItem("agent_code");
 $(document).ready(function(){
   if (localAgentCode) {
-    //location.href = "main.html";
-    //return;
+    location.href = "main.html";
+    return;
   }
   var login = new Vue({
     el: '#login',

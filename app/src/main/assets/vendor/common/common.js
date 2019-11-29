@@ -339,8 +339,9 @@ function replaceDom(skin, param, delimiter)
 }
 
 // 파라이터값 가져오기
-$.urlParam = function(name){
-  var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(window.location.href);
+$.urlParam = function(name, url){
+  if (typeof(url) === "undefined") url = window.location.href;
+  var results = new RegExp('[\?&]' + name + '=([^&#]*)').exec(url);
   if (results==null){
     return null;
   }

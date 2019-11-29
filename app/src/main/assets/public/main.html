@@ -64,9 +64,15 @@ $(document).ready(function(){
   });
 });
 
-function qrScanResult(qrCode) {
+function qrScanResult(result) {
   // 모니터링, 광고촬영에 있는지 체크
+  var qrCode = $.urlParam("cd", result);
+  if (qrCode === null) {
+    alert("인식이 불가능한 QR코드 입니다.");
+    return;
+  }
   window.localStorage.setItem("qr_code", qrCode);
+  console.log(window.localStorage.getItem("qr_code"));
   location.href = "buildingJobList.html";
 }
 </script>
