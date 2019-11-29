@@ -19,7 +19,6 @@
             android:id="@+id/download_progressBar"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:indeterminate="true"
             style="@style/SegeuruProgressBar"
             android:max="100"/>
 
@@ -34,6 +33,12 @@
         app:layout_constraintLeft_toLeftOf="parent"
         app:layout_constraintRight_toRightOf="parent"
         android:layout_marginTop="50dp"
+        />
+
+    <VideoView
+        android:id="@+id/videoView"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
         />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

@@ -28,7 +28,7 @@ public class QrReaderActivity extends AppCompatActivity implements DecoratedBarc
                 //intent.addFlags(Intent.FLAG_ACTIVITY_REORDER_TO_FRONT);
                 //startActivityForResult(intent, REQUEST_CODE);
                 Intent intent = new Intent();
-                intent.putExtra(Intents.Scan.RESULT, "http://test.com");
+                intent.putExtra(Intents.Scan.RESULT, "http://fmkr.kr/event/?cd=T00001");
                 setResult(Activity.RESULT_OK, intent);
                 finish();
             }

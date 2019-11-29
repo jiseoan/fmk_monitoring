@@ -8,8 +8,10 @@ import android.os.Bundle;
 import android.os.PowerManager;
 import android.util.Log;
 import android.view.View;
+import android.widget.MediaController;
 import android.widget.ProgressBar;
 import android.widget.Toast;
+import android.widget.VideoView;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -23,6 +25,7 @@ public class DownloadActivity extends AppCompatActivity {
 
     private final String DEBUG_TAG = "segeuru.com";
     private ProgressBar m_progressBar;
+    private MediaController m_mediaController;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -49,7 +52,13 @@ public class DownloadActivity extends AppCompatActivity {
             }
         });
 
-
+        VideoView videoView = findViewById(R.id.videoView);
+        m_mediaController = new MediaController(this);
+        videoView.setMediaController(m_mediaController);
+        videoView.setVideoPath(MoniteringApp.APP_STORE_PATH + "/video.mp4");
+//        videoView.setRotation(90);
+        videoView.seekTo(0);
+        videoView.start();
     }
 
     private class DownloadFileTask extends AsyncTask<String, String, Long> {
