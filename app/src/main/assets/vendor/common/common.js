@@ -182,7 +182,7 @@ function NativeCallback(command, param, result)
           console.log("no function dataSaveProcess()");
         }
       }
-      else if (command == "onlyList")
+      else if (command == "list")
       {
         // 목록
         history.back(-1);
