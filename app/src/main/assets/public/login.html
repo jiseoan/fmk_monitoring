@@ -29,6 +29,10 @@
   </div>
 </div>
 
+
+<div class="text-center" style="margin-top: 50px;">
+  <a href="test.html"><button class="btn btn-primary">개발자 페이지</button></a>
+</div>
 </body>
 </html>
 
@@ -36,10 +40,10 @@
 
 var localAgentCode = window.localStorage.getItem("agent_code");
 $(document).ready(function(){
-  if (localAgentCode) {
-    location.href = "main.html";
-    return;
-  }
+  // if (localAgentCode) {
+  //   location.href = "main.html";
+  //   return;
+  // }
   var login = new Vue({
     el: '#login',
     data: {

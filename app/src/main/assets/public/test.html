@@ -197,6 +197,8 @@
     <button id="link"> *Active 링크 이동 </button><br />
     <button id="closeActivity"> *Active 닫기 </button><br />
     <button id="loadingProgress"> *로딩 상태 표시 </button><br />
+    <button id="downloadVideo"> *동영상 다운로드 </button><br />
+    <button id="uploadImages"> *이미지 업로드 </button><br />
     <button id="checkNetwork"> *네트워크 체크 </button><br />
 <br/>
     <button id="btnContentActionMonitoringCamera"> 모니터링촬영 카메라 열기 (1장 사진) </button>
@@ -356,6 +358,14 @@ $(document).ready(function(){
 
     $('#loadingProgress').on('click', function() {
       window.android.loadingProgress(true);
+    });
+
+    $('#downloadVideo').on('click', function() {
+      window.android.downloadVideo();
+    });
+
+    $('#uploadImages').on('click', function() {
+      window.android.uploadImages();
     });
 
     $('#checkNetwork').on('click', function() {

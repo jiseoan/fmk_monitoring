@@ -44,7 +44,7 @@ public class WebviewActivity extends BaseAtivity {
 
         initWebview(R.id.webview);
         m_webview.addJavascriptInterface(new AndroidBridge(this, m_webview), "android");
-        m_webview.loadUrl("file:///android_asset/public/" + getIntent().getStringExtra("url"));
+        m_webview.loadUrl("file:///android_asset/public/" + (getIntent().hasExtra("url") ? getIntent().getStringExtra("url") : "login.html"));
     }
 
     protected void javaScriptCallback(String command, String param, String result) {

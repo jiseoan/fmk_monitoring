@@ -217,6 +217,17 @@ public class AndroidBridge {
     }
 
     @JavascriptInterface
+    public void downloadVideo() {
+        Intent intent = new Intent(m_webViewActivity, DownloadActivity.class);
+        m_webViewActivity.startActivity(intent);
+    }
+
+    @JavascriptInterface
+    public void uploadImages() {
+        new WebSupport().uploadImages(m_webViewActivity);
+    }
+
+    @JavascriptInterface
     public int getCheckNetwork() {
         ConnectivityManager manager = (ConnectivityManager)m_webViewActivity.getSystemService(Context.CONNECTIVITY_SERVICE);
         NetworkInfo networkInfo = manager.getActiveNetworkInfo();
