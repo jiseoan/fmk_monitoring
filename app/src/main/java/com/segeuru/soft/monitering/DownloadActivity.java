@@ -3,6 +3,8 @@ package com.segeuru.soft.monitering;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
+import android.content.pm.ActivityInfo;
+import android.content.res.Configuration;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.PowerManager;
@@ -24,6 +26,7 @@ import java.net.URLConnection;
 public class DownloadActivity extends AppCompatActivity {
 
     private final String DEBUG_TAG = "segeuru.com";
+    private final String FILE_NAME = "video2.mp4";
     private ProgressBar m_progressBar;
     private MediaController m_mediaController;
 
@@ -35,30 +38,47 @@ public class DownloadActivity extends AppCompatActivity {
         m_progressBar =findViewById(R.id.download_progressBar);
         m_progressBar.setProgress(0);
 
-        findViewById(R.id.btn_runDownload).setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                final String fileURL = "http://doc.raonworks.com/wp-content/uploads/2019/11/video.mp4";
-                File file = new File(MoniteringApp.APP_STORE_PATH, "video.mp4");
+        downloadVideo();
 
-                if(file.exists()) {
-                    //already exist.
-                    Toast.makeText(DownloadActivity.this, "같은 파일이 존재합니다.", Toast.LENGTH_LONG).show();
-                } else {
-                    //download new.
-                    final DownloadFileTask downloadFileTask = new DownloadFileTask(DownloadActivity.this);
-                    downloadFileTask.execute(fileURL);
-                }
-            }
-        });
+//        findViewById(R.id.btn_runDownload).setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View view) {
+//                downloadVideo();
+//            }
+//        });
 
+    }
+
+    private void downloadVideo() {
+        final String fileURL = "http://doc.raonworks.com/wp-content/uploads/2019/11/" + FILE_NAME;
+        File file = new File(MoniteringApp.APP_STORE_PATH, FILE_NAME);
+
+        if(file.exists()) {
+            //already exist.
+            //Toast.makeText(DownloadActivity.this, "같은 파일이 존재합니다.", Toast.LENGTH_LONG).show();
+            playVideo();
+        } else {
+            //download new.
+            final DownloadFileTask downloadFileTask = new DownloadFileTask(DownloadActivity.this);
+            downloadFileTask.execute(fileURL);
+        }
+    }
+
+    private void playVideo() {
         VideoView videoView = findViewById(R.id.videoView);
         m_mediaController = new MediaController(this);
         videoView.setMediaController(m_mediaController);
-        videoView.setVideoPath(MoniteringApp.APP_STORE_PATH + "/video.mp4");
-//        videoView.setRotation(90);
+        videoView.setVideoPath(MoniteringApp.APP_STORE_PATH + "/" + FILE_NAME);
+        //videoView.setRotation(90);
         videoView.seekTo(0);
         videoView.start();
+    }
+
+    @Override
+    public void onConfigurationChanged(Configuration newConfig) {
+        super.onConfigurationChanged(newConfig);
+
+        //setRequestedOrientation(ActivityInfo.SCREEN_ORIENTATION_LANDSCAPE);
     }
 
     private class DownloadFileTask extends AsyncTask<String, String, Long> {
@@ -97,7 +117,7 @@ public class DownloadActivity extends AppCompatActivity {
 
                 fileSize = connection.getContentLength();
                 inputStream = new BufferedInputStream(url.openStream(), 8192);
-                outputFile = new File(MoniteringApp.APP_STORE_PATH, "video.mp4");
+                outputFile = new File(MoniteringApp.APP_STORE_PATH, FILE_NAME);
 
                 outputStream = new FileOutputStream(outputFile);
 
@@ -152,6 +172,7 @@ public class DownloadActivity extends AppCompatActivity {
             super.onPostExecute(aLong);
 
             Log.i(DEBUG_TAG, "onPostExecute");
+            playVideo();
             Toast.makeText(DownloadActivity.this, "다운로드가 완료되었습니다.", Toast.LENGTH_LONG).show();
         }
     }

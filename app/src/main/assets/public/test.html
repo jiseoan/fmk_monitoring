@@ -196,6 +196,8 @@
     <button id="hideAllActionBars"> *전체 액션바 숨기기 </button><br />
     <button id="link"> *Active 링크 이동 </button><br />
     <button id="closeActivity"> *Active 닫기 </button><br />
+    <button id="loadingProgress"> *로딩 상태 표시 </button><br />
+    <button id="checkNetwork"> *네트워크 체크 </button><br />
 <br/>
     <button id="btnContentActionMonitoringCamera"> 모니터링촬영 카메라 열기 (1장 사진) </button>
     <button id="btnContentActionBuildingCamera"> 단지촬영 카메라 열기 (1장 사진) </button>
@@ -352,6 +354,13 @@ $(document).ready(function(){
       window.android.webViewClose();
     });
 
+    $('#loadingProgress').on('click', function() {
+      window.android.loadingProgress(true);
+    });
+
+    $('#checkNetwork').on('click', function() {
+      console.log(window.android.getCheckNetwork());
+    });
 
 
 

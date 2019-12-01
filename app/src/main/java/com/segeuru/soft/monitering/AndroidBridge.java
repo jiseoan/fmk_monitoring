@@ -4,6 +4,8 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.database.SQLException;
+import android.net.ConnectivityManager;
+import android.net.NetworkInfo;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
@@ -200,6 +202,30 @@ public class AndroidBridge {
         Intent intent = new Intent(m_webViewActivity, WebviewActivity.class);
         intent.putExtra("url", url);
         m_webViewActivity.startActivity(intent);
+    }
+
+    @JavascriptInterface
+    public void loadingProgress(boolean show) {
+
+        final boolean is_show = show;
+        m_webViewActivity.runOnUiThread(new Runnable() {
+            @Override
+            public void run() {
+                m_webViewActivity.findViewById(R.id.loadingProgress).setVisibility(is_show ? View.VISIBLE : View.GONE);
+            }
+        });
+    }
+
+    @JavascriptInterface
+    public int getCheckNetwork() {
+        ConnectivityManager manager = (ConnectivityManager)m_webViewActivity.getSystemService(Context.CONNECTIVITY_SERVICE);
+        NetworkInfo networkInfo = manager.getActiveNetworkInfo();
+        if(networkInfo != null) {
+            int type = networkInfo.getType();
+            if (type == ConnectivityManager.TYPE_MOBILE) return 1; //mobile.
+            else if (type == ConnectivityManager.TYPE_WIFI) return 2; //wifi.
+            }
+        return 0; //no connected.
     }
 
 }
