@@ -17,7 +17,8 @@
 <div class="container">
   <div id="buildingJobProcess">
     <div>
-      이미지가 미리보기로 나오는 화면
+      <!--이미지가 미리보기로 나오는 화면-->
+      <img id="preview" style="width: 100px;height: 100px;">
     </div>
   </div>
 </div>
@@ -31,7 +32,7 @@ var param3 = {take_count: 5, ad_name : "설화수 이영애 2차"};
 var shotMode = window.localStorage.getItem("shot_mode");
 var shotResult = window.localStorage.getItem("shot_result");
 $(document).ready(function(){
-  callNative('toolBar', 'main', '송내 자이 아파트 101동 1호기');
+  callNative('toolBar', 'main', '송내 자이 아파트 101동 1호기(test)');
   if (shotMode == "monitoring") {
     // 모니터링 촬영촬영용 설정을 한다.
     callNative('bottomActionBar', 'retakeAndAsAndConfirm', shotMode);
@@ -55,16 +56,30 @@ function paramData() {
 function cameraResult(param, result) {
   // 촬영 타입과 결과이미지를 저장후 이동한다.
   window.localStorage.setItem("shot_mode", param);
-  window.localStorage.setItem("shot_result", JSON.stringify(result));
+  window.localStorage.setItem("shot_result", result);
 
-  shotMode = window.localStorage.getItem("shot_mode");
-  shotResult = window.localStorage.getItem("shot_result");
+  // shotMode = window.localStorage.getItem("shot_mode");
+  // shotResult = window.localStorage.getItem("shot_result");
 
   // 이미지 미리보는 화면을 재갱신한다.
+  preview(result);
 }
 
 function asRequest() {
   //AS요청으로 이동한다.
   location.href = "asRequest.html";
 }
+
+//let jsonString = window.localStorage.getItem("shot_result");
+preview(window.localStorage.getItem("shot_result"));
+
+function preview(jsonString) {
+  let jsonObject = JSON.parse(jsonString);
+  console.log("xxxxx----------------------------");
+  console.log(jsonString);
+  console.log(jsonObject.length);
+  console.log(jsonObject[0].filepath);
+  $('#preview').attr("src", jsonObject[0].filepath);
+}
+
 </script>

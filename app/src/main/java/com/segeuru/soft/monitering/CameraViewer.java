@@ -93,6 +93,8 @@ public class CameraViewer extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
+        Log.i(DEBUG_TAG, "onCreate");
         setContentView(R.layout.activity_camera_viewer);
 
         m_filePath = new ArrayList<>();
@@ -177,6 +179,7 @@ public class CameraViewer extends AppCompatActivity {
                         //save(bytes);
                         //new saveThread().execute(bitmap);
 
+
                     } catch (Exception e) {
                         e.printStackTrace();
                     } finally {
@@ -238,7 +241,7 @@ public class CameraViewer extends AppCompatActivity {
     private void takePicture() {
         //Log.i(DEBUG_TAG, "take a picture");
         if(null == m_cameraDevice) {
-            Log.e(DEBUG_TAG, "cemeraDevuce is null");
+            Log.e(DEBUG_TAG, "cemeraDevice is null");
             return;
         }
 
@@ -443,7 +446,7 @@ public class CameraViewer extends AppCompatActivity {
 
         @Override
         public void onDisconnected(@NonNull CameraDevice cameraDevice) {
-            //Log.i(DEBUG_TAG, "onDisconnected");
+            Log.i(DEBUG_TAG, "onDisconnected");
             m_cameraDevice.close();
             m_cameraDevice = null;
         }
@@ -477,8 +480,8 @@ public class CameraViewer extends AppCompatActivity {
 
     @Override
     protected void onDestroy() {
+        Log.i(DEBUG_TAG, "onDestroy");
         super.onDestroy();
-
         m_cameraDevice.close();
         m_cameraDevice = null;
     }

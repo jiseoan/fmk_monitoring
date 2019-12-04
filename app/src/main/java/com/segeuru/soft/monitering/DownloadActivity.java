@@ -3,8 +3,10 @@ package com.segeuru.soft.monitering;
 import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Context;
+import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.PowerManager;
@@ -89,6 +91,13 @@ public class DownloadActivity extends AppCompatActivity {
             m_context = context;
         }
 
+        int count;
+        long fileSize = -1;
+        File outputFile = null;
+        InputStream inputStream = null;
+        OutputStream outputStream = null;
+        URLConnection connection = null;
+
         @Override
         protected void onPreExecute() {
             super.onPreExecute();
@@ -101,13 +110,6 @@ public class DownloadActivity extends AppCompatActivity {
 
         @Override
         protected Long doInBackground(String... params) {
-            int count;
-            long fileSize = -1;
-            InputStream inputStream = null;
-            OutputStream outputStream = null;
-            URLConnection connection = null;
-            File outputFile = null;
-
             Log.i(DEBUG_TAG, "doInBackground");
 
             try {
@@ -173,6 +175,8 @@ public class DownloadActivity extends AppCompatActivity {
 
             Log.i(DEBUG_TAG, "onPostExecute");
             playVideo();
+
+            sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse("file://" + outputFile.getAbsolutePath())));
             Toast.makeText(DownloadActivity.this, "다운로드가 완료되었습니다.", Toast.LENGTH_LONG).show();
         }
     }
