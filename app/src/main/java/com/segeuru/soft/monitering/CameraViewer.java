@@ -482,7 +482,13 @@ public class CameraViewer extends AppCompatActivity {
     protected void onDestroy() {
         Log.i(DEBUG_TAG, "onDestroy");
         super.onDestroy();
-        m_cameraDevice.close();
-        m_cameraDevice = null;
+        try {
+            m_captureSession.stopRepeating();
+            m_captureSession.close();
+            m_cameraDevice.close();
+            m_cameraDevice = null;
+        } catch (Exception e) {
+
+        }
     }
 }
