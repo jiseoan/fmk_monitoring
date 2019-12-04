@@ -16,7 +16,10 @@ import android.widget.Toast;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 
+import org.json.JSONArray;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
@@ -223,8 +226,8 @@ public class AndroidBridge {
     }
 
     @JavascriptInterface
-    public void uploadImages() {
-        new WebSupport().uploadImages(m_webViewActivity);
+    public void uploadImages(String json) {
+        m_webViewActivity.support().uploadImages(json);
     }
 
     @JavascriptInterface

@@ -14,8 +14,9 @@ import androidx.annotation.Nullable;
 
 public class WebviewActivity extends BaseAtivity {
 
-    private String DEBUG_TAG = "segeuru.com";
+    private final String DEBUG_TAG = "segeuru.com";
     public static final int REQUEST_CODE = 0x0000c0dd;
+    private WebSupport m_webSupport;
     public String m_bottomBar_style;
 
     @Override
@@ -45,6 +46,7 @@ public class WebviewActivity extends BaseAtivity {
         initWebview(R.id.webview);
         m_webview.addJavascriptInterface(new AndroidBridge(this, m_webview), "android");
         m_webview.loadUrl("file:///android_asset/public/" + (getIntent().hasExtra("url") ? getIntent().getStringExtra("url") : "login.html"));
+        m_webSupport = new WebSupport(this);
     }
 
     protected void javaScriptCallback(String command, String param, String result) {
@@ -216,5 +218,9 @@ public class WebviewActivity extends BaseAtivity {
         }
 
         return super.onOptionsItemSelected(item);
+    }
+
+    public WebSupport support() {
+        return m_webSupport;
     }
 }

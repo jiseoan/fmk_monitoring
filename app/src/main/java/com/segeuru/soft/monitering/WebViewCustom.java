@@ -5,7 +5,7 @@ import android.util.Log;
 import android.webkit.WebView;
 import android.webkit.WebViewClient;
 
-public class WebViweCustom extends WebViewClient {
+public class WebViewCustom extends WebViewClient {
 
     private final String DEBUG_TAG = "segeuru.com";
 

@@ -4,9 +4,6 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.os.Bundle;
 import android.os.Handler;
-import android.provider.Settings;
-import android.util.Log;
-import android.webkit.JavascriptInterface;
 import android.webkit.WebView;
 
 import org.json.JSONArray;
@@ -41,7 +38,7 @@ public class BaseAtivity extends AppCompatActivity {
         m_webview.getSettings().setAllowFileAccessFromFileURLs(true);
         m_webview.getSettings().setAllowUniversalAccessFromFileURLs(true);
         m_webview.getSettings().setDomStorageEnabled(true);
-        m_webview.setWebViewClient(new WebViweCustom());
+        m_webview.setWebViewClient(new WebViewCustom());
     }
 
      protected String selectSQL(String sql) {

@@ -365,7 +365,7 @@ $(document).ready(function(){
     });
 
     $('#uploadImages').on('click', function() {
-      window.android.uploadImages();
+      window.android.uploadImages("[{'filename':'040.jpg'}, {'filename':'045.jpg'}]");
     });
 
     $('#checkNetwork').on('click', function() {
@@ -647,6 +647,9 @@ function NativeCallback(command, param, result)
     break;
     case "list":
       console.log("list");
+    break;
+    case "uploadedImages":
+      console.log("uploadedImages");
     break;
   }
 

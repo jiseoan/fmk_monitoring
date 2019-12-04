@@ -4,6 +4,11 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
+import android.webkit.WebView;
+import android.webkit.WebViewClient;
+
+import org.json.JSONArray;
+import org.json.JSONObject;
 
 import java.io.DataOutputStream;
 import java.io.File;
@@ -15,32 +20,41 @@ import java.util.ArrayList;
 public class WebSupport {
     private final String DEBUG_TAG = "segeuru.com";
     private Context m_context;
+    private WebviewActivity m_webviewActivity;
     private ArrayList<String> m_fileNames;
 
-    public WebSupport() {
-        m_fileNames = new ArrayList<>();
-        m_fileNames.add("040.jpg");
-        m_fileNames.add("045.jpg");
+    public WebSupport(WebviewActivity webviewActivity) {
+        m_webviewActivity = webviewActivity;
     }
 
-    private void uploadImage(Activity activity) {
+    public void uploadImages(String json) {
+        m_fileNames = new ArrayList<>();
+        try {
+            JSONArray jsonArray = new JSONArray(json);
+            for(int i=0;i<jsonArray.length();++i) {
+                JSONObject jsonObject = (JSONObject)jsonArray.get(i);
+                m_fileNames.add(jsonObject.getString("filename"));
+                //Log.i(DEBUG_TAG, jsonObject.getString("filename"));
+            }
+        } catch(Exception e) {
+            e.printStackTrace();
+            return;
+        }
+
+        new uploadAsyncTask().execute();
+    }
+
+    private void uploadImagesAsync() {
         final String SERVER_URL = "http://test.raonworks.com/upload.php";
         final String boundary = "*****";
         final String twoHyphens = "--";
         final String lineEnd = "\r\n";
-        //final String fileName = "040.jpg";
 
         URL url = null;
         byte[] buffer;
         int bytesRead, bytesAvailable, bufferSize;
         int maxBufferSize = 1024 * 1024;
         HttpURLConnection httpConn = null;
-
-//        File sourceFile = new File(MoniteringApp.APP_STORE_PATH + "/" + fileName);
-//        if(!sourceFile.exists()) {
-//            Log.i(DEBUG_TAG, "not exists");
-//            return;
-//        }
 
         try {
             // Open a HTTP  connection to  the URL
@@ -131,11 +145,7 @@ public class WebSupport {
 
     }
 
-    public void uploadImages(Activity activity) {
-        new uploadAsyncTask().execute(activity);
-    }
-
-    private class uploadAsyncTask extends AsyncTask<Activity, Activity, Long> {
+    private class uploadAsyncTask extends AsyncTask<Activity, Activity, Integer> {
 
         @Override
         protected void onPreExecute() {
@@ -143,14 +153,16 @@ public class WebSupport {
         }
 
         @Override
-        protected Long doInBackground(Activity... urls) {
-            uploadImage(urls[0]);
-            return null;
+        protected Integer doInBackground(Activity... activities) {
+            uploadImagesAsync();
+            return 14;
         }
 
         @Override
-        protected void onPostExecute(Long aLong) {
-            super.onPostExecute(aLong);
+        protected void onPostExecute(Integer integer) {
+            super.onPostExecute(integer);
+
+            m_webviewActivity.javaScriptCallback("uploadedImages", "", "");
         }
     }
 
