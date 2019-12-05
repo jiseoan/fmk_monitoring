@@ -4,8 +4,6 @@ import android.app.Activity;
 import android.content.Context;
 import android.os.AsyncTask;
 import android.util.Log;
-import android.webkit.WebView;
-import android.webkit.WebViewClient;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
@@ -68,14 +66,21 @@ public class WebSupport {
             httpConn.setRequestProperty("Charset", "UTF-8");
             httpConn.setRequestProperty("ENCTYPE", "multipart/form-data");
             httpConn.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
-            //httpConn.setRequestProperty("uploaded_file", fileName);
 
-            DataOutputStream dos = new DataOutputStream(httpConn.getOutputStream());
-            dos.writeBytes(twoHyphens + boundary + lineEnd);
+            DataOutputStream dataOutputStream = new DataOutputStream(httpConn.getOutputStream());
 
+            //BEGIN - form datas
+            dataOutputStream.writeBytes(twoHyphens + boundary + lineEnd);
+            dataOutputStream.writeBytes("Content-Disposition: form-data; name=\"email\""+ lineEnd);
+            dataOutputStream.writeBytes(lineEnd);
+            dataOutputStream.writeBytes("devhong@segeuru.com");
+            dataOutputStream.writeBytes(lineEnd);
+            dataOutputStream.writeBytes(twoHyphens + boundary + lineEnd);
+
+            //BEGIN - media datas
             for(int i=0;i<m_fileNames.size();++i) {
-                dos.writeBytes("Content-Disposition: form-data; name=\"uploaded_file[]\";filename=\"" + m_fileNames.get(i) + "\"" + lineEnd);
-                dos.writeBytes(lineEnd);
+                dataOutputStream.writeBytes("Content-Disposition: form-data; name=\"uploaded_file[]\";filename=\"" + m_fileNames.get(i) + "\"" + lineEnd);
+                dataOutputStream.writeBytes(lineEnd);
 
                 File sourceFile = new File(MoniteringApp.APP_STORE_PATH + "/" + m_fileNames.get(i));
                 if (!sourceFile.exists()) {
@@ -94,7 +99,7 @@ public class WebSupport {
                 bytesRead = fileInputStream.read(buffer, 0, bufferSize);
 
                 while (bytesRead > 0) {
-                    dos.write(buffer, 0, bufferSize);
+                    dataOutputStream.write(buffer, 0, bufferSize);
                     bytesAvailable = fileInputStream.available();
                     bufferSize = Math.min(bytesAvailable, maxBufferSize);
                     bytesRead = fileInputStream.read(buffer, 0, bufferSize);
@@ -102,18 +107,18 @@ public class WebSupport {
 
                 // send multipart form data necesssary after file data...
                 fileInputStream.close();
-                dos.writeBytes(lineEnd);
-                dos.writeBytes(twoHyphens + boundary + lineEnd);
+                dataOutputStream.writeBytes(lineEnd);
+                dataOutputStream.writeBytes(twoHyphens + boundary + lineEnd);
                 //dos.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
             }
 
-            dos.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
+            dataOutputStream.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
 
                 // Responses from the server (code and message)
-                int serverResponseCode = httpConn.getResponseCode();
-                String serverResponseMessage = httpConn.getResponseMessage();
+            int serverResponseCode = httpConn.getResponseCode();
+            String serverResponseMessage = httpConn.getResponseMessage();
 
-                Log.i("uploadFile", "HTTP Response is : "
+            Log.i("uploadFile", "HTTP Response is : "
                         + serverResponseMessage + ": " + serverResponseCode);
 
 //                if (serverResponseCode == 200) {
@@ -133,8 +138,8 @@ public class WebSupport {
 //                }
 
                 //close the streams //
-                dos.flush();
-                dos.close();
+            dataOutputStream.flush();
+            dataOutputStream.close();
 
 //            int responseCode = httpConn.getResponseCode();
 //            Log.i("segeuru.com", Integer.toString(responseCode));
