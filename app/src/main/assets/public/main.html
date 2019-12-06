@@ -48,7 +48,8 @@
 </html>
 
 <script language="javascript" type="text/javascript">
-  var agentCode = window.localStorage.getItem("agent_code");
+var agentCode = window.localStorage.getItem("agent_code");
+var thisWeek = [];
 $(document).ready(function(){
   callNative("hideToolBar");
   callNative("bottomActionBar", "jobStart");
@@ -59,21 +60,66 @@ $(document).ready(function(){
   });
   $('#btnLogout').on('click', function() {
     // 로그아웃한다.
+    window.localStorage.setItem("agent_code", "");
+    console.log(window.localStorage.getItem("agent_code"));
+    location.href = "login.html";
   });
   $("#jobList .list-item").on('click', function() {
     // 모니터링/광고촬영 처리 리스트로 이동한다.
     location.href = "buildingJobProcessList.html";
   });
+
+  getThisWeekDate();
 });
+
+function getThisWeekDate() {
+  var currentDay = new Date();  
+  var theYear = currentDay.getFullYear();
+  var theMonth = currentDay.getMonth();
+  var theDate  = currentDay.getDate();
+  var theDayOfWeek = currentDay.getDay();
+   
+  for(var i=0; i<7; i++) {
+    var resultDay = new Date(theYear, theMonth, theDate + (i - theDayOfWeek));
+    var yyyy = resultDay.getFullYear();
+    var mm = Number(resultDay.getMonth()) + 1;
+    var dd = resultDay.getDate();
+   
+    mm = String(mm).length === 1 ? '0' + mm : mm;
+    dd = String(dd).length === 1 ? '0' + dd : dd;
+   
+    thisWeek[i] = yyyy + '-' + mm + '-' + dd;
+  }
+}
 
 function dataSync() {
   $.post('https://dev.treeter.net/fmksystem/Bmm_api/getRemoteVersion', {
-    agent_code: agentCode
+    agent_code: agentCode,
+    start_date: thisWeek[0],
+    end_date: thisWeek[6]
   })
   .done(function(data) {
     var result = parseResult(data);
     console.log(result.data);
     if (result.code == "success") {
+      $.post('https://dev.treeter.net/fmksystem/Bmm_api/getUpdateDataList', {
+        agent_code: agentCode,
+        start_date: thisWeek[0],
+        end_date: thisWeek[6],
+        dataNames: 'notice,building,monitoring_request,ad_check_request,processing,code,as_request,as_processing'
+      })
+      .done(function(data) {
+        var result = parseResult(data);
+        console.log(result.data);
+        if (result.code == "success") {
+        } else {
+          $.alert(result.data);
+        }
+      })
+      .fail(function() {
+        console.log('failed');
+        $.alert("동기화에 실패하였습니다.\n인터넷연결상태를 확인해주세요.")
+      });
     } else {
       $.alert(result.data);
     }

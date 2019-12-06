@@ -245,6 +245,27 @@ function dbMerge(table, param) {
   return result;
 }
 
+function dbInsert(table, param) {
+  var result = null;
+  if (param) {
+    var fields = null;
+    var values = null;
+
+    for (var key in param) {     
+      if (fields === null) {
+        fields = key;
+        values = (param[key] === null)?"NULL":"'" + param[key] + "'";
+      } else {
+        fields += ", " + key;
+        values += (param[key] === null)?", NULL":", '" + param[key] + "'";
+      }
+    };
+
+    result = dbSql("INSERT OR REPLACE INTO " + table + " (" + fields + ") VALUES (" + values + ")");
+  }
+  return result;
+}
+
 function dbSelect(field, table, where, orderBy)
 {
   if (typeof(where) === "undefined") where = "";
