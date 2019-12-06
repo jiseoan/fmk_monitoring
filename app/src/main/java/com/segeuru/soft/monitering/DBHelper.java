@@ -49,7 +49,7 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE IF NOT EXISTS temp_down_as_processing ( as_request_id INTEGER, processing_type_code_id INTEGER, processing_desc TEXT, processing_date TEXT, processing_flag TEXT, as_processing_id INTEGER)");
         db.execSQL("CREATE TABLE IF NOT EXISTS temp_save_as_processing ( as_request_id INTEGER, processing_type_code_id INTEGER, processing_desc TEXT, processing_date TEXT, processing_flag TEXT, as_processing_id INTEGER)");
         
-        db.execSQL("CREATE TABLE IF NOT EXISTS version ( building INTEGER, monitoring_request INTEGER, processing_desc TEXT, processing_date TEXT, processing_flag TEXT, as_processing_id INTEGER)");
+        db.execSQL("CREATE TABLE IF NOT EXISTS version ( notice INTEGER, building INTEGER, monitoring_request INTEGER, ad_check_request INTEGER, processing INTEGER, code INTEGER, as_request INTEGER, as_processing INTEGER)");
     }
 
     @Override

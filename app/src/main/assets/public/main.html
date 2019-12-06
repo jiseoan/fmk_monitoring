@@ -17,7 +17,7 @@
 <div class="container">
   <div id="main">
     <div>
-      <button id="btnRefresh"> 새로고침 </button>
+      <button id="btnSync"> 동기화 </button>
       <button id="btnLogout"> 로그아웃 </button>
     </div>
     <div>
@@ -48,12 +48,14 @@
 </html>
 
 <script language="javascript" type="text/javascript">
+  var agentCode = window.localStorage.getItem("agent_code");
 $(document).ready(function(){
   callNative("hideToolBar");
   callNative("bottomActionBar", "jobStart");
 
-  $('#btnRefresh').on('click', function() {
+  $('#btnSync').on('click', function() {
     // 데이터를 동기화하여 받는다.
+    dataSync();
   });
   $('#btnLogout').on('click', function() {
     // 로그아웃한다.
@@ -63,6 +65,24 @@ $(document).ready(function(){
     location.href = "buildingJobProcessList.html";
   });
 });
+
+function dataSync() {
+  $.post('https://dev.treeter.net/fmksystem/Bmm_api/getRemoteVersion', {
+    agent_code: agentCode
+  })
+  .done(function(data) {
+    var result = parseResult(data);
+    console.log(result.data);
+    if (result.code == "success") {
+    } else {
+      $.alert(result.data);
+    }
+  })
+  .fail(function() {
+    console.log('failed');
+    $.alert("동기화에 실패하였습니다.\n인터넷연결상태를 확인해주세요.")
+  });
+}
 
 function qrScanResult(result) {
   // 모니터링, 광고촬영에 있는지 체크
