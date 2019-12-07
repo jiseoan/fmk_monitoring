@@ -242,4 +242,19 @@ public class AndroidBridge {
         return 0; //no connected.
     }
 
+    @JavascriptInterface
+    public void testFunc(String jsonString) {
+        Log.i(DEBUG_TAG, jsonString);
+        try {
+            JSONArray queries = new JSONArray(jsonString);
+            for(int i=0;i<queries.length();++i) {
+                JSONObject query = (JSONObject)queries.get(i);
+                //Log.i(DEBUG_TAG, query.getString("query"));
+                m_webViewActivity.m_db.execSQL(query.getString("query"));
+            }
+            Log.i(DEBUG_TAG, "insered all.");
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+    }
 }
