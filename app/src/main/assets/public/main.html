@@ -113,19 +113,17 @@ function dataSync() {
         console.log(result.data);
         
         let queryList = [];
-        console.log(JSON.stringify(queryList));
-        console.log(result.data.building.length);
         for(i=0;i<result.data.building.length;++i) {
           let currentData = result.data.building[i];
-          queryList.push({"query": StringFormat("insert into building (building_id, building_name, machine_cnt, address) " + "values('{0}', '{1}', '{2}', '{3}')", currentData.building_id, currentData.building_name, currentData.machine_cnt, currentData.address)});
+          queryList.push({"query": stringFormat("insert into building (building_id, building_name, machine_cnt, address) " + "values('{0}', '{1}', '{2}', '{3}')", currentData.building_id, currentData.building_name, currentData.machine_cnt, currentData.address)});
         }
 
         for(i=0;i<result.data.building_locate.length;++i) {
           let currentData = result.data.building_locate[i];
-          queryList.push({"query": StringFormat("insert into building_locate (building_locate_id, building_id, dong, unit_name, machine_code, qr_serial_code) " + "values('{0}', '{1}', '{2}', '{3}', '{4}', '{5}')", currentData.building_locate_id, currentData.building_id, currentData.dong, currentData.unit_name, currentData.machine_code, currentData.qr_serial_code)});
+          queryList.push({"query": stringFormat("insert into building_locate (building_locate_id, building_id, dong, unit_name, machine_code, qr_serial_code) " + "values('{0}', '{1}', '{2}', '{3}', '{4}', '{5}')", currentData.building_locate_id, currentData.building_id, currentData.dong, currentData.unit_name, currentData.machine_code, currentData.qr_serial_code)});
         }
         console.log("encoded.... end");
-        window.android.testFunc(JSON.stringify(queryList));
+        window.android.massQueries(JSON.stringify(queryList));
         if (result.code == "success") {
         } else {
           $.alert(result.data);
@@ -158,7 +156,7 @@ function qrScanResult(result) {
 }
 
 //아래 함수를 적절한 공용 라이브러리로 이동해주세요.
-function StringFormat() {
+function stringFormat() {
     var expression = arguments[0]; 
     for (var i=1; i < arguments.length; i++) {
         var prttern = "{" + (i - 1) + "}"

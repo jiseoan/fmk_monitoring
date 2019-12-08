@@ -243,16 +243,18 @@ public class AndroidBridge {
     }
 
     @JavascriptInterface
-    public void testFunc(String jsonString) {
-        Log.i(DEBUG_TAG, jsonString);
+    public void massQueries(String jsonString) {
+        //Log.i(DEBUG_TAG, jsonString);
         try {
             JSONArray queries = new JSONArray(jsonString);
+            Log.i(DEBUG_TAG, "processing database queries " + Integer.toString(queries.length()));
             for(int i=0;i<queries.length();++i) {
+                if((i % 1000) == 0) Log.i(DEBUG_TAG, "processed 1000 queries");
                 JSONObject query = (JSONObject)queries.get(i);
                 //Log.i(DEBUG_TAG, query.getString("query"));
-                m_webViewActivity.m_db.execSQL(query.getString("query"));
+                //m_webViewActivity.m_db.execSQL(query.getString("query"));
             }
-            Log.i(DEBUG_TAG, "insered all.");
+            Log.i(DEBUG_TAG, "ended processing.");
         } catch(Exception e) {
             e.printStackTrace();
         }
