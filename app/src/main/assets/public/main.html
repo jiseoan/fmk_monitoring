@@ -113,11 +113,13 @@ function dataSync() {
         console.log(result.data);
         
         let queryList = [];
+        queryList.push({"query": "delete from building"});
         for(i=0;i<result.data.building.length;++i) {
           let currentData = result.data.building[i];
           queryList.push({"query": stringFormat("insert into building (building_id, building_name, machine_cnt, address) " + "values('{0}', '{1}', '{2}', '{3}')", currentData.building_id, currentData.building_name, currentData.machine_cnt, currentData.address)});
         }
 
+        queryList.push({"query": "delete from building_locate"});
         for(i=0;i<result.data.building_locate.length;++i) {
           let currentData = result.data.building_locate[i];
           queryList.push({"query": stringFormat("insert into building_locate (building_locate_id, building_id, dong, unit_name, machine_code, qr_serial_code) " + "values('{0}', '{1}', '{2}', '{3}', '{4}', '{5}')", currentData.building_locate_id, currentData.building_id, currentData.dong, currentData.unit_name, currentData.machine_code, currentData.qr_serial_code)});
