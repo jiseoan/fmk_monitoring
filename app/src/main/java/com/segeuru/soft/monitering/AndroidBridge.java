@@ -226,8 +226,8 @@ public class AndroidBridge {
     }
 
     @JavascriptInterface
-    public void uploadImages(String json) {
-        m_webViewActivity.support().uploadImages(json);
+    public void uploadMedia(String json) {
+        m_webViewActivity.support().uploadMedia(json);
     }
 
     @JavascriptInterface

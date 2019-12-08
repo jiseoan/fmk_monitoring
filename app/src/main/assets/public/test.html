@@ -365,7 +365,55 @@ $(document).ready(function(){
     });
 
     $('#uploadImages').on('click', function() {
-      window.android.uploadImages("[{'filename':'a.jpg'}, {'filename':'a.jpg'}]");
+
+    /*
+    // 업로드
+    $("#btnUpload").on('click', function() {
+      console.log("업로드");
+
+      var uploadData = {};
+      uploadData['url'] = MOBILE_UPLOAD_URL;
+      var uploadList = [];
+
+      var itemList = $("#list").children();
+      if (itemList.length === 0) // 사진 첨부가 필수라면
+      {
+        messageBox("첨부된 사진이 없습니다.");
+        return;
+      }
+      $.each(itemList, function(index)
+      {
+        var item = {};
+        item['path'] = $(itemList.get(index)).data("path");
+        uploadList.push(item);
+      });
+      uploadData['fileData'] = uploadList;
+      var param = {};
+      param['custom_data1'] = 1;
+      param['custom_data2'] = { name: "test" };
+      param['custom_data1'] = "한글테스트!!@%!123";
+      uploadData['data'] = JSON.stringify(param);
+      callNative("uploadMedia", JSON.stringify(uploadData));
+    });
+    */
+
+      MOBILE_UPLOAD_URL = "http://test.raonworks.com/upload.php";
+      let uploadData = {};
+      let uploadList = [];
+
+      uploadData['url'] = MOBILE_UPLOAD_URL;
+
+      uploadList.push({"path":"a.jpg"});
+      uploadList.push({"path":"b.jpg"});
+      uploadData["fileData"] = uploadList;
+
+      let param = {};
+      param["custom_data1"] = 10;
+      param["custom_data2"] = "t:est1";
+      param["custom_data3"] = "abc!!한글테스트";
+      uploadData['data'] = param;
+
+      window.android.uploadMedia(JSON.stringify(uploadData));
     });
 
     $('#checkNetwork').on('click', function() {

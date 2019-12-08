@@ -13,6 +13,7 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.net.URLEncoder;
 import java.util.ArrayList;
 
 public class WebSupport {
@@ -25,24 +26,44 @@ public class WebSupport {
         m_webviewActivity = webviewActivity;
     }
 
-    public void uploadImages(String json) {
-        m_fileNames = new ArrayList<>();
-        try {
-            JSONArray jsonArray = new JSONArray(json);
-            for(int i=0;i<jsonArray.length();++i) {
-                JSONObject jsonObject = (JSONObject)jsonArray.get(i);
-                m_fileNames.add(jsonObject.getString("filename"));
-                //Log.i(DEBUG_TAG, jsonObject.getString("filename"));
-            }
-        } catch(Exception e) {
-            e.printStackTrace();
-            return;
-        }
-
-        new uploadAsyncTask().execute();
+    public void uploadMedia(String jsonString) {
+        new uploadAsyncTask().execute(jsonString);
     }
 
-    private void uploadImagesAsync() {
+    private void uploadMediaAsync(String jsonString) {
+
+        Log.i(DEBUG_TAG, jsonString);
+
+        String uploadURL = null;
+        JSONObject params = null;
+        JSONArray filePaths = null;
+        try {
+            JSONObject jsonRoot = new JSONObject(jsonString);
+
+            //test, get url.
+            uploadURL = jsonRoot.getString("url");
+            Log.i(DEBUG_TAG, uploadURL);
+
+            //test, list of params.
+            params = (JSONObject)jsonRoot.get("data");
+            for(int i=0;i<params.length();++i) {
+                Log.i(DEBUG_TAG, params.names().getString(i));
+                Log.i(DEBUG_TAG, params.get(params.names().getString(i)).toString());
+            }
+
+            //list of file paths.
+            m_fileNames = new ArrayList<>();
+            filePaths = (JSONArray)jsonRoot.get("fileData");
+            for(int i=0;i<filePaths.length();++i) {
+                JSONObject filePath = (JSONObject)filePaths.get(i);
+                m_fileNames.add(filePath.getString("path"));
+                //Log.i(DEBUG_TAG, filePath.getString("path"));
+            }
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+
         final String SERVER_URL = "http://test.raonworks.com/upload.php";
         final String boundary = "*****";
         final String twoHyphens = "--";
@@ -70,11 +91,15 @@ public class WebSupport {
             DataOutputStream dataOutputStream = new DataOutputStream(httpConn.getOutputStream());
 
             //BEGIN - form datas
-            dataOutputStream.writeBytes(twoHyphens + boundary + lineEnd);
-            dataOutputStream.writeBytes("Content-Disposition: form-data; name=\"email\""+ lineEnd);
-            dataOutputStream.writeBytes(lineEnd);
-            dataOutputStream.writeBytes("devhong@segeuru.com");
-            dataOutputStream.writeBytes(lineEnd);
+            for(int i=0;i<params.length();++i) {
+                dataOutputStream.writeBytes(twoHyphens + boundary + lineEnd);
+                dataOutputStream.writeBytes(String.format("Content-Disposition: form-data; name=\"%s\"" + lineEnd, params.names().getString(i)));
+                dataOutputStream.writeBytes(lineEnd);
+                //dataOutputStream.writeUTF(params.getString(params.names().getString(i)));
+                dataOutputStream.writeBytes(URLEncoder.encode (params.getString(params.names().getString(i)), "UTF-8"));
+                dataOutputStream.writeBytes(lineEnd);
+            }
+
             dataOutputStream.writeBytes(twoHyphens + boundary + lineEnd);
 
             //BEGIN - media datas
@@ -150,7 +175,7 @@ public class WebSupport {
 
     }
 
-    private class uploadAsyncTask extends AsyncTask<Activity, Activity, Integer> {
+    private class uploadAsyncTask extends AsyncTask<String, String, Integer> {
 
         @Override
         protected void onPreExecute() {
@@ -158,9 +183,9 @@ public class WebSupport {
         }
 
         @Override
-        protected Integer doInBackground(Activity... activities) {
-            uploadImagesAsync();
-            return 14;
+        protected Integer doInBackground(String... args) {
+            uploadMediaAsync(args[0]);
+            return null;
         }
 
         @Override
