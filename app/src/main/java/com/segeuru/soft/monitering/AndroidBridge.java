@@ -6,6 +6,7 @@ import android.content.res.Resources;
 import android.database.SQLException;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.Handler;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
@@ -19,8 +20,6 @@ import com.google.zxing.integration.android.IntentIntegrator;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
-import java.util.ArrayList;
-
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
@@ -29,6 +28,7 @@ import androidx.constraintlayout.widget.ConstraintSet;
 public class AndroidBridge {
 
     private final String DEBUG_TAG = "segeuru.com";
+    private final Handler handler = new Handler();
     private WebviewActivity m_webViewActivity;
     private WebView m_webView;
 
@@ -244,23 +244,55 @@ public class AndroidBridge {
 
     @JavascriptInterface
     public void massQueries(String jsonString) {
-        //Log.i(DEBUG_TAG, jsonString);
-        m_webViewActivity.m_db.beginTransaction();
-        try {
-            JSONArray queries = new JSONArray(jsonString);
-            Log.i(DEBUG_TAG, "processing database queries " + Integer.toString(queries.length()));
-            for(int i=0;i<queries.length();++i) {
-                JSONObject query = (JSONObject)queries.get(i);
-                //Log.i(DEBUG_TAG, query.getString("query"));
-                m_webViewActivity.m_db.execSQL(query.getString("query"));
-                if((i % 1000) == 0) Log.i(DEBUG_TAG, "processed 1000 queries");
+        Log.i(DEBUG_TAG, jsonString);
+        final String jsonstr = jsonString;
+
+        handler.post(new Runnable() {
+            @Override
+            public void run() {
+                m_webViewActivity.m_db.beginTransaction();
+                try {
+                    JSONArray queries = new JSONArray(jsonstr);
+                    Log.i(DEBUG_TAG, "processing database queries " + Integer.toString(queries.length()));
+                    for(int i=0;i<queries.length();++i) {
+                        JSONObject query = (JSONObject)queries.get(i);
+                        m_webViewActivity.m_db.execSQL(query.getString("query"));
+                        //Log.i(DEBUG_TAG, query.getString("query"));
+                        //if((i % 1000) == 0) Log.i(DEBUG_TAG, "processed 1000 queries");
+                    }
+                    m_webViewActivity.m_db.setTransactionSuccessful();
+                } catch(Exception e) {
+                    e.printStackTrace();
+                } finally {
+                    m_webViewActivity.m_db.endTransaction();
+                }
+                Log.i(DEBUG_TAG, "ended processing.");
+                m_webViewActivity.javaScriptCallback("completeQueries", "", "");
             }
-            m_webViewActivity.m_db.setTransactionSuccessful();
-            Log.i(DEBUG_TAG, "ended processing.");
-        } catch(Exception e) {
-            e.printStackTrace();
-        }
-        m_webViewActivity.m_db.endTransaction();
-        m_webViewActivity.javaScriptCallback("completeQueries", "", "");
+        });
+
     }
+
+//    @JavascriptInterface
+//    public void massQueries(String jsonString) {
+//        //Log.i(DEBUG_TAG, jsonString);
+//        m_webViewActivity.m_db.beginTransaction();
+//        try {
+//            JSONArray queries = new JSONArray(jsonString);
+//            Log.i(DEBUG_TAG, "processing database queries " + Integer.toString(queries.length()));
+//            for(int i=0;i<queries.length();++i) {
+//                JSONObject query = (JSONObject)queries.get(i);
+//                //Log.i(DEBUG_TAG, query.getString("query"));
+//                m_webViewActivity.m_db.execSQL(query.getString("query"));
+//                if((i % 1000) == 0) Log.i(DEBUG_TAG, "processed 1000 queries");
+//            }
+//            m_webViewActivity.m_db.setTransactionSuccessful();
+//            Log.i(DEBUG_TAG, "ended processing.");
+//        } catch(Exception e) {
+//            e.printStackTrace();
+//        }
+//        m_webViewActivity.m_db.endTransaction();
+//        m_webViewActivity.javaScriptCallback("completeQueries", "", "");
+//    }
+
 }
