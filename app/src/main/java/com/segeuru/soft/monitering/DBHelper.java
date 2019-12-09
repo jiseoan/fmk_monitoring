@@ -28,6 +28,7 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE IF NOT EXISTS monitoring_request ( monitoring_request_id INTEGER NOT NULL PRIMARY KEY, building_id INTEGER, machine_cnt INTEGER, request_date TEXT)");
         
         db.execSQL("CREATE TABLE IF NOT EXISTS ad_check_request ( ad_check_request_id INTEGER NOT NULL PRIMARY KEY, ad_name TEXT, ad_type TEXT, ad_url TEXT, request_date TEXT, ad_check_building_id INTEGER, building_id INTEGER, building_file_url TEXT)");
+        db.execSQL("CREATE TABLE IF NOT EXISTS temp_save_ad_check_building ( ad_check_building_id INTEGER, building_id INTEGER, building_file_url TEXT)");
         
         db.execSQL("CREATE TABLE IF NOT EXISTS processing ( building_id INTEGER, building_locate_id INTEGER, machine_code TEXT, processing_file_url TEXT, processing_date TEXT, processing_flag TEXT, qr_flag TEXT, no_qr_type_code_id INTEGER, no_qr_desc TEXT, monitoring_request_id INTEGER, ad_check_building_id INTEGER, processing_id INTEGER)");
         db.execSQL("CREATE TABLE IF NOT EXISTS temp_save_processing ( building_id INTEGER, building_locate_id INTEGER, machine_code TEXT, processing_file_url TEXT, processing_date TEXT, processing_flag TEXT, qr_flag TEXT, no_qr_type_code_id INTEGER, no_qr_desc TEXT, monitoring_request_id INTEGER, ad_check_building_id INTEGER, processing_id INTEGER)");
