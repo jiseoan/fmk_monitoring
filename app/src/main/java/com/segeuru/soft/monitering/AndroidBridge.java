@@ -261,5 +261,6 @@ public class AndroidBridge {
             e.printStackTrace();
         }
         m_webViewActivity.m_db.endTransaction();
+        m_webViewActivity.javaScriptCallback("completeQueries", "", "");
     }
 }
