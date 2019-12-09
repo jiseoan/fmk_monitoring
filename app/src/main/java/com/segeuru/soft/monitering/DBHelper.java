@@ -25,7 +25,7 @@ public class DBHelper extends SQLiteOpenHelper {
         
         db.execSQL("CREATE TABLE IF NOT EXISTS building_locate ( building_locate_id INTEGER NOT NULL PRIMARY KEY, building_id INTEGER, dong TEXT, unit_name TEXT, machine_code TEXT, qr_serial_code TEXT)");
         
-        db.execSQL("CREATE TABLE IF NOT EXISTS monitoring_request ( monitoring_request_id INTEGER NOT NULL PRIMARY KEY, building_id INTEGER, machine_cnt INTEGER, request_date TEXT)");
+        db.execSQL("CREATE TABLE IF NOT EXISTS monitoring_request ( monitoring_request_id INTEGER NOT NULL PRIMARY KEY, building_id INTEGER, machine_cnt INTEGER, building_locate_ids TEXT, request_date TEXT)");
         
         db.execSQL("CREATE TABLE IF NOT EXISTS ad_check_request ( ad_check_request_id INTEGER NOT NULL PRIMARY KEY, ad_name TEXT, ad_type TEXT, ad_url TEXT, request_date TEXT, ad_check_building_id INTEGER, building_id INTEGER, building_file_url TEXT)");
         db.execSQL("CREATE TABLE IF NOT EXISTS temp_save_ad_check_building ( ad_check_building_id INTEGER, building_id INTEGER, building_file_url TEXT)");

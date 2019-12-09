@@ -197,7 +197,7 @@ function getDownloadData(dataNames) {
       queryList.push({"query": "delete from monitoring_request"});
       for(i=0;i<result.data.monitoring_request.length;++i) {
         let currentData = result.data.monitoring_request[i];
-        queryList.push({"query": stringFormat("insert into monitoring_request (monitoring_request_id, building_id, machine_cnt, request_date) " + "values('{0}', '{1}', '{2}', '{3}')", currentData.monitoring_request_id, currentData.building_id, currentData.machine_cnt, currentData.request_date)});
+        queryList.push({"query": stringFormat("insert into monitoring_request (monitoring_request_id, building_id, machine_cnt, building_locate_ids, request_date) " + "values('{0}', '{1}', '{2}', '{3}', '{4}')", currentData.monitoring_request_id, currentData.building_id, currentData.machine_cnt, currentData.building_locate_ids, currentData.request_date)});
       }
 
       // 광고게첨 요청
