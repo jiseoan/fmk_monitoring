@@ -74,6 +74,8 @@ function callNative(command, param, param2) {
       } else if (command == "camera") {
         // 카메라 촬영 보이기
         window.android.camera(param, JSON.stringify(param2));
+      } else if (command == "massQueries") {
+        window.android.massQueries(JSON.stringify(param));
       }
     } else {
       console.log("ignore callNative('" + command + "', '" + param + "', '" + param2 + "')");
@@ -200,6 +202,15 @@ function NativeCallback(command, param, result)
       else if (command == "complete")
       { 
         // 데이터를 저장하는 프로세스 진행
+      }
+      else if (command == "completeQueries")
+      { 
+        // massQueries 로 데이터를 저장후 콜백
+        if (typeof window["completeQueries"] === "function") {
+          completeQueries();
+        } else {
+          console.log("no function completeQueries()");
+        }
       }
     } else {
       console.log("[INFO] NativeCallback: " + command + ", " + param+ ", " + result);
@@ -370,3 +381,16 @@ $.urlParam = function(name, url){
     return results[1] || null;
   }
 }
+
+//아래 함수를 적절한 공용 라이브러리로 이동해주세요.
+function stringFormat() {
+  var expression = arguments[0]; 
+  for (var i=1; i < arguments.length; i++) {
+    var prttern = "{" + (i - 1) + "}"
+    expression = expression.replace(prttern, arguments[i]);
+  }
+
+  return expression;
+}
+
+var BASE_URL = "https://dev.treeter.net/fmksystem";

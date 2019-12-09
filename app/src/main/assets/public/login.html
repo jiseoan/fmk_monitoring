@@ -48,7 +48,7 @@ $(document).ready(function(){
     el: '#login',
     data: {
       error: '',
-      userId: 'FMK_180079',
+      userId: 'AGE_190001',
       userPasswd: '1234'
     },
     methods: {
@@ -66,7 +66,7 @@ $(document).ready(function(){
           return false;
         }
 
-        $.post('https://dev.treeter.net/fmksystem/Bmm_api/loginCheck', {
+        $.post(BASE_URL + '/Bmm_api/loginCheck', {
           agent_code: this.userId,
           agent_passwd: this.userPasswd
         })
