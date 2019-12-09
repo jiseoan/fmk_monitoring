@@ -1,0 +1,151 @@
+/*--------------------------------------------------------------------------------------------------------------
+ *  Style
+ *--------------------------------------------------------------------------------------------------------------*/
+.clear() { zoom: 1; &:after{ content:''; display:block; clear:both; font-size:0; height:0; visibility:hidden; }}
+.cf() { .clear; & > * { .fl; } }
+.ir() { text-indent: -10000px; font-size:0; line-height:0; }
+
+.-b(@color, @thickness:1px) { border-bottom:@thickness solid @color; }
+.-t(@color, @thickness:1px) { border-top:@thickness solid @color; }
+.-v(@color, @thickness:1px) { .-b(@color,@thickness); .-t(@color,@thickness); }
+.-l(@color, @thickness:1px) { border-left:@thickness solid @color; }
+.-r(@color, @thickness:1px) { border-right:@thickness solid @color; }
+.-h(@color, @thickness:1px) { .-l(@color,@thickness); .-r(@color,@thickness); }
+.-a(@color, @thickness:1px) { border:@thickness solid @color; }
+.-box() { box-sizing:border-box; }
+
+.gap-v(@gap) { margin-top: @gap; &:first-child{ margin-top: 0 } }
+.gap-h(@gap) { margin-left: @gap; &:first-child{ margin-left: 0 } }
+
+.block() { display:block; }
+.ib() { display:inline-block; }
+.inline() { display:inline; }
+.hide() { display:none; }
+.table() { display:table; }
+.cell() { display:table-cell; }
+.flex() { display:flex; }
+.visible() { visibility:visible; }
+.hidden() { visibility:hidden; }
+.rel() { position:relative; }
+.abs() { position:absolute; }
+.fix() { position:fixed;}
+.static() { position:static;}
+.tc() { text-align:center }
+.tl() { text-align:left }
+.tr() { text-align:right }
+.fl() { float:left; }
+.fr() { float:right; }
+.vat() { vertical-align:top; }
+.vam() { vertical-align:middle; }
+.vab() { vertical-align:bottom; }
+.bold() { font-weight:700; }
+.medium() { font-weight:500; }
+.regular() { font-weight:400; }
+.light() { font-weight:300; }
+.underline() { text-decoration:underline; }
+.cnt() { content:''; .block; }
+
+.w(@v) { width: if((get-unit(@v) = ~""),unit(@v / @rem,rem),@v); }
+.min-w(@v) { min-width: if((get-unit(@v) = ~""),unit(@v / @rem,rem),@v); }
+.h(@v) { height: if((get-unit(@v) = ~""),unit(@v / @rem,rem),@v); }
+.min-h(@v) { min-height: if((get-unit(@v) = ~""),unit(@v / @rem,rem),@v); }
+.wh(@v) { .w(@v); .h(@v); }
+.wh(@w, @h) { .w(@w); .h(@h); }
+
+.t(@v) { top: if((get-unit(@v) = ~""),unit(@v / @rem,rem),@v); }
+.r(@v) { right: if((get-unit(@v) = ~""),unit(@v / @rem,rem),@v); }
+.b(@v) { bottom: if((get-unit(@v) = ~""),unit(@v / @rem,rem),@v); }
+.l(@v) { left: if((get-unit(@v) = ~""),unit(@v / @rem,rem),@v); }
+
+.lt(@l:0, @t:0) { .l(@l); .t(@t); right: auto; bottom: auto; }
+.lb(@l:0, @b:0) { .l(@l); .b(@b); right: auto; top: auto; }
+.rt(@r:0, @t:0) { .r(@r); .t(@t); left: auto; bottom: auto; }
+.rb(@r:0, @b:0) { .r(@r); .b(@b); left: auto; top: auto; }
+
+.pt(@v) { padding-top: if((get-unit(@v) = ~""),unit(@v / @rem,rem),@v); }
+.pr(@v) { padding-right: if((get-unit(@v) = ~""),unit(@v / @rem,rem),@v); }
+.pb(@v) { padding-bottom: if((get-unit(@v) = ~""),unit(@v / @rem,rem),@v); }
+.pl(@v) { padding-left: if((get-unit(@v) = ~""),unit(@v / @rem,rem),@v); }
+
+.p(@v) { padding: if((get-unit(@v) = ~""),unit(@v / @rem,rem),@v); }
+.p(@v, @h) { .pt(@v); .pr(@h); .pb(@v); .pl(@h); }
+.p(@t, @h, @b) { .pt(@t); .pr(@h); .pb(@b); .pl(@h); }
+.p(@t, @r, @b, @l) { .pt(@t); .pr(@r); .pb(@b); .pl(@l); }
+
+.mt(@v) { margin-top: if((get-unit(@v) = ~""),unit(@v / @rem,rem),@v); }
+.mr(@v) { margin-right: if((get-unit(@v) = ~""),unit(@v / @rem,rem),@v); }
+.mb(@v) { margin-bottom: if((get-unit(@v) = ~""),unit(@v / @rem,rem),@v); }
+.ml(@v) { margin-left: if((get-unit(@v) = ~""),unit(@v / @rem,rem),@v); }
+
+.m(@v) { margin: if((get-unit(@v) = ~""),unit(@v / @rem,rem),@v); }
+.m(@v, @h) { .mt(@v); .mr(@h); .mb(@v); .ml(@h); }
+.m(@t, @h, @b) { .mt(@t); .mr(@h); .mb(@b); .ml(@h); }
+.m(@t, @r, @b, @l) { .mt(@t); .mr(@r); .mb(@b); .ml(@l); }
+
+.mh-c() { margin-left: auto; margin-right: auto; }
+
+.fs(@v,@lh:1.4) { font-size: if((get-unit(@v) = ~""),unit(@v / @rem,rem),@v); line-height:@lh; }
+.lh(@v) { line-height: if((get-unit(@v) = ~""),unit(@v / @rem,rem),@v); }
+.lh1() { line-height:1; }
+.br(@v) { border-radius: if((get-unit(@v) = ~""),unit(@v / @rem,rem),@v); }
+.ls(@v) { letter-spacing: if((get-unit(@v) = ~""),unit(@v / @rem,rem),@v); }
+.va(@v) { vertical-align: if((get-unit(@v) = ~""),unit(@v / @rem,rem),@v); }
+.ti(@v) { text-indent: if((get-unit(@v) = ~""),unit(@v / @rem,rem),@v); }
+
+.bg(@url) { background-image: url(@url);}
+.bg(@url, @x, @y) { .bg(@url); .bg-xy(@x, @y); }
+.bg-s(@w, @h) {
+  @rw: if((get-unit(@w) = ~""),unit(@w / @rem,rem),@w);
+  @rh: if((get-unit(@h) = ~""),unit(@h / @rem,rem),@h);
+  background-size: @rw @rh;
+}
+.bg-sx(@w) {
+  @rw: if((get-unit(@w) = ~""),unit(@w / @rem,rem),@w);
+  background-size: @rw auto;
+}
+.bg-sy(@h) {
+  @rh: if((get-unit(@h) = ~""),unit(@h / @rem,rem),@h);
+  background-size: audo @rh;
+}
+.bg-x(@v) { background-position-x: if((get-unit(@v) = ~""),unit(@v / @rem,rem),@v); }
+.bg-y(@v) { background-position-y: if((get-unit(@v) = ~""),unit(@v / @rem,rem),@v); }
+.bg-xy(@x, @y) { .bg-x(@x); .bg-y(@y); }
+.bg-c() { background-position: center; }
+.bg-xc() { background-position-x: center; }
+.bg-yc() { background-position-y: center; }
+.no-repeat() { background-repeat: no-repeat;}
+.contain() { background-size:contain; }
+.contain(@url) { .no-repeat; .bg(@url); .contain; }
+.cover() { background-size:cover; }
+.cover(@url) { .no-repeat; .bg(@url); .cover; }
+
+.wf() { width:100%; }
+.hf() { height:100%; }
+.f() { .wh(100%); }
+
+.pointer() { cursor:pointer; }
+
+/*--------------------------------------------------------------------------------------------------------------
+*  Template
+*--------------------------------------------------------------------------------------------------------------*/
+
+.ib-list() { font-size: 0;
+  &>* { .ib; font-size: 1rem; .vat; }
+}
+.ib-list(@width) { .ib-list;
+  &>* { width:@width; }
+}
+
+.split-line-cf(@color,@height,@top,@margin:0) { .clear;
+  > * { .fl; .block; .rel; padding-left:@margin; padding-right:@margin+1;
+    &:before { .cnt; .abs; .lt(-1px, @top); .wh(1px, @height); background:@color; }
+    &:first-child { padding-left:0; &:before { .hide }}
+    &:last-child { padding-right:0; }
+  }
+}
+.split-line-ib(@color,@width,@height,@margin) { font-size:0; letter-spacing:0; word-spacing:0;
+  > * { .ib;
+    &:before { content: ''; .ib; .wh(@width,@height); background:@color; margin:0 @margin; }
+    &:first-child:before { .hide; }
+  }
+}

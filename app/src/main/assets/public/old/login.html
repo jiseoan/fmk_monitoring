@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <title>Focus Media Korea Monitoring App</title>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <link rel="stylesheet" href="../../vendor/bootstrap/css/bootstrap.min.css">
+  <link rel="stylesheet" href="../../vendor/jquery-confirm/dist/jquery-confirm.min.css">
+  <script src="../../vendor/jquery/jquery-3.1.1.min.js"></script>
+  <script src="../../vendor/bootstrap/js/bootstrap.min.js"></script>
+  <script src="../../vendor/vue/vue.js"></script>
+  <script src="../../vendor/jquery-confirm/dist/jquery-confirm.min.js"></script>
+  <script src="../../vendor/common/common.js"></script>
+</head>
+<body>
+
+<div class="container">
+  <div id="login">
+    <form class="mt-40" onsubmit="return false;">
+      <div class="form-group">
+        <input id="txtUserId" type="text" class="form-control" required="" name="userId" autocomplete="off" placeholder="아이디" v-model="userId" />
+      </div>
+      <div class="form-group">
+        <input id="txtUserPasswd" type="password" class="form-control" required="" name="userPasswd" autocomplete="new-password" placeholder="비밀번호" v-model="userPasswd" />
+      </div>
+      <button id="btnLogin" type="button" class="btn btn-block btn-outline-secondary" v-on:click="sendPost">로그인</button>
+    </form>   
+    <p>{{ error }}</p> 
+  </div>
+</div>
+
+
+<div class="text-center" style="margin-top: 50px;">
+  <a href="test.html"><button class="btn btn-primary">개발자 페이지</button></a>
+</div>
+</body>
+</html>
+
+<script language="javascript" type="text/javascript">
+
+var localAgentCode = window.localStorage.getItem("agent_code");
+$(document).ready(function(){
+  // if (localAgentCode) {
+  //   location.href = "main.html";
+  //   return;
+  // }
+  var login = new Vue({
+    el: '#login',
+    data: {
+      error: '',
+      userId: 'AGE_190001',
+      userPasswd: '1234'
+    },
+    methods: {
+      sendPost: function (e) {
+        this.error = '';
+        if (!this.userId) {
+          this.error = '아이디를 입력해 주세요.';
+        } else {
+          if (!this.userPasswd) {
+           this.error = '비밀번호를 입력해 주세요.';
+          }
+        }
+        
+        if (this.error) {
+          return false;
+        }
+
+        $.post(BASE_URL + '/Bmm_api/loginCheck', {
+          agent_code: this.userId,
+          agent_passwd: this.userPasswd
+        })
+        .done(function(data) {
+          var result = parseResult(data);
+          console.log(result.data);
+          if (result.code == "success") {
+            var userData  = result.data;
+            var param = {};
+            param['agent_code'] = userData.agent_code;
+            param['agent_name'] = userData.agent_name;
+            param['agent_type'] = userData.agent_type;
+            param['job_area'] = userData.job_area;
+            param['job_week'] = userData.job_week;
+            param['mobile_code'] = callNative("deviceUniq");
+            var res = dbMerge("agent", param);
+            console.log(res);
+
+            window.localStorage.setItem("agent_code", userData.agent_code);
+            location.replace("main.html");
+          } else {
+            $.alert(result.data);
+          }
+        })
+        .fail(function() {
+          console.log('failed');
+          $.alert("로그인에 실패하였습니다.\n인터넷연결상태를 확인해주세요.")
+        });
+      }
+    }
+  });
+});
+</script>

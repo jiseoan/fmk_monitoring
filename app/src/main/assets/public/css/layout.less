@@ -1,0 +1,66 @@
+@rem: 16;
+@red: #e30119;
+@import "asset";
+
+.mont() { font-family: 'Montserrat', sans-serif; }
+
+html { font-size:16px; -webkit-text-size-adjust:none }
+body { font-family: sans-serif; color:#000; background: #f8f5ef; }
+.wrapper { .rel; .w(740px); .mh-c; .-box; }
+
+input { border: 0; }
+
+.login { .rel; .pt(50);
+  &:before { .cnt; .abs; .lt; .wh(100%,170); background-image: linear-gradient(111deg, #d29e0c -6%, #b57a09 100%); }
+  .form-box { .rel; .m(0,16); .p(170,20,70); .br(5); background: #fff; box-shadow: 0 2px 8px 0 #d9d1be;
+    &:before { .cnt; .abs; .lt(50%,64); .ml(-45); .wh(90,57); .contain('../images/logo.png'); .no-repeat; }
+    label { .block;
+      p { .mont; .fs(12); .medium; color: #C88912; }
+      input { .fs(16); .mont; .medium; .mt(8); .pb(5); .-b(#C88912); .wf; }
+    }
+    label + label { .mt(55); }
+  }
+  .copyright { .mt(42); .mont; .fs(10); .light; .tc; }
+}
+
+.main {
+  .header { color: #fff; background-image: linear-gradient(111deg, #d29e0c -6%, #b57a09 100%);
+    .top { .rel; .p(12,16); .-b(#efc96e);
+      span { .fs(11); .mr(7); .ib; .vam; }
+      .date { .fs(30); .mont; }
+      .refresh { .block; .abs; .rt(12,20); .wh(74,22); .contain('../images/refresh.png'); .no-repeat; }
+    }
+    .calendar { .h(76);
+      td { .tc; }
+      thead td { .fs(11); .p(8,0,3); }
+      tbody td p { .rel; .ib; .wh(33); .fs(20); .lh(35);
+        &.on { background:#fff; .br(50%); color: #3e2913; &:after { .cnt; .abs; .lb(14,-10); .wh(5); background:#fff; .br(50%); }}
+        &.dim { background:rgba(255,255,255,0.3); .br(50%); &:after { .cnt; .abs; .lb(14,-10); .wh(5); background:#fff; .br(50%); opacity: 0.3; }}
+      }
+    }
+    .notice { .rel; .p(8,16); background:#3e2913;
+      p { .ib; .fs(13); }
+      .paging { .abs; .rt(16,8); .fs(13); }
+    }
+  }
+  article { .p(20,16);
+    ul {
+      li { .p(12,10); border-radius: 5px; box-shadow: 0 2px 3px 0 #d9d1be; background-color: #ffffff;
+        a { .rel; .block;
+          &:after { .cnt; .abs; .rt(0,50%); .mt(-7); .wh(8,15); .contain('../images/arrow.png'); .no-repeat; }
+          p { .fs(15); }
+          p + p { .fs(11); .mt(3); }
+        }
+        a + div { .mt(10); .pt(13); .-t(#ebe5d9); .fs(11); .lh(18);
+          .badge { .ib; .wh(40,18); .fs(9); .lh(18); color: #fff; .tc; .br(9); .mr(8);
+            &.red { background: #f24b5d; }
+            &.blue { background: #4B4BF2; }
+            &.gray { background: #C1C1C1; }
+            &.green { background: #01CCBD; }
+          }
+        }
+      }
+      li + li { .mt(10); }
+    }
+  }
+}

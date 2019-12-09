@@ -1,0 +1,297 @@
+/*--------------------------------------------------------------------------------------------------------------
+ *  Style
+ *--------------------------------------------------------------------------------------------------------------*/
+/*--------------------------------------------------------------------------------------------------------------
+*  Template
+*--------------------------------------------------------------------------------------------------------------*/
+html {
+  font-size: 16px;
+  -webkit-text-size-adjust: none;
+}
+body {
+  font-family: sans-serif;
+  color: #000;
+  background: #f8f5ef;
+}
+.wrapper {
+  position: relative;
+  width: 740px;
+  margin-left: auto;
+  margin-right: auto;
+  box-sizing: border-box;
+}
+input {
+  border: 0;
+}
+.login {
+  position: relative;
+  padding-top: 3.125rem;
+}
+.login:before {
+  content: '';
+  display: block;
+  position: absolute;
+  left: 0rem;
+  top: 0rem;
+  right: auto;
+  bottom: auto;
+  width: 100%;
+  height: 10.625rem;
+  background-image: linear-gradient(111deg, #d29e0c -6%, #b57a09 100%);
+}
+.login .form-box {
+  position: relative;
+  margin-top: 0rem;
+  margin-right: 1rem;
+  margin-bottom: 0rem;
+  margin-left: 1rem;
+  padding-top: 10.625rem;
+  padding-right: 1.25rem;
+  padding-bottom: 4.375rem;
+  padding-left: 1.25rem;
+  border-radius: 0.3125rem;
+  background: #fff;
+  box-shadow: 0 2px 8px 0 #d9d1be;
+}
+.login .form-box:before {
+  content: '';
+  display: block;
+  position: absolute;
+  left: 50%;
+  top: 4rem;
+  right: auto;
+  bottom: auto;
+  margin-left: -2.8125rem;
+  width: 5.625rem;
+  height: 3.5625rem;
+  background-image: url('../images/logo.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+.login .form-box label {
+  display: block;
+}
+.login .form-box label p {
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.75rem;
+  line-height: 1.4;
+  font-weight: 500;
+  color: #C88912;
+}
+.login .form-box label input {
+  font-size: 1rem;
+  line-height: 1.4;
+  font-family: 'Montserrat', sans-serif;
+  font-weight: 500;
+  margin-top: 0.5rem;
+  padding-bottom: 0.3125rem;
+  border-bottom: 1px solid #C88912;
+  width: 100%;
+}
+.login .form-box label + label {
+  margin-top: 3.4375rem;
+}
+.login .copyright {
+  margin-top: 2.625rem;
+  font-family: 'Montserrat', sans-serif;
+  font-size: 0.625rem;
+  line-height: 1.4;
+  font-weight: 300;
+  text-align: center;
+}
+.main .header {
+  color: #fff;
+  background-image: linear-gradient(111deg, #d29e0c -6%, #b57a09 100%);
+}
+.main .header .top {
+  position: relative;
+  padding-top: 0.75rem;
+  padding-right: 1rem;
+  padding-bottom: 0.75rem;
+  padding-left: 1rem;
+  border-bottom: 1px solid #efc96e;
+}
+.main .header .top span {
+  font-size: 0.6875rem;
+  line-height: 1.4;
+  margin-right: 0.4375rem;
+  display: inline-block;
+  vertical-align: middle;
+}
+.main .header .top .date {
+  font-size: 1.875rem;
+  line-height: 1.4;
+  font-family: 'Montserrat', sans-serif;
+}
+.main .header .top .refresh {
+  display: block;
+  position: absolute;
+  right: 0.75rem;
+  top: 1.25rem;
+  left: auto;
+  bottom: auto;
+  width: 4.625rem;
+  height: 1.375rem;
+  background-image: url('../images/refresh.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+.main .header .calendar {
+  height: 4.75rem;
+}
+.main .header .calendar td {
+  text-align: center;
+}
+.main .header .calendar thead td {
+  font-size: 0.6875rem;
+  line-height: 1.4;
+  padding-top: 0.5rem;
+  padding-right: 0rem;
+  padding-bottom: 0.1875rem;
+  padding-left: 0rem;
+}
+.main .header .calendar tbody td p {
+  position: relative;
+  display: inline-block;
+  width: 2.0625rem;
+  height: 2.0625rem;
+  font-size: 1.25rem;
+  line-height: 1.4;
+  line-height: 2.1875rem;
+}
+.main .header .calendar tbody td p.on {
+  background: #fff;
+  border-radius: 50%;
+  color: #3e2913;
+}
+.main .header .calendar tbody td p.on:after {
+  content: '';
+  display: block;
+  position: absolute;
+  left: 0.875rem;
+  bottom: -0.625rem;
+  right: auto;
+  top: auto;
+  width: 0.3125rem;
+  height: 0.3125rem;
+  background: #fff;
+  border-radius: 50%;
+}
+.main .header .calendar tbody td p.dim {
+  background: rgba(255, 255, 255, 0.3);
+  border-radius: 50%;
+}
+.main .header .calendar tbody td p.dim:after {
+  content: '';
+  display: block;
+  position: absolute;
+  left: 0.875rem;
+  bottom: -0.625rem;
+  right: auto;
+  top: auto;
+  width: 0.3125rem;
+  height: 0.3125rem;
+  background: #fff;
+  border-radius: 50%;
+  opacity: 0.3;
+}
+.main .header .notice {
+  position: relative;
+  padding-top: 0.5rem;
+  padding-right: 1rem;
+  padding-bottom: 0.5rem;
+  padding-left: 1rem;
+  background: #3e2913;
+}
+.main .header .notice p {
+  display: inline-block;
+  font-size: 0.8125rem;
+  line-height: 1.4;
+}
+.main .header .notice .paging {
+  position: absolute;
+  right: 1rem;
+  top: 0.5rem;
+  left: auto;
+  bottom: auto;
+  font-size: 0.8125rem;
+  line-height: 1.4;
+}
+.main article {
+  padding-top: 1.25rem;
+  padding-right: 1rem;
+  padding-bottom: 1.25rem;
+  padding-left: 1rem;
+}
+.main article ul li {
+  padding-top: 0.75rem;
+  padding-right: 0.625rem;
+  padding-bottom: 0.75rem;
+  padding-left: 0.625rem;
+  border-radius: 5px;
+  box-shadow: 0 2px 3px 0 #d9d1be;
+  background-color: #ffffff;
+}
+.main article ul li a {
+  position: relative;
+  display: block;
+}
+.main article ul li a:after {
+  content: '';
+  display: block;
+  position: absolute;
+  right: 0rem;
+  top: 50%;
+  left: auto;
+  bottom: auto;
+  margin-top: -0.4375rem;
+  width: 0.5rem;
+  height: 0.9375rem;
+  background-image: url('../images/arrow.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+.main article ul li a p {
+  font-size: 0.9375rem;
+  line-height: 1.4;
+}
+.main article ul li a p + p {
+  font-size: 0.6875rem;
+  line-height: 1.4;
+  margin-top: 0.1875rem;
+}
+.main article ul li a + div {
+  margin-top: 0.625rem;
+  padding-top: 0.8125rem;
+  border-top: 1px solid #ebe5d9;
+  font-size: 0.6875rem;
+  line-height: 1.4;
+  line-height: 1.125rem;
+}
+.main article ul li a + div .badge {
+  display: inline-block;
+  width: 2.5rem;
+  height: 1.125rem;
+  font-size: 0.5625rem;
+  line-height: 1.4;
+  line-height: 1.125rem;
+  color: #fff;
+  text-align: center;
+  border-radius: 0.5625rem;
+  margin-right: 0.5rem;
+}
+.main article ul li a + div .badge.red {
+  background: #f24b5d;
+}
+.main article ul li a + div .badge.blue {
+  background: #4B4BF2;
+}
+.main article ul li a + div .badge.gray {
+  background: #C1C1C1;
+}
+.main article ul li a + div .badge.green {
+  background: #01CCBD;
+}
+.main article ul li + li {
+  margin-top: 0.625rem;
+}
