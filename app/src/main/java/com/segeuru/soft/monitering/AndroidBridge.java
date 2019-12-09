@@ -245,6 +245,7 @@ public class AndroidBridge {
     @JavascriptInterface
     public void massQueries(String jsonString) {
         //Log.i(DEBUG_TAG, jsonString);
+        m_webViewActivity.m_db.beginTransaction();
         try {
             JSONArray queries = new JSONArray(jsonString);
             Log.i(DEBUG_TAG, "processing database queries " + Integer.toString(queries.length()));
@@ -254,9 +255,11 @@ public class AndroidBridge {
                 m_webViewActivity.m_db.execSQL(query.getString("query"));
                 if((i % 1000) == 0) Log.i(DEBUG_TAG, "processed 1000 queries");
             }
+            m_webViewActivity.m_db.setTransactionSuccessful();
             Log.i(DEBUG_TAG, "ended processing.");
         } catch(Exception e) {
             e.printStackTrace();
         }
+        m_webViewActivity.m_db.endTransaction();
     }
 }
