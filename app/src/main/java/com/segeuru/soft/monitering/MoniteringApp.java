@@ -18,7 +18,7 @@ public class MoniteringApp extends Application {
         MoniteringApp.scale = getResources().getDisplayMetrics().density;
 
         if(null == m_dbHlper) {
-            m_dbHlper = new DBHelper(getApplicationContext(), "monitering.db", null, 12);
+            m_dbHlper = new DBHelper(getApplicationContext(), "monitering.db", null, 14);
         }
 
         //create folder.

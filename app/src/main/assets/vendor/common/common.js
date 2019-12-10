@@ -513,7 +513,7 @@ function getDownloadData(agentCode, dataNames) {
       queryList.push({"query": "delete from monitoring_request"});
       for(i=0;i<result.data.monitoring_request.length;++i) {
         let currentData = result.data.monitoring_request[i];
-        queryList.push({"query": stringFormat("insert into monitoring_request (monitoring_request_id, building_id, machine_cnt, building_locate_ids, request_date) " + "values('{0}', '{1}', '{2}', '{3}', '{4}')", currentData.monitoring_request_id, currentData.building_id, currentData.machine_cnt, currentData.building_locate_ids, currentData.request_date)});
+        queryList.push({"query": stringFormat("insert into monitoring_request (monitoring_request_id, building_id, machine_cnt, building_locate_ids, request_date, processing_flag, processing_date) " + "values('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}')", currentData.monitoring_request_id, currentData.building_id, currentData.machine_cnt, currentData.building_locate_ids, currentData.request_date, currentData.processing_flag, currentData.processing_date)});
       }
 
       // 광고게첨 요청
@@ -541,14 +541,14 @@ function getDownloadData(agentCode, dataNames) {
       queryList.push({"query": "delete from as_request"});
       for(i=0;i<result.data.as_request.length;++i) {
         let currentData = result.data.as_request[i];
-        queryList.push({"query": stringFormat("insert into as_request (building_id, building_locate_id, machine_code, request_date, request_type_code_id, request_desc, as_request_id) " + "values('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}')", currentData.building_id, currentData.building_locate_id, currentData.machine_code, currentData.request_date, currentData.request_type_code_id, currentData.request_desc, currentData.as_request_id)});
+        queryList.push({"query": stringFormat("insert into as_request (building_id, building_locate_id, machine_code, request_date, request_type_code_id, request_desc, processing_flag, as_request_id) " + "values('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}')", currentData.building_id, currentData.building_locate_id, currentData.machine_code, currentData.request_date, currentData.request_type_code_id, currentData.request_desc, currentData.processing_flag, currentData.as_request_id)});
       }
 
       // AS 처리
       queryList.push({"query": "delete from as_processing"});
       for(i=0;i<result.data.as_processing.length;++i) {
         let currentData = result.data.as_processing[i];
-        queryList.push({"query": stringFormat("insert into as_processing (as_request_id, processing_type_code_id, processing_desc, processing_date, processing_flag, as_processing_id) " + "values('{0}', '{1}', '{2}', '{3}', '{4}', '{5}')", currentData.as_request_id, currentData.processing_type_code_id, currentData.processing_desc, currentData.processing_date, currentData.processing_flag, currentData.as_processing_id)});
+        queryList.push({"query": stringFormat("insert into as_processing (as_request_id, processing_type_code_id, processing_desc, processing_date, as_processing_id) " + "values('{0}', '{1}', '{2}', '{3}', '{4}')", currentData.as_request_id, currentData.processing_type_code_id, currentData.processing_desc, currentData.processing_date, currentData.as_processing_id)});
       }
 
       console.log("encoded.... end");
