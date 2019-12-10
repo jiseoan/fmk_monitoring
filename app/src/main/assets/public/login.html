@@ -25,21 +25,23 @@
         <p>PASSWORD</p>
         <input type="password" autocomplete="new-password" placeholder="비밀번호" v-model="userPasswd">
       </label>
-      <button id="btnLogin" type="button" class="btn btn-block btn-outline-secondary" v-on:click="sendPost">로그인</button>
     </div>
   </form>
   <p class="copyright">Copyright © Focusmedia Korea 2019. All right reserved.</p>
   <p class="copyright"><a href="old/login.html">old Version</a></p>
 
 <script language="javascript" type="text/javascript">
-
+var vueLogin = null;
 var localAgentCode = window.localStorage.getItem("agent_code");
 $(document).ready(function(){
   // if (localAgentCode) {
   //   location.href = "main.html";
   //   return;
   // }
-  var login = new Vue({
+  callNative("hideToolBar");
+  callNative("bottomActionBar", "login");
+
+  vueLogin = new Vue({
     el: '#login',
     data: {
       error: '',
@@ -81,7 +83,7 @@ $(document).ready(function(){
             console.log(res);
 
             window.localStorage.setItem("agent_code", userData.agent_code);
-            location.replace("main.html");
+            dataSync(userData.agent_code);
           } else {
             $.alert(result.data);
           }
@@ -94,6 +96,15 @@ $(document).ready(function(){
     }
   });
 });
+
+function login () {
+  //console.log("function login()");
+  vueLogin.sendPost();
+}
+
+function dataUpdateCallBack() {
+  location.replace("main.html");
+}
 </script>
 
 </body>

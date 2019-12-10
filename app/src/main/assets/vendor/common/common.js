@@ -38,7 +38,7 @@ function callNative(command, param, param2) {
   var checkOS = getPlatform();
   try {
     if (checkOS == "Android") {
-      console.log("[INFO] callNative('" + command + "', '" + param + "', '" + param2 + "')");
+      console.log("[INFO] callNative('" + command + "', '" + JSON.stringify(param) + "', '" + JSON.stringify(param2) + "')");
       if (command == "hideToolBar") {
         // 상단바 안보이기
         result = window.android.hideToolBar();
@@ -78,10 +78,10 @@ function callNative(command, param, param2) {
         window.android.massQueries(JSON.stringify(param));
       }
     } else {
-      console.log("ignore callNative('" + command + "', '" + param + "', '" + param2 + "')");
+      console.log("ignore callNative('" + command + "', '" + JSON.stringify(param) + "', '" + JSON.stringify(param2) + "')");
     }
   } catch (e) { 
-    console.log("ignore callNative('" + command + "', '" + param + "', '" + param2 + "')");
+    console.log("ignore callNative('" + command + "', '" + JSON.stringify(param) + "', '" + JSON.stringify(param2) + "')");
   }
 
   return result;
@@ -94,7 +94,7 @@ function NativeCallback(command, param, result)
   var checkOS = getPlatform();
   try {
     if (checkOS == "Android") {
-      console.log("[INFO] NativeCallback: " + command + ", " + param+ ", " + result);
+      console.log("[INFO] NativeCallback: " + command + ", " + JSON.stringify(param)+ ", " + JSON.stringify(result));
       if (command == "back")
       {
         // 뒤로가기
@@ -109,6 +109,15 @@ function NativeCallback(command, param, result)
       {
         // 닫기
         window.android.webViewClose();
+      }
+      else if (command == "login")
+      {
+        // 로그인
+       if (typeof window["login"] === "function") {
+          login();
+        } else {
+          console.log("no function login()");
+        }
       }
       else if (command == "qrScan")
       {
@@ -285,7 +294,7 @@ function dbSelect(field, table, where, orderBy)
   if (where) query += " WHERE " + where;
   if (orderBy) query += " ORDER BY " + orderBy;
   result = dbSql(query);
-  return result;
+  return $.parseJSON(result);
 }
 
 var __ajaxSkinList = {};
@@ -394,3 +403,173 @@ function stringFormat() {
 }
 
 var BASE_URL = "https://dev.treeter.net/fmksystem";
+
+
+
+var getRemoteVersionData = null;
+
+function dataSync(agentCode) {
+  // 서버에 업로드 되지않은 데이터를 업로드 한다.
+  // 업로드가 완료되면 내려받기 위해 버전을 체크한다.
+  getRemoteVersion(agentCode);
+}
+
+function getNowDate() {
+  var currentDay = new Date();  
+  var nyyyy = currentDay.getFullYear();
+  var nmm = Number(currentDay.getMonth()) + 1;
+  var ndd = currentDay.getDate();
+  var nowDate = nyyyy + "-" + (String(nmm).length === 1 ? '0' + nmm : nmm) + "-" + (String(ndd).length === 1 ? '0' + ndd : ndd);
+  return nowDate;
+}
+
+function getThisWeekDates() {
+  var currentDay = new Date();
+  var theYear = currentDay.getFullYear();
+  var theMonth = currentDay.getMonth();
+  var theDate  = currentDay.getDate();
+  var theDayOfWeek = currentDay.getDay();
+  var thisWeekDates = [];
+  for(var i=0; i<7; i++) {
+    if (i == 0 || i == 6) {
+      var resultDay = new Date(theYear, theMonth, theDate + (i - theDayOfWeek));
+      var yyyy = resultDay.getFullYear();
+      var mm = Number(resultDay.getMonth()) + 1;
+      var dd = resultDay.getDate();
+     
+      mm = String(mm).length === 1 ? '0' + mm : mm;
+      dd = String(dd).length === 1 ? '0' + dd : dd;
+      var ymd = yyyy + '-' + mm + '-' + dd;
+      if (i == 0) thisWeekDates['start'] = ymd;
+      if (i == 6) thisWeekDates['end'] = ymd;
+    }
+  }
+  return thisWeekDates;
+}
+
+function getRemoteVersion(agentCode) {
+  var thisWeekDates = getThisWeekDates();
+  $.post(BASE_URL + '/Bmm_api/getRemoteVersion', {
+    agent_code: agentCode,
+    start_date: thisWeekDates['start'],
+    end_date: thisWeekDates['end']
+  })
+  .done(function(data) {
+    var result = parseResult(data);
+    //console.log(result.data);
+    if (result.code == "success") {
+      // 각 데이터의 버전을 체크한다.
+      getRemoteVersionData = result.data;
+
+      var dataNames = 'notice,building,monitoring_request,ad_check_request,processing,code,as_request,as_processing';
+      getDownloadData(agentCode, dataNames);
+    } else {
+      $.alert(result.data);
+    }
+  })
+  .fail(function() {
+    console.log('failed');
+    $.alert("동기화에 실패하였습니다.\n인터넷연결상태를 확인해주세요.")
+  });
+}
+
+function getDownloadData(agentCode, dataNames) {
+  var thisWeekDates = getThisWeekDates();
+  $.post(BASE_URL + '/Bmm_api/getUpdateDataList', {
+    agent_code: agentCode,
+    start_date: thisWeekDates['start'],
+    end_date: thisWeekDates['end'],
+    dataNames: dataNames
+  })
+  .done(function(data) {
+    var result = parseResult(data);
+    console.log(result.data);
+    if (result.code == "success") {
+    
+      let queryList = [];
+
+      // 공지사항
+      queryList.push({"query": "delete from notice"});
+      for(i=0;i<result.data.notice.length;++i) {
+        let currentData = result.data.notice[i];
+        queryList.push({"query": stringFormat("insert into notice (notice_id, notice_type, title, content, create_date) " + "values('{0}', '{1}', '{2}', '{3}', '{4}')", currentData.notice_id, currentData.notice_type, currentData.title, currentData.content, currentData.create_date)});
+      }
+
+      // 단지
+      queryList.push({"query": "delete from building"});
+      for(i=0;i<result.data.building.length;++i) {
+        let currentData = result.data.building[i];
+        queryList.push({"query": stringFormat("insert into building (building_id, building_name, machine_cnt, address) " + "values('{0}', '{1}', '{2}', '{3}')", currentData.building_id, currentData.building_name, currentData.machine_cnt, currentData.address)});
+      }
+
+      // 단지 매체
+      queryList.push({"query": "delete from building_locate"});
+      for(i=0;i<result.data.building_locate.length;++i) {
+        let currentData = result.data.building_locate[i];
+        queryList.push({"query": stringFormat("insert into building_locate (building_locate_id, building_id, dong, unit_name, machine_code, qr_serial_code) " + "values('{0}', '{1}', '{2}', '{3}', '{4}', '{5}')", currentData.building_locate_id, currentData.building_id, currentData.dong, currentData.unit_name, currentData.machine_code, currentData.qr_serial_code)});
+      }
+
+      // 모니터링 요청
+      queryList.push({"query": "delete from monitoring_request"});
+      for(i=0;i<result.data.monitoring_request.length;++i) {
+        let currentData = result.data.monitoring_request[i];
+        queryList.push({"query": stringFormat("insert into monitoring_request (monitoring_request_id, building_id, machine_cnt, building_locate_ids, request_date) " + "values('{0}', '{1}', '{2}', '{3}', '{4}')", currentData.monitoring_request_id, currentData.building_id, currentData.machine_cnt, currentData.building_locate_ids, currentData.request_date)});
+      }
+
+      // 광고게첨 요청
+      queryList.push({"query": "delete from ad_check_request"});
+      for(i=0;i<result.data.ad_check_request.length;++i) {
+        let currentData = result.data.ad_check_request[i];
+        queryList.push({"query": stringFormat("insert into ad_check_request (ad_check_request_id, ad_name, ad_type, ad_url, request_date, ad_check_building_id, building_id, building_file_url, processing_flag) " + "values('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}')", currentData.ad_check_request_id, currentData.ad_name, currentData.ad_type, currentData.ad_url, currentData.request_date, currentData.ad_check_building_id, currentData.building_id, currentData.building_file_url, currentData.processing_flag)});
+      }
+
+      // 모니터링/광고게첨 처리
+      queryList.push({"query": "delete from processing"});
+      for(i=0;i<result.data.processing.length;++i) {
+        let currentData = result.data.processing[i];
+        queryList.push({"query": stringFormat("insert into processing (building_id, building_locate_id, machine_code, processing_file_url, processing_date, qr_flag, no_qr_type_code_id, no_qr_desc, monitoring_request_id, ad_check_building_id, processing_id) " + "values('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}', '{9}', '{10}', '{11}')", currentData.building_id, currentData.building_locate_id, currentData.machine_code, currentData.processing_file_url, currentData.processing_date, currentData.qr_flag, currentData.no_qr_type_code_id, currentData.no_qr_desc, currentData.monitoring_request_id, currentData.ad_check_building_id, currentData.processing_id)});
+      }
+
+      // 모니터링 전체 사용 코드
+      queryList.push({"query": "delete from code"});
+      for(i=0;i<result.data.code.length;++i) {
+        let currentData = result.data.code[i];
+        queryList.push({"query": stringFormat("insert into code (code_id, parent_id, code, codename) " + "values('{0}', '{1}', '{2}', '{3}')", currentData.code_id, currentData.parent_id, currentData.code, currentData.codename)});
+      }
+
+      // AS 요청
+      queryList.push({"query": "delete from as_request"});
+      for(i=0;i<result.data.as_request.length;++i) {
+        let currentData = result.data.as_request[i];
+        queryList.push({"query": stringFormat("insert into as_request (building_id, building_locate_id, machine_code, request_date, request_type_code_id, request_desc, as_request_id) " + "values('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}')", currentData.building_id, currentData.building_locate_id, currentData.machine_code, currentData.request_date, currentData.request_type_code_id, currentData.request_desc, currentData.as_request_id)});
+      }
+
+      // AS 처리
+      queryList.push({"query": "delete from as_processing"});
+      for(i=0;i<result.data.as_processing.length;++i) {
+        let currentData = result.data.as_processing[i];
+        queryList.push({"query": stringFormat("insert into as_processing (as_request_id, processing_type_code_id, processing_desc, processing_date, processing_flag, as_processing_id) " + "values('{0}', '{1}', '{2}', '{3}', '{4}', '{5}')", currentData.as_request_id, currentData.processing_type_code_id, currentData.processing_desc, currentData.processing_date, currentData.processing_flag, currentData.as_processing_id)});
+      }
+
+      console.log("encoded.... end");
+      callNative('massQueries', queryList);
+    } else {
+      $.alert("동기화에 실패하였습니다.");
+    }
+  })
+  .fail(function() {
+    console.log('failed');
+    $.alert("동기화에 실패하였습니다.\n인터넷연결상태를 확인해주세요.")
+  });
+}
+
+// 다운로드 완료시 콜백
+function completeQueries() {
+  // version 테이블의 정보를 업데이트 한다.
+  console.log(getRemoteVersionData);
+  if (typeof window["dataUpdateCallBack"] === "function") {
+    dataUpdateCallBack();
+  } else {
+    console.log("no function completeQueries()");
+  }
+}
