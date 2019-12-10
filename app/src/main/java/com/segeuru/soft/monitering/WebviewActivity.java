@@ -27,6 +27,7 @@ public class WebviewActivity extends BaseAtivity {
         findViewById(R.id.btn_home).setOnClickListener(home_button_clickLisener);
         findViewById(R.id.btn_close).setOnClickListener(close_button_clickLisener);
         findViewById(R.id.btn_qr).setOnClickListener(qr_button_clickLisener);
+        findViewById(R.id.btn_login).setOnClickListener(login_button_clickLisener);
         findViewById(R.id.btn_retakePicture).setOnClickListener(retake_button_clickLisener);
         findViewById(R.id.btn_request_as).setOnClickListener(requestAs_button_clickLisener);
         findViewById(R.id.btn_confirm).setOnClickListener(confirm_button_clickLisener);
@@ -59,6 +60,7 @@ public class WebviewActivity extends BaseAtivity {
     }
 
     protected void hideAllBottomActionBars() {
+        findViewById(R.id.login).setVisibility(View.GONE);
         findViewById(R.id.jobStart).setVisibility(View.GONE);
         findViewById(R.id.jobStartAndCancel).setVisibility(View.GONE);
         findViewById(R.id.retakeAndAsAndConfirm).setVisibility(View.GONE);
@@ -109,6 +111,13 @@ public class WebviewActivity extends BaseAtivity {
         @Override
         public void onClick(View view) {
             javaScriptCallback("close", "", "");
+        }
+    };
+
+    final View.OnClickListener login_button_clickLisener = new View.OnClickListener() {
+        @Override
+        public void onClick(View view) {
+            javaScriptCallback("login", "", "");
         }
     };
 
