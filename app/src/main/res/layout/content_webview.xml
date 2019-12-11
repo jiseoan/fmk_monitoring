@@ -69,22 +69,43 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:background="@drawable/bg_border"
+        android:padding="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         >
 
-        <Button
-            android:id="@+id/btn_monitoringCamera"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="작업시작"
-            />
+            android:gravity="center"
+            android:layout_weight="1"
+            android:background="#c18109"
+            >
 
-        <Button
-            android:id="@+id/btn_cancel"
-            android:layout_width="wrap_content"
+            <ImageButton
+                android:id="@+id/btn_monitoringCamera"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/btn_work"
+                android:background="?android:attr/selectableItemBackgroundBorderless"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="취소"
-            />
+            android:gravity="center"
+            android:layout_weight="1"
+            android:background="#4b4bf2"
+            >
+
+            <Button
+                android:id="@+id/btn_cancel"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="취소"
+                />
+
+        </LinearLayout>
 
     </LinearLayout>
 
@@ -92,31 +113,60 @@
         android:id="@+id/retakeAndAsAndConfirm"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:gravity="center"
         android:background="@drawable/bg_border"
+        android:orientation="horizontal"
+        android:padding="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         >
 
-        <Button
-            android:id="@+id/btn_retakePicture"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="재촬영"
-            />
+            android:gravity="center"
+            android:layout_weight="1"
+            android:background="#c18109"
+            >
 
-        <Button
-            android:id="@+id/btn_request_as"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="AS요청"
-            />
+            <ImageButton
+                android:id="@+id/btn_retakePicture"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/btn_retake"/>
 
-        <Button
-            android:id="@+id/btn_confirm"
-            android:layout_width="wrap_content"
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="확인"
-            />
+            android:gravity="center"
+            android:layout_weight="1"
+            android:background="#4b4bf2">
+
+            <ImageButton
+                android:id="@+id/btn_request_as"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/btn_asreq"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_weight="1"
+            android:background="#01ccbd">
+
+            <ImageButton
+                android:id="@+id/btn_confirm"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/btn_confirm"/>
+
+        </LinearLayout>
 
     </LinearLayout>
 
@@ -126,15 +176,16 @@
         android:layout_height="wrap_content"
         android:gravity="center"
         android:background="@drawable/bg_border"
+        android:padding="0dp"
         app:layout_constraintBottom_toBottomOf="parent"
         >
 
-        <Button
+        <ImageButton
             android:id="@+id/btn_list"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="목록"
-            />
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/btn_list"/>
 
     </LinearLayout>
 

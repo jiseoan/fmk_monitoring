@@ -10,15 +10,19 @@ import android.os.Handler;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
+import android.view.ViewGroup;
 import android.webkit.WebView;
 import android.webkit.JavascriptInterface;
 import android.widget.LinearLayout;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 
 import org.json.JSONArray;
 import org.json.JSONObject;
+
+import java.util.ArrayList;
 
 import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
@@ -95,7 +99,8 @@ public class AndroidBridge {
                 Toolbar toolbar = m_webViewActivity.findViewById(id);
                 toolbar.setVisibility(is_show ? View.VISIBLE : View.GONE);
                 m_webViewActivity.setSupportActionBar(is_show ? toolbar : null);
-                m_webViewActivity.getSupportActionBar().setTitle(title);
+                m_webViewActivity.getSupportActionBar().setDisplayShowTitleEnabled(false);
+                getChildren(toolbar, TextView.class).get(0).setText(title);
             }
         });
     }
@@ -273,26 +278,18 @@ public class AndroidBridge {
 
     }
 
-//    @JavascriptInterface
-//    public void massQueries(String jsonString) {
-//        //Log.i(DEBUG_TAG, jsonString);
-//        m_webViewActivity.m_db.beginTransaction();
-//        try {
-//            JSONArray queries = new JSONArray(jsonString);
-//            Log.i(DEBUG_TAG, "processing database queries " + Integer.toString(queries.length()));
-//            for(int i=0;i<queries.length();++i) {
-//                JSONObject query = (JSONObject)queries.get(i);
-//                //Log.i(DEBUG_TAG, query.getString("query"));
-//                m_webViewActivity.m_db.execSQL(query.getString("query"));
-//                if((i % 1000) == 0) Log.i(DEBUG_TAG, "processed 1000 queries");
-//            }
-//            m_webViewActivity.m_db.setTransactionSuccessful();
-//            Log.i(DEBUG_TAG, "ended processing.");
-//        } catch(Exception e) {
-//            e.printStackTrace();
-//        }
-//        m_webViewActivity.m_db.endTransaction();
-//        m_webViewActivity.javaScriptCallback("completeQueries", "", "");
-//    }
+    private static <T extends View> ArrayList<T> getChildren(ViewGroup parent, Class<T> clazz)
+    {
+        ArrayList<T> children = new ArrayList<>();
+        int childCount = parent.getChildCount();
+        for (int i = 0; i < childCount; i++)
+        {
+            View child = parent.getChildAt(i);
+            if(clazz.isInstance(child))
+                children.add((T) child);
+        }
+
+        return children;
+    }
 
 }
