@@ -117,7 +117,7 @@ public class WebviewActivity extends BaseAtivity {
     final View.OnClickListener login_button_clickLisener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            javaScriptCallback("login", "", "");
+            javaScriptCallback("login", "", "clicked");
         }
     };
 
