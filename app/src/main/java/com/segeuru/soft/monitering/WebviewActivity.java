@@ -1,10 +1,6 @@
 package com.segeuru.soft.monitering;
 
 import android.content.Intent;
-import android.graphics.Color;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Drawable;
-import android.graphics.drawable.StateListDrawable;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
