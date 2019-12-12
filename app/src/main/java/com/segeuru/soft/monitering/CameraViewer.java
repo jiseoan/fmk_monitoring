@@ -46,6 +46,7 @@ import android.view.TextureView;
 import android.view.View;
 import android.webkit.WebView;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -85,7 +86,7 @@ public class CameraViewer extends AppCompatActivity {
 
     private TextureView m_textureViewer;
     private Surface m_surface;
-    private Button m_btnTakePicture;
+    private ImageButton m_btnTakePicture;
     private String m_requestId;
     private ArrayList<String> m_filePath;
     private int m_needPic_count;
@@ -112,7 +113,7 @@ public class CameraViewer extends AppCompatActivity {
         ((TextView)findViewById(R.id.txt_address)).setText(intent.getStringExtra("address"));
 
         Date currentTime = Calendar.getInstance().getTime();
-        String dateTime = new SimpleDateFormat("yyyy년 MM월 dd일 hh:mm", Locale.getDefault()).format(currentTime);
+        String dateTime = new SimpleDateFormat("yyyy년 MM월 dd일 a hh:mm", Locale.getDefault()).format(currentTime);
         ((TextView)findViewById(R.id.txt_datetime)).setText(dateTime);
 
         m_textView_count = findViewById(R.id.take_picture_count);
@@ -285,7 +286,7 @@ public class CameraViewer extends AppCompatActivity {
     private void save(Bitmap bitmap) throws IOException {
 
         int padding = 10;
-        int lineHeight = 0;
+        int lineHeight = 10;
         final File file = new File(MoniteringApp.APP_STORE_PATH + "/" + System.currentTimeMillis() + ".jpg");
         OutputStream output = null;
 
@@ -298,25 +299,38 @@ public class CameraViewer extends AppCompatActivity {
             paint.setTypeface(Typeface.DEFAULT);
             paint.setAntiAlias(true);
             paint.setDither(true);
-            paint.setColor(Color.WHITE); // Text Color
-            paint.setTextSize(20); // Text Size
 
             String txtAddress = ((TextView)findViewById(R.id.txt_address)).getText().toString();
             String txtDatetime = ((TextView)findViewById(R.id.txt_datetime)).getText().toString();
 
-            Rect bounds = new Rect();
-            paint.getTextBounds(txtAddress, 0, txtAddress.length(), bounds);
-
             paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_OVER));
             canvas.drawBitmap(bitmapTmp, 0, 0, paint);
 
-            //rectangle
-            paint.setColor(Color.BLACK);
-            canvas.drawRect(0, 0, m_imageReader.getWidth(), bounds.height() + (padding * 2), paint);
+            Rect bound = new Rect();
 
+            //calculate rectangle bound box
+            Rect rectangleBound = new Rect();
+            paint.setTextSize(20);
+            paint.getTextBounds(txtAddress, 0, txtAddress.length(), bound);
+            rectangleBound.bottom = bound.height();
+
+            paint.setTextSize(16);
+            paint.getTextBounds(txtAddress, 0, txtAddress.length(), bound);
+            rectangleBound.bottom += bound.height();
+
+            //draw rectangle
+            paint.setColor(Color.BLACK);
+            canvas.drawRect(0, 0, m_imageReader.getWidth(), rectangleBound.height() + (padding * 2) + lineHeight, paint);
+
+            //draw text
             paint.setColor(Color.WHITE);
-            canvas.drawText(txtAddress, ((m_imageReader.getHeight() - bounds.width()) * 0.5f), bounds.height() + padding, paint);
-            //canvas.drawText(txtDatetime, 20, 200, paint);
+            paint.setTextSize(20);
+            paint.getTextBounds(txtAddress, 0, txtAddress.length(), bound);
+            canvas.drawText(txtAddress, ((m_imageReader.getHeight() - bound.width()) * 0.5f), bound.height() + padding, paint);
+
+            paint.setTextSize(16);
+            paint.getTextBounds(txtDatetime, 0, txtDatetime.length(), bound);
+            canvas.drawText(txtDatetime, ((m_imageReader.getHeight() - bound.width()) * 0.5f), (bound.height() * 2) + padding + lineHeight, paint);
 
             output = new FileOutputStream(file);
             bitmapTmp.compress(Bitmap.CompressFormat.JPEG, 60, output);
