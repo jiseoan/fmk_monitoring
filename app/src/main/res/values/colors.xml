@@ -3,6 +3,10 @@
     <color name="colorPrimary">#008577</color>
     <color name="colorPrimaryDark">#00574B</color>
     <color name="colorAccent">#D81B60</color>
-
     <color name="black_overlay">#66000000</color>
+
+    <color name="fmk_color_default">#c18109</color>
+    <color name="fmk_color_secondary">#4b4bf2</color>
+    <color name="fmk_color_third">#01ccbd</color>
+    <color name="fmk_color_toolbar">#ba8009</color>
 </resources>

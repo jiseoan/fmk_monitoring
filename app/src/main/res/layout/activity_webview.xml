@@ -15,7 +15,7 @@
             android:id="@+id/main"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="#ba8009"
+            android:background="@color/fmk_color_toolbar"
             app:popupTheme="@style/AppTheme.PopupOverlay"
             app:navigationIcon="?attr/homeAsUpIndicator"
             >
@@ -44,7 +44,7 @@
             android:id="@+id/popup"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="#ba8009"
+            android:background="@color/fmk_color_toolbar"
             app:popupTheme="@style/AppTheme.PopupOverlay">
 
             <TextView

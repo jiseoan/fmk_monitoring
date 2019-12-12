@@ -78,7 +78,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:layout_weight="1"
-            android:background="#c18109"
+            android:background="@color/fmk_color_default"
             >
 
             <ImageButton
@@ -95,7 +95,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:layout_weight="1"
-            android:background="#4b4bf2"
+            android:background="@color/fmk_color_secondary"
             >
 
             <Button
@@ -124,7 +124,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:layout_weight="1"
-            android:background="#c18109"
+            android:background="@color/fmk_color_default"
             >
 
             <ImageButton
@@ -141,7 +141,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:layout_weight="1"
-            android:background="#4b4bf2">
+            android:background="@color/fmk_color_secondary">
 
             <ImageButton
                 android:id="@+id/btn_request_as"
@@ -157,7 +157,7 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:layout_weight="1"
-            android:background="#01ccbd">
+            android:background="@color/fmk_color_third">
 
             <ImageButton
                 android:id="@+id/btn_confirm"
