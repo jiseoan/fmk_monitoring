@@ -541,7 +541,7 @@ function getDownloadData(agentCode, dataNames) {
       queryList.push({"query": "delete from as_request"});
       for(i=0;i<result.data.as_request.length;++i) {
         let currentData = result.data.as_request[i];
-        queryList.push({"query": stringFormat("insert into as_request (building_id, building_locate_id, machine_code, request_date, request_type_code_id, request_desc, processing_flag, as_request_id) " + "values('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}')", currentData.building_id, currentData.building_locate_id, currentData.machine_code, currentData.request_date, currentData.request_type_code_id, currentData.request_desc, currentData.processing_flag, currentData.as_request_id)});
+        queryList.push({"query": stringFormat("insert into as_request (building_id, building_locate_id, machine_code, request_date, request_type_code_ids, request_desc, processing_flag, as_request_id) " + "values('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}')", currentData.building_id, currentData.building_locate_id, currentData.machine_code, currentData.request_date, currentData.request_type_code_ids, currentData.request_desc, currentData.processing_flag, currentData.as_request_id)});
       }
 
       // AS 처리

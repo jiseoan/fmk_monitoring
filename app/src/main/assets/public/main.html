@@ -165,6 +165,7 @@ function getDateSet() {
         var items = this.items;
         var row = items[idx];
         if ($.inArray(row.date, jobDates) === -1) return;
+        if (selDate == row.date) return;
         console.log(this.items.length);
         $.each(items, function(index, item){
           if (index == idx) {
@@ -197,7 +198,7 @@ function buildingsJobList(date) {
   result = $.parseJSON(result);
 
   $.each(result, function(index, item){
-    var subResult = dbSql("SELECT mr.processing_flag, '모니터링' AS job_name FROM monitoring_request mr WHERE date(mr.request_date) = date('" + date + "') AND mr.building_id='" + item.building_id + "' UNION SELECT acr.processing_flag, acr.ad_name AS job_name FROM ad_check_request acr WHERE date(acr.request_date) = date('" + date + "') AND acr.building_id='" + item.building_id + "' UNION SELECT ar.processing_flag, (SELECT codename FROM code c WHERE c.code_id=ar.request_type_code_id) AS job_name FROM as_request ar WHERE date(ar.request_date) = date('" + date + "') AND ar.building_id='" + item.building_id + "'");
+    var subResult = dbSql("SELECT t.* FROM (SELECT 0 AS sort, 0 AS num, mr.processing_flag, '모니터링' AS job_name FROM monitoring_request mr WHERE date(mr.request_date) = date('" + date + "') AND mr.building_id='" + item.building_id + "' UNION SELECT 1 AS sort, acr.ad_check_request_id AS num, acr.processing_flag, acr.ad_name AS job_name FROM ad_check_request acr WHERE date(acr.request_date) = date('" + date + "') AND acr.building_id='" + item.building_id + "' UNION SELECT 2 AS sort, 0 AS num, ar.processing_flag, (SELECT group_concat(codename) FROM code c WHERE c.code_id IN (ar.request_type_code_ids)) AS job_name FROM as_request ar WHERE date(ar.request_date) = date('" + date + "') AND ar.building_id='" + item.building_id + "') AS t ORDER BY t.sort, t.num");
     console.log(subResult);
     subResult = $.parseJSON(subResult);
     result[index].details = subResult;
@@ -207,16 +208,17 @@ function buildingsJobList(date) {
     mainBuildingJobListVue = new Vue({
       el: '#buildingsJobList',
       data: {
-        items: result
+        items: []
       },
       methods: {
         jobDetail: function(idx) {
         }
       }
     });
-  } else {
-
   }
+  
+  mainBuildingJobListVue.items = result;
+  
 }
 
 function qrScanResult(result) {
