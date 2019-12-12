@@ -21,6 +21,16 @@ public class QrReaderActivity extends AppCompatActivity implements DecoratedBarc
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_qr_reader);
 
+        findViewById(R.id.btn_close).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                Intent intent = new Intent();
+                intent.putExtra(Intents.Scan.RESULT, "cancel");
+                setResult(Activity.RESULT_OK, intent);
+                finish();
+            }
+        });
+
         findViewById(R.id.btn_skip_qr).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {

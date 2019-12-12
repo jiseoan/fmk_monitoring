@@ -36,6 +36,7 @@ public class AndroidBridge {
     private final Handler handler = new Handler();
     private WebviewActivity m_webViewActivity;
     private WebView m_webView;
+    private TextView m_currentActionBarTextView = null;
 
     public AndroidBridge(WebviewActivity activity, WebView webview) {
         m_webViewActivity = activity;
@@ -68,9 +69,11 @@ public class AndroidBridge {
         m_webViewActivity.runOnUiThread(new Runnable() {
             @Override
             public void run() {
-                ActionBar actionBar = m_webViewActivity.getSupportActionBar();
-                if(null != actionBar)
-                    actionBar.setTitle(actionBarTitle);
+//                ActionBar actionBar = m_webViewActivity.getSupportActionBar();
+//                if(null != actionBar)
+//                    actionBar.setTitle(actionBarTitle);
+                if(null != m_currentActionBarTextView)
+                    m_currentActionBarTextView.setText(actionBarTitle);
             }
         });
     }
@@ -101,7 +104,8 @@ public class AndroidBridge {
                 toolbar.setVisibility(is_show ? View.VISIBLE : View.GONE);
                 m_webViewActivity.setSupportActionBar(is_show ? toolbar : null);
                 m_webViewActivity.getSupportActionBar().setDisplayShowTitleEnabled(false);
-                getChildren(toolbar, TextView.class).get(0).setText(title);
+                m_currentActionBarTextView = getChildren(toolbar, TextView.class).get(0);
+                m_currentActionBarTextView.setText(title);
             }
         });
     }
