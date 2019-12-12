@@ -1,6 +1,9 @@
 package com.segeuru.soft.monitering;
 
+import android.Manifest;
 import android.content.Intent;
+import android.content.pm.PackageManager;
+import android.os.Build;
 import android.os.Bundle;
 import android.util.Log;
 import android.view.MenuItem;
@@ -10,9 +13,14 @@ import android.widget.Toast;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
+import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.content.ContextCompat;
 
 public class WebviewActivity extends BaseAtivity {
+
+    private static final int REQUEST_PERMISSION_CODE = 1000;
+    private String[] PERMISSIONS = { Manifest.permission.CAMERA, Manifest.permission.WRITE_EXTERNAL_STORAGE };
 
     private final String DEBUG_TAG = "segeuru.com";
     public static final int REQUEST_CODE = 0x0000c0dd;
@@ -48,6 +56,15 @@ public class WebviewActivity extends BaseAtivity {
         m_webview.addJavascriptInterface(new AndroidBridge(this, m_webview), "android");
         m_webview.loadUrl("file:///android_asset/public/" + (getIntent().hasExtra("url") ? getIntent().getStringExtra("url") : "login.html"));
         m_webSupport = new WebSupport(this);
+
+        //권한요구
+        if(Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            if(!hasPermissions(PERMISSIONS))
+                requestPermissions(PERMISSIONS, REQUEST_PERMISSION_CODE);
+        } else {
+            //finish();
+        }
+
     }
 
     protected void javaScriptCallback(String command, String param, String result) {
@@ -216,6 +233,38 @@ public class WebviewActivity extends BaseAtivity {
             javaScriptCallback("list", "", "clicked");
         }
     };
+
+    private boolean hasPermissions(String[] permissions) {
+        int result;
+        for(String perms : permissions) {
+            result = ContextCompat.checkSelfPermission(this, perms);
+            if(result == PackageManager.PERMISSION_DENIED) {
+                return false;
+            }
+        }
+
+        return true;
+    }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        switch(requestCode) {
+            case REQUEST_PERMISSION_CODE:
+                if(grantResults.length > 0) {
+                    boolean result = true;
+                    result &= grantResults[0] == PackageManager.PERMISSION_GRANTED;
+                    result &= grantResults[1] == PackageManager.PERMISSION_GRANTED;
+
+                    if(!result) {
+                        Toast.makeText(this, "접근권한이 거부되었습니다.", Toast.LENGTH_LONG).show();
+                        finish();
+                    }
+                }
+                break;
+        }
+    }
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {

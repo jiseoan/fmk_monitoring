@@ -19,7 +19,9 @@ import android.graphics.Matrix;
 import android.graphics.Paint;
 import android.graphics.PorterDuff;
 import android.graphics.PorterDuffXfermode;
+import android.graphics.Rect;
 import android.graphics.SurfaceTexture;
+import android.graphics.Typeface;
 import android.hardware.camera2.CameraAccessException;
 import android.hardware.camera2.CameraCaptureSession;
 import android.hardware.camera2.CameraCharacteristics;
@@ -282,6 +284,8 @@ public class CameraViewer extends AppCompatActivity {
 
     private void save(Bitmap bitmap) throws IOException {
 
+        int padding = 10;
+        int lineHeight = 0;
         final File file = new File(MoniteringApp.APP_STORE_PATH + "/" + System.currentTimeMillis() + ".jpg");
         OutputStream output = null;
 
@@ -291,15 +295,28 @@ public class CameraViewer extends AppCompatActivity {
             Canvas canvas = new Canvas(bitmapTmp);
 
             Paint paint = new Paint();
+            paint.setTypeface(Typeface.DEFAULT);
+            paint.setAntiAlias(true);
+            paint.setDither(true);
             paint.setColor(Color.WHITE); // Text Color
-            paint.setTextSize(100); // Text Size
-            paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_OVER));
-            canvas.drawBitmap(bitmapTmp, 0, 0, paint);
+            paint.setTextSize(20); // Text Size
 
             String txtAddress = ((TextView)findViewById(R.id.txt_address)).getText().toString();
             String txtDatetime = ((TextView)findViewById(R.id.txt_datetime)).getText().toString();
-            canvas.drawText(txtAddress, 20, 80, paint);
-            canvas.drawText(txtDatetime, 20, 200, paint);
+
+            Rect bounds = new Rect();
+            paint.getTextBounds(txtAddress, 0, txtAddress.length(), bounds);
+
+            paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_OVER));
+            canvas.drawBitmap(bitmapTmp, 0, 0, paint);
+
+            //rectangle
+            paint.setColor(Color.BLACK);
+            canvas.drawRect(0, 0, m_imageReader.getWidth(), bounds.height() + (padding * 2), paint);
+
+            paint.setColor(Color.WHITE);
+            canvas.drawText(txtAddress, ((m_imageReader.getHeight() - bounds.width()) * 0.5f), bounds.height() + padding, paint);
+            //canvas.drawText(txtDatetime, 20, 200, paint);
 
             output = new FileOutputStream(file);
             bitmapTmp.compress(Bitmap.CompressFormat.JPEG, 60, output);

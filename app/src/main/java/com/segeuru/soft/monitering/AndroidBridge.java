@@ -9,6 +9,7 @@ import android.net.NetworkInfo;
 import android.os.Handler;
 import android.provider.Settings;
 import android.util.Log;
+import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebView;
@@ -279,7 +280,9 @@ public class AndroidBridge {
 
     @JavascriptInterface
     public void toastMessage(String message) {
-        Toast.makeText(m_webViewActivity, message, Toast.LENGTH_SHORT).show();
+        Toast toast =  Toast.makeText(m_webViewActivity, message, Toast.LENGTH_SHORT);
+        toast.setGravity(Gravity.CENTER, 0, 0);
+        toast.show();
     }
 
     private static <T extends View> ArrayList<T> getChildren(ViewGroup parent, Class<T> clazz)
