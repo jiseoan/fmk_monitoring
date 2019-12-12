@@ -67,7 +67,7 @@ function callNative(command, param, param2) {
         window.android.toolBar(param, param2);
       } else if (command == "setTitle") {
         // 타이틀명 변경하기
-        window.android.toolBar(param);
+        window.android.setTitle(param);
       } else if (command == "newWebView") {
         // 새로운 웹뷰 보이기
         window.android.newWebView(param);
@@ -76,6 +76,8 @@ function callNative(command, param, param2) {
         window.android.camera(param, JSON.stringify(param2));
       } else if (command == "massQueries") {
         window.android.massQueries(JSON.stringify(param));
+      } else if (command == "toastMessage") {
+        window.android.toastMessage(param);
       }
     } else {
       console.log("ignore callNative('" + command + "', '" + JSON.stringify(param) + "', '" + JSON.stringify(param2) + "')");
@@ -411,6 +413,7 @@ var getRemoteVersionData = null;
 function dataSync(agentCode) {
   // 서버에 업로드 되지않은 데이터를 업로드 한다.
   // 업로드가 완료되면 내려받기 위해 버전을 체크한다.
+  callNative("toastMessage", "동기화중 ...");
   getRemoteVersion(agentCode);
 }
 
@@ -469,7 +472,7 @@ function getRemoteVersion(agentCode) {
   })
   .fail(function() {
     console.log('failed');
-    $.alert("동기화에 실패하였습니다.\n인터넷연결상태를 확인해주세요.")
+    callNative("toastMessage", "동기화에 실패하였습니다.\n인터넷연결상태를 확인해주세요.")
   });
 }
 
@@ -554,12 +557,12 @@ function getDownloadData(agentCode, dataNames) {
       console.log("encoded.... end");
       callNative('massQueries', queryList);
     } else {
-      $.alert("동기화에 실패하였습니다.");
+      callNative("toastMessage", "동기화에 실패하였습니다.");
     }
   })
   .fail(function() {
     console.log('failed');
-    $.alert("동기화에 실패하였습니다.\n인터넷연결상태를 확인해주세요.")
+    callNative("toastMessage", "동기화에 실패하였습니다.\n인터넷연결상태를 확인해주세요.");
   });
 }
 
@@ -567,6 +570,7 @@ function getDownloadData(agentCode, dataNames) {
 function completeQueries() {
   // version 테이블의 정보를 업데이트 한다.
   console.log(getRemoteVersionData);
+  callNative("toastMessage", "동기화가 완료되었습니다.");
   if (typeof window["dataUpdateCallBack"] === "function") {
     dataUpdateCallBack();
   } else {

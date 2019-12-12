@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
@@ -16,7 +16,7 @@
 <body class="main" id="main">
   <div class="header">
     <div class="top" id="mainTop">
-      <span>오늘</span><span class="date">{{ nowDate }}</span>
+      <span>오늘</span><span class="date" is="today-item" v-bind:today="nowDate"></span>
       <a class="refresh" v-on:click="dataSync"></a>
       <a class="logout" v-on:click="logout">로그아웃</a>
     </div>
@@ -54,18 +54,11 @@
   </div>
   <article id="buildingsJobList">
     <ul>
-      <li v-for="item in items">
-        <a>
-          <p>{{ item.building_name }}</p>
-          <p>{{ item.address }}</p>
-        </a>
-        <div v-for="detail in item.details">
-          <span v-if="detail.class != '2' && detail.processing_flag === 'N'" class="badge gray">미완료</span>
-          <span v-else-if="detail.class != '2' && detail.processing_flag === 'Y'" class="badge green">완료</span>
-          <span v-else-if="detail.class != '2' && detail.processing_flag === 'R'" class="badge red">반려</span>
-          <span v-else-if="detail.class == '2'" class="badge blue">AS요청</span>
-          {{ detail.job_name }}
-        </div>
+      <li
+        is="job-item"
+        v-for="(item, index) in items"
+        v-bind:item="item"
+        v-on:job-detail="jobDetail(index)">
       </li>
     </ul>
   </article>
@@ -85,10 +78,6 @@ $(document).ready(function(){
   callNative("bottomActionBar", "jobStart");
 
   agentCode = window.localStorage.getItem("agent_code");
-  $("#jobList .list-item").on('click', function() {
-    // 모니터링/광고촬영 처리 리스트로 이동한다.
-    location.href = "buildingJobProcessList.html";
-  });
 
   var agentData = dbSelect("*", "agent", "agent_code='" + agentCode + "'");
   console.log(agentData);
@@ -132,6 +121,14 @@ function getDateSet() {
       jobDates.push(ymd);
     }
   }
+
+  Vue.component(
+    'today-item',
+    {
+      template: '<span class="date">{{ today }}</span>',
+      props: ['today']
+    }
+  );
 
   mainTopVue = new Vue({
     el: '#mainTop',
@@ -193,8 +190,7 @@ function getDateSet() {
       }
     }
   });
-
-  buildingsJobList(selDate);
+  dataSync(agentCode);
 }
 
 function buildingsJobList(date) {
@@ -210,6 +206,27 @@ function buildingsJobList(date) {
   });
 
   if (mainBuildingJobListVue === null) {
+
+    Vue.component(
+      'job-item',
+      {
+        template: '<li v-on:click="$emit(\'job-detail\')">\
+                    <a>\
+                      <p>{{ item.building_name }}</p>\
+                      <p>{{ item.address }}</p>\
+                    </a>\
+                    <div v-for="detail in item.details">\
+                      <span v-if="detail.class != \'2\' && detail.processing_flag === \'N\'" class="badge gray">미완료</span>\
+                      <span v-else-if="detail.class != \'2\' && detail.processing_flag === \'Y\'" class="badge green">완료</span>\
+                      <span v-else-if="detail.class != \'2\' && detail.processing_flag === \'R\'" class="badge red">반려</span>\
+                      <span v-else-if="detail.class == \'2\'" class="badge blue">AS요청</span>\
+                      {{ detail.job_name }}\
+                    </div>\
+                  </li>',
+        props: ['item']
+      }
+    );
+
     mainBuildingJobListVue = new Vue({
       el: '#buildingsJobList',
       data: {
@@ -217,6 +234,13 @@ function buildingsJobList(date) {
       },
       methods: {
         jobDetail: function(idx) {
+          var items = this.items;
+          var row = items[idx];
+          var buildingId = row.building_id;
+          console.log(buildingId);
+
+          // 모니터링/광고촬영 처리 리스트로 이동한다.
+          location.href = "buildingJobProcessList.html?id=" + buildingId;
         }
       }
     });
@@ -230,12 +254,27 @@ function qrScanResult(result) {
   // 모니터링, 광고촬영에 있는지 체크
   var qrCode = $.urlParam("cd", result);
   if (qrCode === null) {
-    $.alert("인식이 불가능한 QR코드 입니다.");
+    callNative("toastMessage", "인식이 불가능한 QR코드 입니다.");
     return;
   }
-  window.localStorage.setItem("qr_code", qrCode);
-  console.log(window.localStorage.getItem("qr_code"));
-  location.href = "buildingJobList.html";
+
+  qrCode = "T00017";
+  var buildingRes = dbSql("SELECT bl.building_locate_id, b.building_id, b.building_name, b.address FROM building_locate bl JOIN building b ON bl.building_id=b.building_id WHERE qr_serial_code = '" + qrCode + "'");
+  console.log(buildingRes);
+  buildingRes = $.parseJSON(buildingRes);
+  buildingData = (!buildingRes || buildingRes[0] === "undefined" )?null:buildingRes[0];
+  if (!buildingData) {
+    callNative("toastMessage", "작업이 가능한 단지가 아닙니다.");
+    return;
+  }
+
+  var buildingLocateId = buildingData.building_locate_id;
+  location.href = "buildingJobList.html?id=" + buildingLocateId;
+}
+
+// 동기화 완료시 콜백
+function dataUpdateCallBack() {
+  buildingsJobList(selDate);
 }
 
 </script>

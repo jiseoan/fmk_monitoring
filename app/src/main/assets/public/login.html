@@ -1,4 +1,4 @@
-<!doctype html>
+<!DOCTYPE html>
 <html>
 <head>
   <meta charset="utf-8">
@@ -59,6 +59,7 @@ $(document).ready(function(){
         }
         
         if (this.error) {
+          callNative("toastMessage", this.error);
           return false;
         }
 
@@ -82,14 +83,14 @@ $(document).ready(function(){
             console.log(res);
 
             window.localStorage.setItem("agent_code", userData.agent_code);
-            dataSync(userData.agent_code);
+            location.replace("main.html");
           } else {
             $.alert(result.data);
           }
         })
         .fail(function() {
           console.log('failed');
-          $.alert("로그인에 실패하였습니다.\n인터넷연결상태를 확인해주세요.")
+          callNative("toastMessage", "로그인에 실패하였습니다.\n인터넷연결상태를 확인해주세요.");
         });
       }
     }
@@ -99,10 +100,6 @@ $(document).ready(function(){
 function login () {
   //console.log("function login()");
   vueLogin.sendPost();
-}
-
-function dataUpdateCallBack() {
-  location.replace("main.html");
 }
 </script>
 
