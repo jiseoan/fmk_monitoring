@@ -7,7 +7,6 @@
   <title>Focus Media Korea Monitoring App</title>
   <link rel="stylesheet" type="text/css" href="css/base.css"/>
   <link rel="stylesheet" type="text/css" href="css/layout.css"/>
-  <link href="https://fonts.googleapis.com/css?family=Montserrat:300,400,500&display=swap" rel="stylesheet">
   <link rel="stylesheet" type="text/css" href="../vendor/jquery-confirm/dist/jquery-confirm.min.css">
   <script type="text/javascript" src="../vendor/jquery/jquery-3.1.1.min.js"></script>
   <script type="text/javascript" src="../vendor/vue/vue.js"></script>
@@ -60,7 +59,13 @@
           <p>{{ item.building_name }}</p>
           <p>{{ item.address }}</p>
         </a>
-        <div v-for="detail in item.details"><span class="badge red">반려</span>{{ detail.job_name }}</div>
+        <div v-for="detail in item.details">
+          <span v-if="detail.class != '2' && detail.processing_flag === 'N'" class="badge gray">미완료</span>
+          <span v-else-if="detail.class != '2' && detail.processing_flag === 'Y'" class="badge green">완료</span>
+          <span v-else-if="detail.class != '2' && detail.processing_flag === 'R'" class="badge red">반려</span>
+          <span v-else-if="detail.class == '2'" class="badge blue">AS요청</span>
+          {{ detail.job_name }}
+        </div>
       </li>
     </ul>
   </article>
@@ -198,7 +203,7 @@ function buildingsJobList(date) {
   result = $.parseJSON(result);
 
   $.each(result, function(index, item){
-    var subResult = dbSql("SELECT t.* FROM (SELECT 0 AS sort, 0 AS num, mr.processing_flag, '모니터링' AS job_name FROM monitoring_request mr WHERE date(mr.request_date) = date('" + date + "') AND mr.building_id='" + item.building_id + "' UNION SELECT 1 AS sort, acr.ad_check_request_id AS num, acr.processing_flag, acr.ad_name AS job_name FROM ad_check_request acr WHERE date(acr.request_date) = date('" + date + "') AND acr.building_id='" + item.building_id + "' UNION SELECT 2 AS sort, 0 AS num, ar.processing_flag, (SELECT group_concat(codename) FROM code c WHERE c.code_id IN (ar.request_type_code_ids)) AS job_name FROM as_request ar WHERE date(ar.request_date) = date('" + date + "') AND ar.building_id='" + item.building_id + "') AS t ORDER BY t.sort, t.num");
+    var subResult = dbSql("SELECT t.* FROM (SELECT 0 AS class, 0 AS sort, mr.processing_flag, '모니터링' AS job_name FROM monitoring_request mr WHERE date(mr.request_date) = date('" + date + "') AND mr.building_id='" + item.building_id + "' UNION SELECT 1 AS class, acr.ad_check_request_id AS sort, acr.processing_flag, acr.ad_name AS job_name FROM ad_check_request acr WHERE date(acr.request_date) = date('" + date + "') AND acr.building_id='" + item.building_id + "' UNION SELECT 2 AS sort, ar.building_locate_id AS num, ar.processing_flag, (SELECT bl.dong||' '||bl.unit_name FROM building_locate bl WHERE bl.building_locate_id=ar.building_locate_id)||' <'||(SELECT group_concat(codename) FROM code c WHERE c.code_id IN (ar.request_type_code_ids))||'>' AS job_name FROM as_request ar WHERE date(ar.request_date) = date('" + date + "') AND ar.building_id='" + item.building_id + "') AS t ORDER BY t.class, t.sort");
     console.log(subResult);
     subResult = $.parseJSON(subResult);
     result[index].details = subResult;
