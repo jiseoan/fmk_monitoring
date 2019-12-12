@@ -73,7 +73,6 @@ public class MainActivity extends AppCompatActivity implements ActivityCompat.On
         } else {
             //finish();
         }
-
     }
 
     private boolean hasPermissions(String[] permissions) {

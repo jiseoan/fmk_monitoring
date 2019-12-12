@@ -275,7 +275,11 @@ public class AndroidBridge {
                 m_webViewActivity.javaScriptCallback("completeQueries", "", "");
             }
         });
+    }
 
+    @JavascriptInterface
+    public void toastMessage(String message) {
+        Toast.makeText(m_webViewActivity, message, Toast.LENGTH_SHORT).show();
     }
 
     private static <T extends View> ArrayList<T> getChildren(ViewGroup parent, Class<T> clazz)

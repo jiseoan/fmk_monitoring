@@ -200,6 +200,7 @@
     <button id="downloadVideo"> *동영상 다운로드 </button><br />
     <button id="uploadImages"> *이미지 업로드 </button><br />
     <button id="checkNetwork"> *네트워크 체크 </button><br />
+    <button id="toastMessage"> *토스트 메세지 </button><br />
 <br/>
     <button id="btnContentActionMonitoringCamera"> 모니터링촬영 카메라 열기 (1장 사진) </button>
     <button id="btnContentActionBuildingCamera"> 단지촬영 카메라 열기 (1장 사진) </button>
@@ -420,6 +421,9 @@ $(document).ready(function(){
       console.log(window.android.getCheckNetwork());
     });
 
+    $('#toastMessage').on('click', function() {
+      window.android.toastMessage("토스트 메세지");
+    });
 
 
 
