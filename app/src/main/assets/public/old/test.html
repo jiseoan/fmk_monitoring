@@ -197,7 +197,7 @@
     <button id="link"> *Active 링크 이동 </button><br />
     <button id="closeActivity"> *Active 닫기 </button><br />
     <button id="loadingProgress"> *로딩 상태 표시 </button><br />
-    <button id="downloadVideo"> *동영상 다운로드 </button><br />
+    <button id="downloadMedia"> *동영상 다운로드 </button><br />
     <button id="uploadImages"> *이미지 업로드 </button><br />
     <button id="checkNetwork"> *네트워크 체크 </button><br />
     <button id="toastMessage"> *토스트 메세지 </button><br />
@@ -361,8 +361,8 @@ $(document).ready(function(){
       window.android.loadingProgress(true);
     });
 
-    $('#downloadVideo').on('click', function() {
-      window.android.downloadVideo();
+    $('#downloadMedia').on('click', function() {
+      window.android.downloadMedia("mp4", "http://test.raonworks.com/tmp/video2.mp4");
     });
 
     $('#uploadImages').on('click', function() {
@@ -414,7 +414,7 @@ $(document).ready(function(){
       param["custom_data3"] = "abc!!한글테스트";
       uploadData['data'] = param;
 
-      window.android.uploadMedia(JSON.stringify(uploadData));
+      window.android.uploadData(JSON.stringify(uploadData));
     });
 
     $('#checkNetwork').on('click', function() {
@@ -585,7 +585,7 @@ $(document).ready(function(){
       param['custom_data2'] = { name: "test" };
       param['custom_data1'] = "한글테스트!!@%!123";
       uploadData['data'] = JSON.stringify(param);
-      callNative("uploadMedia", JSON.stringify(uploadData));
+      callNative("uploadData", JSON.stringify(uploadData));
     });
 
     $('#btn1').on('click', function() {
@@ -634,10 +634,11 @@ function NativeCallback(command, param, result)
         $("#list").css("display", "block");
     }
     break;
-    case "uploadMedia":
+    case "uploadData":
     {
       // /fmksystem/mobile/upload 페이지 결과가 뿌려짐
       console.log(result);
+      $.alert("uploaded data");
     }
     break;
     case "back":
@@ -700,8 +701,9 @@ function NativeCallback(command, param, result)
     case "list":
       console.log("list");
     break;
-    case "uploadedImages":
-      console.log("uploadedImages");
+    case "uploadData":
+      console.log("vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv");
+      $.alert("uploadedData");
     break;
   }
 

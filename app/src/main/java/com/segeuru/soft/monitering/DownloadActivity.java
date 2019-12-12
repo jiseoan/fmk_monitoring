@@ -28,7 +28,8 @@ import java.net.URLConnection;
 public class DownloadActivity extends AppCompatActivity {
 
     private final String DEBUG_TAG = "segeuru.com";
-    private final String FILE_NAME = "video2.mp4";
+    private String m_url;
+    private String m_filename;
     private ProgressBar m_progressBar;
     private MediaController m_mediaController;
 
@@ -39,6 +40,13 @@ public class DownloadActivity extends AppCompatActivity {
 
         m_progressBar =findViewById(R.id.download_progressBar);
         m_progressBar.setProgress(0);
+
+        Intent intent = getIntent();
+        m_url = intent.getStringExtra("url");
+
+        Uri uri= Uri.parse(m_url);
+        File file= new File(uri.getPath());
+        m_filename = file.getName();
 
         downloadVideo();
 
@@ -52,8 +60,8 @@ public class DownloadActivity extends AppCompatActivity {
     }
 
     private void downloadVideo() {
-        final String fileURL = "http://doc.raonworks.com/wp-content/uploads/2019/11/" + FILE_NAME;
-        File file = new File(MoniteringApp.APP_STORE_PATH, FILE_NAME);
+        final String fileURL = m_url;
+        File file = new File(MoniteringApp.APP_STORE_PATH, m_filename);
 
         if(file.exists()) {
             //already exist.
@@ -70,7 +78,7 @@ public class DownloadActivity extends AppCompatActivity {
         VideoView videoView = findViewById(R.id.videoView);
         m_mediaController = new MediaController(this);
         videoView.setMediaController(m_mediaController);
-        videoView.setVideoPath(MoniteringApp.APP_STORE_PATH + "/" + FILE_NAME);
+        videoView.setVideoPath(MoniteringApp.APP_STORE_PATH + "/" + m_filename);
         //videoView.setRotation(90);
         videoView.seekTo(0);
         videoView.start();
@@ -119,7 +127,7 @@ public class DownloadActivity extends AppCompatActivity {
 
                 fileSize = connection.getContentLength();
                 inputStream = new BufferedInputStream(url.openStream(), 8192);
-                outputFile = new File(MoniteringApp.APP_STORE_PATH, FILE_NAME);
+                outputFile = new File(MoniteringApp.APP_STORE_PATH, m_filename);
 
                 outputStream = new FileOutputStream(outputFile);
 

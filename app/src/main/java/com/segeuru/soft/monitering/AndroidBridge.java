@@ -229,15 +229,23 @@ public class AndroidBridge {
         });
     }
 
+//    @JavascriptInterface
+//    public void downloadVideo() {
+//        Intent intent = new Intent(m_webViewActivity, DownloadActivity.class);
+//        m_webViewActivity.startActivity(intent);
+//    }
+
     @JavascriptInterface
-    public void downloadVideo() {
+    public void downloadMedia(String mimeType, String url) {
         Intent intent = new Intent(m_webViewActivity, DownloadActivity.class);
+        intent.putExtra("mime_type", mimeType);
+        intent.putExtra("url", url);
         m_webViewActivity.startActivity(intent);
     }
 
     @JavascriptInterface
-    public void uploadMedia(String json) {
-        m_webViewActivity.support().uploadMedia(json);
+    public void uploadData(String json) {
+        m_webViewActivity.support().uploadData(json);
     }
 
     @JavascriptInterface

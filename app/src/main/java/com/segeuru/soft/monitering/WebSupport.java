@@ -26,11 +26,11 @@ public class WebSupport {
         m_webviewActivity = webviewActivity;
     }
 
-    public void uploadMedia(String jsonString) {
+    public void uploadData(String jsonString) {
         new uploadAsyncTask().execute(jsonString);
     }
 
-    private void uploadMediaAsync(String jsonString) {
+    private void uploadDataAsync(String jsonString) {
 
         Log.i(DEBUG_TAG, jsonString);
 
@@ -184,15 +184,14 @@ public class WebSupport {
 
         @Override
         protected Integer doInBackground(String... args) {
-            uploadMediaAsync(args[0]);
+            uploadDataAsync(args[0]);
             return null;
         }
 
         @Override
         protected void onPostExecute(Integer integer) {
             super.onPostExecute(integer);
-
-            m_webviewActivity.javaScriptCallback("uploadedImages", "", "");
+            m_webviewActivity.javaScriptCallback("uploadData", "", "");
         }
     }
 
