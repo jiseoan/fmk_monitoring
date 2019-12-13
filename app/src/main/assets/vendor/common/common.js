@@ -299,6 +299,24 @@ function dbSelect(field, table, where, orderBy)
   return $.parseJSON(result);
 }
 
+function dbRowArray(query)
+{
+  var row = dbSql(query);
+  console.log(row);
+  row = $.parseJSON(row);
+  row = (row.length > 0)?row[0]:null;
+  return row;
+}
+
+function dbResultArray(query)
+{
+  var result = dbSql(query);
+  console.log(result);
+  result = $.parseJSON(result);
+  result = (result.length > 0)?result:null;
+  return result;
+}
+
 var __ajaxSkinList = {};
 
 function addAjaxSkin(skin_dom, replace_text)

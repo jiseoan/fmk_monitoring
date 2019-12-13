@@ -16,30 +16,19 @@
 <body id="buildingJobList">
   <article class="select-work">
     <h2>업무를 선택해주세요</h2>
-    <div class="wrapper">
-      <p class="date">19.12.24</p>
+    <div class="wrapper"id="buildingJob">
+      <p is="today-item" v-bind:today="nowDate"></p>
       <div class="status">
         <p><span>진행전</span></p>
-        <p><span>진행중</span></p>
+        <p><span>반려</span></p>
         <p><span>진행완료</span></p>
       </div>
-      <ul>
-        <li class="before"><p>모니터링 촬영 내역</p></li>
-        <li class="doing"><p>단지 대표 이미지 촬영 내역</p></li>
-        <li class="after">
-          <p>광고촬영 <br> &lt;나이키 제임스르브론편 1차&gt; 촬영</p>
-          <a href="#" class="btn-ad">광고보기</a>
+      <ul v-for="(item, index) in jobList">
+        <li v-if="item.class == 0" v-bind:class="[item.processing_flag =='Y'?'after':item.processing_flag =='R'?'doing':'before']">
+          <p>{{ item.job_name }} 촬영</p>
         </li>
-        <li class="before">
-          <p>광고촬영 <br> &lt;나이키 제임스르브론편 1차&gt; 촬영</p>
-          <a href="#" class="btn-ad">광고보기</a>
-        </li>
-        <li class="before">
-          <p>광고촬영 <br> &lt;나이키 제임스르브론편 1차&gt; 촬영</p>
-          <a href="#" class="btn-ad">광고보기</a>
-        </li>
-        <li class="before">
-          <p>광고촬영 <br> &lt;나이키 제임스르브론편 1차&gt; 촬영</p>
+        <li v-else-if="item.class == 1" v-bind:class="[item.processing_flag =='Y'?'after':item.processing_flag =='R'?'doing':'before']">
+          <p>{{ item.job_name }} 촬영 <br> &lt;{{ item.sub_name }}&gt; 촬영</p>
           <a href="#" class="btn-ad">광고보기</a>
         </li>
       </ul>
@@ -50,17 +39,59 @@
 var buildingLocateId = null;
 var buildingParam = {take_count: 1, building_name : "송내 자이 아파트 101동 1호기", address: "경기도 부천시 소사구 송내동 409"};
 var adParam = {take_count: 5, ad_name : "설화수 이영애 2차"};
+var buildingJobListVue = null;
+var nowDate = null;
 $(document).ready(function(){
   callNative('toolBar', 'main', "");
   callNative("hideBottomActionBar");
 
+  // 매체정보를 이용하여 단지 및 매체 정보 가져옴
   buildingLocateId = $.urlParam("id");
   var buildingRes = dbSql("SELECT b.building_id,bl.building_locate_id, b.building_name, bl.dong, bl.unit_name, b.building_name||' '||bl.dong||' '||bl.unit_name AS building_locate_name, b.address FROM building_locate bl JOIN building b ON bl.building_id=b.building_id WHERE bl.building_locate_id='" + buildingLocateId + "'");
-  console.log(buildingRes);
+
   buildingRes = $.parseJSON(buildingRes);
-  buildingData = (!buildingRes || buildingRes[0] === "undefined" )?null:buildingRes[0];
+  buildingData = (buildingRes.length > 0)?buildingRes[0]:null;
 
   callNative('setTitle', buildingData.building_locate_name);
+
+  nowDate = getNowDate();
+
+  var jobList = [];
+
+  // 모니터링 리스트 가져옴
+  var monitoringRes = dbSql("SELECT 0 AS class, CASE WHEN p.processing_date !='' THEN 'Y' ELSE 'N' END AS processing_flag, '모니터링' AS job_name, '' AS sub_name, '' AS ad_type, '' AS ad_url FROM monitoring_request mr LEFT JOIN processing p ON mr.monitoring_request_id=p.monitoring_request_id AND p.building_locate_id = '" + buildingData.building_locate_id + "' WHERE date(mr.request_date) = date('" + nowDate + "') AND mr.building_id='" + buildingData.building_id + "'");
+
+  monitoringRes = $.parseJSON(monitoringRes);
+  jobList = (monitoringRes.length > 0)?jobList.concat(monitoringRes):jobList;
+
+  // 게첨 리스트 가져옴
+  var adRes = dbSql("SELECT 1 AS class, CASE WHEN p.processing_date !='' THEN 'Y' ELSE 'N' END AS processing_flag, '광고' AS job_name, acr.ad_name AS sub_name, acr.ad_type, acr.ad_url FROM ad_check_request acr LEFT JOIN processing p ON acr.ad_check_building_id=p.ad_check_building_id WHERE date(acr.request_date) = date('" + nowDate + "') AND acr.building_id='" + buildingData.building_id + "'");
+
+  adRes = $.parseJSON(adRes);
+  jobList = (adRes.length > 0)?jobList.concat(adRes):jobList;
+  console.log(JSON.stringify(jobList));
+
+  Vue.component(
+    'today-item',
+    {
+      template: '<p class="date">{{ today }}</p>',
+      props: ['today']
+    }
+  );
+
+  buildingJobListVue = new Vue({
+    el: '#buildingJob',
+    data: {
+      nowDate: parseInt(nowDate.substr(2,2)) + "." + parseInt(nowDate.substr(5,2)) + "." + parseInt(nowDate.substr(8,2)),
+      jobList:jobList
+    }
+  });
+
+
+
+
+
+
 
   $('.btnMonitoringShot').on('click', function() {
     // 모니터링 촬영촬영용 카메라를 연다
