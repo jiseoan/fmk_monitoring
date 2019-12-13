@@ -47,6 +47,26 @@
         app:layout_constraintBottom_toTopOf="@id/bottomBar"
         >
 
+        <LinearLayout
+            android:id="@+id/download_status"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical"
+            android:gravity="center"
+            android:visibility="gone">
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:src="@drawable/btn_download"/>
+            <TextView
+                android:id="@+id/txt_download"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:textColor="#ffffff"
+                android:layout_marginTop="-30dp"
+                android:text="0.0MB/0.0MB"/>
+        </LinearLayout>
+
         <ImageView
             android:id="@+id/imageView"
             android:layout_width="match_parent"
@@ -75,6 +95,7 @@
         >
 
         <ImageButton
+            android:id="@+id/btn_confirm"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="?android:attr/selectableItemBackgroundBorderless"

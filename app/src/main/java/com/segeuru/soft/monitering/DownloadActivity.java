@@ -2,6 +2,7 @@ package com.segeuru.soft.monitering;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
@@ -19,6 +20,7 @@ import android.view.View;
 import android.widget.ImageView;
 import android.widget.MediaController;
 import android.widget.ProgressBar;
+import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.VideoView;
 
@@ -36,8 +38,9 @@ public class DownloadActivity extends AppCompatActivity {
     private String m_mimeType;
     private String m_url;
     private String m_filename;
-    private ProgressBar m_progressBar;
+    //private ProgressBar m_progressBar;
     private MediaController m_mediaController;
+    private int m_confirm_type = 0; //0:파일 다운로드, 1:기타
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -81,8 +84,49 @@ public class DownloadActivity extends AppCompatActivity {
                 finish();
             }
         });
+        findViewById(R.id.btn_confirm).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                switch (m_confirm_type) {
+                    case 0:
+                        //download now.
+                        final DownloadFileTask downloadFileTask = new DownloadFileTask(DownloadActivity.this);
+                        downloadFileTask.execute(m_url);
+                        break;
+                }
+            }
+        });
 
         downloadMedia();
+    }
+
+    private int getFileSize(String fileURL) {
+
+        int fileSize = 0;
+        try {
+            @SuppressLint("StaticFieldLeak") AsyncTask<String, Void, Integer> asyncTask = new AsyncTask<String, Void, Integer>() {
+                @Override
+                protected Integer doInBackground(String... urls) {
+                    int fileSize = 0;
+                    try {
+                        URL url = new URL(urls[0]); //it's url
+                        URLConnection connection = url.openConnection();
+                         fileSize = connection.getContentLength();
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                    }
+
+                    return fileSize;
+                }
+            };
+
+            fileSize = asyncTask.execute(fileURL).get();
+
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+
+        return fileSize;
     }
 
     private void downloadMedia() {
@@ -93,15 +137,24 @@ public class DownloadActivity extends AppCompatActivity {
             //already exist.
             //Toast.makeText(DownloadActivity.this, "같은 파일이 존재합니다.", Toast.LENGTH_LONG).show();
             playVideo();
+            m_confirm_type = 1;
         } else {
-            //download new.
-            final DownloadFileTask downloadFileTask = new DownloadFileTask(DownloadActivity.this);
-            downloadFileTask.execute(fileURL);
+            findViewById(R.id.download_status).setVisibility(View.VISIBLE);
+            int filesize = getFileSize(fileURL);
+            setDownloadText(0, filesize);
+            m_confirm_type = 0;
         }
+    }
+
+    private void setDownloadText(int received, int total) {
+        received = received != 0 ? received / 1000000 : 0;
+        total = total != 0 ? total / 1000000 : 0;
+        ((TextView)findViewById(R.id.txt_download)).setText(received + "MB/" + total + "MB");
     }
 
     private void playVideo() {
         //동영상일경우
+        findViewById(R.id.download_status).setVisibility(View.GONE);
         findViewById(R.id.videoView).setVisibility(View.GONE);
         findViewById(R.id.imageView).setVisibility(View.GONE);
 
@@ -181,12 +234,21 @@ public class DownloadActivity extends AppCompatActivity {
                     }
 
                     downloadedSize += count;
+                    final int ui_recieved = (int)downloadedSize;
+                    final int ui_total = (int)fileSize;
 
                     if(fileSize > 0) {
-                        int per = (int)(((float)downloadedSize/fileSize) * 100);
+//                        int per = (int)(((float)downloadedSize/fileSize) * 100);
 //                        m_progressBar.setProgress(per);
 //                        String str = "Downloaded " + downloadedSize + "KB / " + fileSize + "KB (" + (int)per + "%)";
 //                        Log.i(DEBUG_TAG, Long.toString(downloadedSize));
+
+                        runOnUiThread(new Runnable() {
+                            @Override
+                            public void run() {
+                                setDownloadText(ui_recieved, ui_total);
+                            }
+                        });
                     }
 
                     outputStream.write(data, 0, count);
