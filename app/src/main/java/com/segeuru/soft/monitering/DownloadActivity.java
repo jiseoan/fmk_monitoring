@@ -9,6 +9,7 @@ import android.content.res.Configuration;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -43,8 +44,8 @@ public class DownloadActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_download);
 
-        m_progressBar =findViewById(R.id.download_progressBar);
-        m_progressBar.setProgress(0);
+//        m_progressBar =findViewById(R.id.download_progressBar);
+//        m_progressBar.setProgress(0);
 
         Intent intent = getIntent();
         m_mimeType = intent.getStringExtra("mime_type");
@@ -54,9 +55,26 @@ public class DownloadActivity extends AppCompatActivity {
         File file= new File(uri.getPath());
         m_filename = file.getName();
 
-        findViewById(R.id.videoView).setVisibility(View.GONE);
-        findViewById(R.id.imageView).setVisibility(View.GONE);
+        final VideoView videoView = findViewById(R.id.videoView);
+        videoView.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+            @Override
+            public void onPrepared(MediaPlayer mp) {
+                mp.setOnVideoSizeChangedListener(new MediaPlayer.OnVideoSizeChangedListener() {
+                    @Override
+                    public void onVideoSizeChanged(MediaPlayer mp, int width, int height) {
+                        //add media controller
+                        m_mediaController = new MediaController(DownloadActivity.this);
+                        videoView.setMediaController(m_mediaController);
 
+                        //and set its position on screen
+                        m_mediaController.setAnchorView(videoView);
+                    }
+                });
+            }
+        });
+
+        videoView.setVisibility(View.GONE);
+        findViewById(R.id.imageView).setVisibility(View.GONE);
         findViewById(R.id.btn_close).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -84,11 +102,12 @@ public class DownloadActivity extends AppCompatActivity {
 
     private void playVideo() {
         //동영상일경우
-        findViewById(R.id.videoView).setVisibility(View.VISIBLE);
+        findViewById(R.id.videoView).setVisibility(View.GONE);
+        findViewById(R.id.imageView).setVisibility(View.GONE);
+
         if(m_mimeType.compareTo("video") == 0) {
-            VideoView videoView = findViewById(R.id.videoView);
-            m_mediaController = new MediaController(this);
-            videoView.setMediaController(m_mediaController);
+            findViewById(R.id.videoView).setVisibility(View.VISIBLE);
+            final VideoView videoView = findViewById(R.id.videoView);
             videoView.setVideoPath(MoniteringApp.APP_STORE_PATH + "/" + m_filename);
             //videoView.setRotation(90);
             videoView.seekTo(0);
@@ -165,7 +184,7 @@ public class DownloadActivity extends AppCompatActivity {
 
                     if(fileSize > 0) {
                         int per = (int)(((float)downloadedSize/fileSize) * 100);
-                        m_progressBar.setProgress(per);
+//                        m_progressBar.setProgress(per);
 //                        String str = "Downloaded " + downloadedSize + "KB / " + fileSize + "KB (" + (int)per + "%)";
 //                        Log.i(DEBUG_TAG, Long.toString(downloadedSize));
                     }
@@ -173,7 +192,7 @@ public class DownloadActivity extends AppCompatActivity {
                     outputStream.write(data, 0, count);
                 }
 
-                m_progressBar.setProgress(100);
+//                m_progressBar.setProgress(100);
 
                 outputStream.flush();
                 outputStream.close();
