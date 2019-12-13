@@ -56,10 +56,10 @@ $(document).ready(function(){
 
   nowDate = getNowDate();
 
-  var jobList = [];
+  var jobList = [{"class":"0","processing_flag":"Y","job_name":"모니터링","sub_name":"","ad_type":"","ad_url":""},{"class":"1","processing_flag":"N","job_name":"광고","sub_name":"20190625_위드엠씨_연세신통마취통증의학과","ad_type":"video","ad_url":"https://d1awe5jzdkmaac.cloudfront.net/files/media/5781876.mp4"}];
 
   // 모니터링 리스트 가져옴
-  var monitoringRes = dbSql("SELECT 0 AS class, CASE WHEN p.processing_date !='' THEN 'Y' ELSE 'N' END AS processing_flag, '모니터링' AS job_name, '' AS sub_name, '' AS ad_type, '' AS ad_url FROM monitoring_request mr LEFT JOIN processing p ON mr.monitoring_request_id=p.monitoring_request_id AND p.building_locate_id = '" + buildingData.building_locate_id + "' WHERE date(mr.request_date) = date('" + nowDate + "') AND mr.building_id='" + buildingData.building_id + "'");
+  /*var monitoringRes = dbSql("SELECT 0 AS class, CASE WHEN p.processing_date !='' THEN 'Y' ELSE 'N' END AS processing_flag, '모니터링' AS job_name, '' AS sub_name, '' AS ad_type, '' AS ad_url FROM monitoring_request mr LEFT JOIN processing p ON mr.monitoring_request_id=p.monitoring_request_id AND p.building_locate_id = '" + buildingData.building_locate_id + "' WHERE date(mr.request_date) = date('" + nowDate + "') AND mr.building_id='" + buildingData.building_id + "'");
 
   monitoringRes = $.parseJSON(monitoringRes);
   jobList = (monitoringRes.length > 0)?jobList.concat(monitoringRes):jobList;
@@ -68,7 +68,7 @@ $(document).ready(function(){
   var adRes = dbSql("SELECT 1 AS class, CASE WHEN p.processing_date !='' THEN 'Y' ELSE 'N' END AS processing_flag, '광고' AS job_name, acr.ad_name AS sub_name, acr.ad_type, acr.ad_url FROM ad_check_request acr LEFT JOIN processing p ON acr.ad_check_building_id=p.ad_check_building_id WHERE date(acr.request_date) = date('" + nowDate + "') AND acr.building_id='" + buildingData.building_id + "'");
 
   adRes = $.parseJSON(adRes);
-  jobList = (adRes.length > 0)?jobList.concat(adRes):jobList;
+  jobList = (adRes.length > 0)?jobList.concat(adRes):jobList;*/
   console.log(JSON.stringify(jobList));
 
   Vue.component(
