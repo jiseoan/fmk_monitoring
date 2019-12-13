@@ -194,16 +194,21 @@ function getDateSet() {
 }
 
 function buildingsJobList(date) {
-  var result = dbSql("SELECT t.building_id, b.building_name, b.address FROM ( SELECT mr.building_id, CASE WHEN mr.processing_flag='Y' THEN 1 ELSE 10 END AS sort_cnt FROM monitoring_request mr WHERE date(mr.request_date) = date('" + date + "') UNION SELECT acr.building_id, CASE WHEN acr.processing_flag='Y' THEN 1 WHEN acr.processing_flag='R' THEN 999 ELSE 10 END AS sort_cnt FROM ad_check_request acr WHERE date(acr.request_date) = date('" + date + "') ) t JOIN building b ON t.building_id = b.building_id GROUP BY t.building_id ORDER BY sum(t.sort_cnt) DESC");
-  console.log(result);
-  result = $.parseJSON(result);
+  /*var jobListData = [];
+  var result = dbResultArray("SELECT t.building_id, b.building_name, b.address FROM ( SELECT mr.building_id, CASE WHEN mr.processing_flag='Y' THEN 1 ELSE 10 END AS sort_cnt FROM monitoring_request mr WHERE date(mr.request_date) = date('" + date + "') UNION SELECT acr.building_id, CASE WHEN acr.processing_flag='Y' THEN 1 WHEN acr.processing_flag='R' THEN 999 ELSE 10 END AS sort_cnt FROM ad_check_request acr WHERE date(acr.request_date) = date('" + date + "') ) t JOIN building b ON t.building_id = b.building_id GROUP BY t.building_id ORDER BY sum(t.sort_cnt) DESC");
+  //console.log(result);
+  if (result) {
+    $.each(result, function(index, item){
+      result[index].details = [];
+      var subResult = dbResultArray("SELECT t.* FROM (SELECT 0 AS class, 0 AS sort, mr.processing_flag, '모니터링' AS job_name FROM monitoring_request mr WHERE date(mr.request_date) = date('" + date + "') AND mr.building_id='" + item.building_id + "' UNION SELECT 1 AS class, acr.ad_check_request_id AS sort, acr.processing_flag, acr.ad_name AS job_name FROM ad_check_request acr WHERE date(acr.request_date) = date('" + date + "') AND acr.building_id='" + item.building_id + "' UNION SELECT 2 AS sort, ar.building_locate_id AS num, ar.processing_flag, (SELECT bl.dong||' '||bl.unit_name FROM building_locate bl WHERE bl.building_locate_id=ar.building_locate_id)||' <'||(SELECT group_concat(codename) FROM code c WHERE c.code_id IN (ar.request_type_code_ids))||'>' AS job_name FROM as_request ar WHERE date(ar.request_date) = date('" + date + "') AND ar.building_id='" + item.building_id + "') AS t ORDER BY t.class, t.sort");
+      //console.log(subResult);
+      if (subResult) result[index].details = subResult;
+    });
+    jobListData = result;
+    console.log(JSON.stringify(jobListData));
+  }*/
 
-  $.each(result, function(index, item){
-    var subResult = dbSql("SELECT t.* FROM (SELECT 0 AS class, 0 AS sort, mr.processing_flag, '모니터링' AS job_name FROM monitoring_request mr WHERE date(mr.request_date) = date('" + date + "') AND mr.building_id='" + item.building_id + "' UNION SELECT 1 AS class, acr.ad_check_request_id AS sort, acr.processing_flag, acr.ad_name AS job_name FROM ad_check_request acr WHERE date(acr.request_date) = date('" + date + "') AND acr.building_id='" + item.building_id + "' UNION SELECT 2 AS sort, ar.building_locate_id AS num, ar.processing_flag, (SELECT bl.dong||' '||bl.unit_name FROM building_locate bl WHERE bl.building_locate_id=ar.building_locate_id)||' <'||(SELECT group_concat(codename) FROM code c WHERE c.code_id IN (ar.request_type_code_ids))||'>' AS job_name FROM as_request ar WHERE date(ar.request_date) = date('" + date + "') AND ar.building_id='" + item.building_id + "') AS t ORDER BY t.class, t.sort");
-    console.log(subResult);
-    subResult = $.parseJSON(subResult);
-    result[index].details = subResult;
-  });
+  var jobListData = [{"building_id":"748","building_name":"경동미주아파트","address":"서울시 동대문구 제기2동 892-68번지","details":[{"class":"0","sort":"0","processing_flag":"N","job_name":"모니터링"},{"class":"1","sort":"6","processing_flag":"N","job_name":"20190625_위드엠씨_연세신통마취통증의학과"}]},{"building_id":"2026","building_name":"황학롯데캐슬베네치아임대","address":"서울시 중구 황학동 2545","details":[{"class":"0","sort":"0","processing_flag":"N","job_name":"모니터링"},{"class":"1","sort":"6","processing_flag":"N","job_name":"20190625_위드엠씨_연세신통마취통증의학과"}]}]
 
   if (mainBuildingJobListVue === null) {
 
@@ -246,7 +251,7 @@ function buildingsJobList(date) {
     });
   }
   
-  mainBuildingJobListVue.items = result;
+  mainBuildingJobListVue.items = jobListData;
   
 }
 
@@ -265,11 +270,11 @@ function qrScanResult(result) {
     return;
   }
 
-  var monitoringData = dbRowArray("SELECT COUNT(*) AS cnt FROM monitoring_request WHERE date(request_date) = date('" + nowDate + "') AND building_id='" + buildingData.building_id + "'");
+  /*var monitoringData = dbRowArray("SELECT COUNT(*) AS cnt FROM monitoring_request WHERE date(request_date) = date('" + nowDate + "') AND building_id='" + buildingData.building_id + "'");
   if (monitoringData.cnt == 0) {
     callNative("toastMessage", "오늘 작업이 없는 단지입니다.");
     return;
-  }
+  }*/
 
   var buildingLocateId = buildingData.building_locate_id;
   location.href = "buildingJobList.html?id=" + buildingLocateId;

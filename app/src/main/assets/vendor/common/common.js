@@ -77,7 +77,11 @@ function callNative(command, param, param2) {
       } else if (command == "massQueries") {
         window.android.massQueries(JSON.stringify(param));
       } else if (command == "toastMessage") {
+        // 토스트 알림 띄우기
         window.android.toastMessage(param);
+      } else if (command == "downloadMedia") {
+        // 동영상/이미지 보기화면 보이기
+        window.android.downloadMedia(param, param2);
       }
     } else {
       console.log("ignore callNative('" + command + "', '" + JSON.stringify(param) + "', '" + JSON.stringify(param2) + "')");

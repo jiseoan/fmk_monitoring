@@ -53,6 +53,10 @@ public class WebviewActivity extends BaseAtivity {
         hideAllActionBars();
 
         initWebview(R.id.webview);
+        // 원격디버깅창을 쓰기위해 추가 - kim.js
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.KITKAT) {
+            m_webview.setWebContentsDebuggingEnabled(true);
+        }
         m_webview.addJavascriptInterface(new AndroidBridge(this, m_webview), "android");
         m_webview.loadUrl("file:///android_asset/public/" + (getIntent().hasExtra("url") ? getIntent().getStringExtra("url") : "login.html"));
         m_webSupport = new WebSupport(this);
