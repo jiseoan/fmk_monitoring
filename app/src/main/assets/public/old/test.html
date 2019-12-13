@@ -198,6 +198,7 @@
     <button id="closeActivity"> *Active 닫기 </button><br />
     <button id="loadingProgress"> *로딩 상태 표시 </button><br />
     <button id="downloadMedia"> *동영상 다운로드 </button><br />
+    <button id="downloadImage"> *이미지 다운로드 </button><br />
     <button id="uploadImages"> *이미지 업로드 </button><br />
     <button id="checkNetwork"> *네트워크 체크 </button><br />
     <button id="toastMessage"> *토스트 메세지 </button><br />
@@ -362,7 +363,11 @@ $(document).ready(function(){
     });
 
     $('#downloadMedia').on('click', function() {
-      window.android.downloadMedia("mp4", "http://test.raonworks.com/tmp/video2.mp4");
+      window.android.downloadMedia("video", "http://test.raonworks.com/tmp/video2.mp4");
+    });
+
+    $('#downloadImage').on('click', function() {
+      window.android.downloadMedia("image", "http://test.raonworks.com/tmp/test2.jpg");
     });
 
     $('#uploadImages').on('click', function() {

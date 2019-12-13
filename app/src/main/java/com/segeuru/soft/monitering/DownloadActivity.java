@@ -6,12 +6,16 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.ActivityInfo;
 import android.content.res.Configuration;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.PowerManager;
 import android.util.Log;
 import android.view.View;
+import android.widget.ImageView;
 import android.widget.MediaController;
 import android.widget.ProgressBar;
 import android.widget.Toast;
@@ -28,6 +32,7 @@ import java.net.URLConnection;
 public class DownloadActivity extends AppCompatActivity {
 
     private final String DEBUG_TAG = "segeuru.com";
+    private String m_mimeType;
     private String m_url;
     private String m_filename;
     private ProgressBar m_progressBar;
@@ -42,24 +47,27 @@ public class DownloadActivity extends AppCompatActivity {
         m_progressBar.setProgress(0);
 
         Intent intent = getIntent();
+        m_mimeType = intent.getStringExtra("mime_type");
         m_url = intent.getStringExtra("url");
 
         Uri uri= Uri.parse(m_url);
         File file= new File(uri.getPath());
         m_filename = file.getName();
 
-        downloadVideo();
+        findViewById(R.id.videoView).setVisibility(View.GONE);
+        findViewById(R.id.imageView).setVisibility(View.GONE);
 
-//        findViewById(R.id.btn_runDownload).setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                downloadVideo();
-//            }
-//        });
+        findViewById(R.id.btn_close).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                finish();
+            }
+        });
 
+        downloadMedia();
     }
 
-    private void downloadVideo() {
+    private void downloadMedia() {
         final String fileURL = m_url;
         File file = new File(MoniteringApp.APP_STORE_PATH, m_filename);
 
@@ -75,13 +83,26 @@ public class DownloadActivity extends AppCompatActivity {
     }
 
     private void playVideo() {
-        VideoView videoView = findViewById(R.id.videoView);
-        m_mediaController = new MediaController(this);
-        videoView.setMediaController(m_mediaController);
-        videoView.setVideoPath(MoniteringApp.APP_STORE_PATH + "/" + m_filename);
-        //videoView.setRotation(90);
-        videoView.seekTo(0);
-        videoView.start();
+        //동영상일경우
+        findViewById(R.id.videoView).setVisibility(View.VISIBLE);
+        if(m_mimeType.compareTo("video") == 0) {
+            VideoView videoView = findViewById(R.id.videoView);
+            m_mediaController = new MediaController(this);
+            videoView.setMediaController(m_mediaController);
+            videoView.setVideoPath(MoniteringApp.APP_STORE_PATH + "/" + m_filename);
+            //videoView.setRotation(90);
+            videoView.seekTo(0);
+            videoView.start();
+        } else {
+        //이미지일 경우
+            findViewById(R.id.imageView).setVisibility(View.VISIBLE);
+            File imgFile = new  File(MoniteringApp.APP_STORE_PATH + "/" + m_filename);
+            if(imgFile.exists()) {
+                Bitmap bitmap = BitmapFactory.decodeFile(imgFile.getPath());
+                ImageView imageView = findViewById(R.id.imageView);
+                imageView.setImageBitmap(bitmap);
+            }
+        }
     }
 
     @Override
@@ -182,6 +203,7 @@ public class DownloadActivity extends AppCompatActivity {
             super.onPostExecute(aLong);
 
             Log.i(DEBUG_TAG, "onPostExecute");
+            Log.i(DEBUG_TAG, m_mimeType);
             playVideo();
 
             sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE, Uri.parse("file://" + outputFile.getAbsolutePath())));
