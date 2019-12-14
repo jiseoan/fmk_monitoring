@@ -144,7 +144,7 @@ public class CameraViewer extends AppCompatActivity {
                 Intent intent = new Intent();
                 intent.putExtra("request_id", m_requestId);
                 intent.putExtra("pics", "[]");
-                setResult(-1, intent);
+                setResult(WebviewActivity.REQUEST_CODE, intent);
                 finish();
             }
         });
