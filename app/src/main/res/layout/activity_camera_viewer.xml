@@ -16,16 +16,26 @@
             android:id="@+id/camera_toolbar"
             android:layout_width="match_parent"
             android:layout_height="?attr/actionBarSize"
-            android:background="@android:color/white"
+            android:background="@color/fmk_color_toolbar"
             app:theme="@style/ThemeOverlay.AppCompat.Light"
             >
+
+            <TextView
+                android:id="@+id/title"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:textColor="#ffffff"
+                android:textSize="18dp"
+                android:text="타이틀"
+                />
 
             <ImageView
                 android:id="@+id/btn_close"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_gravity="right"
-                android:src="@android:drawable/ic_menu_close_clear_cancel"
+                android:src="@drawable/btn_close"
                 android:layout_alignParentEnd="true"
                 android:layout_alignParentRight="true"
                 android:layout_marginRight="15dp"
@@ -53,7 +63,7 @@
             android:id="@+id/display_layout"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="#80000000"
+            android:background="#ee3e2913"
             android:padding="10dp"
             android:orientation="vertical"
             app:layout_constraintTop_toTopOf="parent"
@@ -64,25 +74,32 @@
                 android:id="@+id/txt_address"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:gravity="center"
                 android:textColor="@android:color/white"/>
 
             <TextView
                 android:id="@+id/txt_datetime"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
+                android:gravity="center"
                 android:textColor="@android:color/white"/>
 
         </LinearLayout>
 
         <TextView
-            android:id="@+id/take_picture_count"
+            android:id="@+id/txt_message"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            app:layout_constraintTop_toBottomOf="@id/display_layout"
+            android:textColor="@android:color/white"
+            android:background="#aa000000"
+            android:padding="30dp"
+            android:gravity="center"
+            android:textSize="20dp"
             app:layout_constraintLeft_toLeftOf="parent"
             app:layout_constraintRight_toRightOf="parent"
-            android:textColor="@android:color/white"
-            android:textSize="25dp"/>
+            app:layout_constraintTop_toBottomOf="@id/display_layout"
+            app:layout_constraintBottom_toBottomOf="parent"
+            />
 
         <ImageButton
             android:id="@+id/btn_takepicture"

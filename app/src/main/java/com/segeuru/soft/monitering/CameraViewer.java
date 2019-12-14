@@ -62,8 +62,11 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+import java.util.Collections;
 import java.util.Date;
 import java.util.Locale;
+import java.util.Timer;
+import java.util.TimerTask;
 
 public class CameraViewer extends AppCompatActivity {
 
@@ -91,7 +94,13 @@ public class CameraViewer extends AppCompatActivity {
     private ArrayList<String> m_filePath;
     private int m_needPic_count;
     private int m_currentPic_count;
-    private TextView m_textView_count;
+
+    private TimerTask m_timerTask;
+    private Timer m_timer;
+
+    private int m_resolution_width = 640;
+    private int m_resolution_height = 480;
+    private float m_font_scale = 1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -105,18 +114,27 @@ public class CameraViewer extends AppCompatActivity {
 
         Intent intent = getIntent();
         m_requestId = intent.getStringExtra("request_id");
+        if(m_requestId.compareTo("monitoring") == 0) {
+            //monitoring.
+            m_resolution_width = 960;
+            m_resolution_height = 540;
+        } else {
+            //other is ad.
+            m_resolution_width = 1440;
+            m_resolution_height = 810;
+        }
 
         setSupportActionBar((Toolbar)findViewById(R.id.camera_toolbar));
         m_needPic_count = intent.getIntExtra("take_count", 0);
 
-        getSupportActionBar().setTitle(intent.getStringExtra("title"));
+        getSupportActionBar().setDisplayShowTitleEnabled(false);
+        ((TextView)findViewById(R.id.title)).setText(intent.getStringExtra("title"));
         ((TextView)findViewById(R.id.txt_address)).setText(intent.getStringExtra("address"));
 
         Date currentTime = Calendar.getInstance().getTime();
-        String dateTime = new SimpleDateFormat("yyyy년 MM월 dd일 a hh:mm", Locale.getDefault()).format(currentTime);
+        String dateTime = new SimpleDateFormat("yyyy. MM. dd. a hh:mm", Locale.getDefault()).format(currentTime);
         ((TextView)findViewById(R.id.txt_datetime)).setText(dateTime);
 
-        m_textView_count = findViewById(R.id.take_picture_count);
         updateTakeCount();
 
         m_textureViewer = findViewById(R.id.texture);
@@ -132,10 +150,42 @@ public class CameraViewer extends AppCompatActivity {
                 takePicture();
             }
         });
+
+
+        setMessage("단지 대표 이미지용\n사진을 촬영해주세요", 2000);
+
+
+    }
+
+    //메세지 출력 타이머
+    private void setMessage(String message, int time) {
+        if(null != m_timer) {
+            m_timer.cancel();
+        }
+
+        final TextView textView = findViewById(R.id.txt_message);
+        textView.setText(message);
+        textView.setVisibility(View.VISIBLE);
+
+        m_timerTask = new TimerTask() {
+            @Override
+            public void run() {
+                runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        textView.setVisibility(View.GONE);
+                        m_timer = null;
+                    }
+                });
+            }
+        };
+
+        m_timer = new Timer();
+        m_timer.schedule(m_timerTask, time);
     }
 
     private void updateTakeCount() {
-        m_textView_count.setText(String.format("%d/%d", m_currentPic_count, m_needPic_count));
+        setMessage(m_currentPic_count + "/" + m_needPic_count, 2000);
     }
 
     @SuppressLint("MissingPermission")
@@ -156,17 +206,35 @@ public class CameraViewer extends AppCompatActivity {
             Size[] jpegSizes = null;
             if(null != m_cameraCharacteristics) {
                 jpegSizes = m_cameraCharacteristics.get(CameraCharacteristics.SCALER_STREAM_CONFIGURATION_MAP).getOutputSizes(ImageFormat.JPEG);
-                //Log.i(DEBUG_TAG, Arrays.toString(jpegSizes));
+                Log.i(DEBUG_TAG, Arrays.toString(jpegSizes));
             }
+
+            ArrayList<Size> jpegList = new ArrayList<>(Arrays.asList(jpegSizes));
+            Collections.reverse(jpegList);
 
             int width = 640;
             int height = 480;
-            if (jpegSizes != null && 0 < jpegSizes.length) {
-                width = jpegSizes[0].getWidth();
-                height = jpegSizes[0].getHeight();
+            for(Size size:jpegList) {
+                if(size.getWidth() >= m_resolution_width && size.getHeight() >= m_resolution_height )
+                {
+                    width = size.getWidth();
+                    height = size.getHeight();
+                    break;
+                }
             }
 
+//            if (jpegSizes != null && 0 < jpegSizes.length) {
+//                width = jpegSizes[0].getWidth();
+//                height = jpegSizes[0].getHeight();
+//            }
+
+            //Log.i(DEBUG_TAG, width + ":" + height);
+            m_font_scale = (float)width / 480;
+
             m_imageReader = ImageReader.newInstance(width, height, ImageFormat.JPEG, 1);
+            Log.i(DEBUG_TAG, width + ":" + height);
+
+
             m_imageReader.setOnImageAvailableListener(new ImageReader.OnImageAvailableListener() {
                 @Override
                 public void onImageAvailable(ImageReader imageReader) {
@@ -285,8 +353,8 @@ public class CameraViewer extends AppCompatActivity {
 
     private void save(Bitmap bitmap) throws IOException {
 
-        int padding = 10;
-        int lineHeight = 10;
+        int padding = Math.round(10 * m_font_scale);
+        int lineHeight = Math.round(10 * m_font_scale);
         final File file = new File(MoniteringApp.APP_STORE_PATH + "/" + System.currentTimeMillis() + ".jpg");
         OutputStream output = null;
 
@@ -310,25 +378,26 @@ public class CameraViewer extends AppCompatActivity {
 
             //calculate rectangle bound box
             Rect rectangleBound = new Rect();
-            paint.setTextSize(20);
+            paint.setTextSize(Math.round(20 * m_font_scale));
             paint.getTextBounds(txtAddress, 0, txtAddress.length(), bound);
             rectangleBound.bottom = bound.height();
 
-            paint.setTextSize(16);
+            paint.setTextSize(Math.round(16 * m_font_scale));
             paint.getTextBounds(txtAddress, 0, txtAddress.length(), bound);
             rectangleBound.bottom += bound.height();
 
             //draw rectangle
             paint.setColor(Color.BLACK);
+            paint.setAlpha(200);
             canvas.drawRect(0, 0, m_imageReader.getWidth(), rectangleBound.height() + (padding * 2) + lineHeight, paint);
 
             //draw text
             paint.setColor(Color.WHITE);
-            paint.setTextSize(20);
+            paint.setTextSize(Math.round(20 * m_font_scale));
             paint.getTextBounds(txtAddress, 0, txtAddress.length(), bound);
             canvas.drawText(txtAddress, ((m_imageReader.getHeight() - bound.width()) * 0.5f), bound.height() + padding, paint);
 
-            paint.setTextSize(16);
+            paint.setTextSize(Math.round(16 * m_font_scale));
             paint.getTextBounds(txtDatetime, 0, txtDatetime.length(), bound);
             canvas.drawText(txtDatetime, ((m_imageReader.getHeight() - bound.width()) * 0.5f), (bound.height() * 2) + padding + lineHeight, paint);
 
