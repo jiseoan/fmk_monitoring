@@ -137,6 +137,18 @@ public class CameraViewer extends AppCompatActivity {
 
         updateTakeCount();
 
+        findViewById(R.id.btn_close).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //촬영 중간에 취소
+                Intent intent = new Intent();
+                intent.putExtra("request_id", m_requestId);
+                intent.putExtra("pics", "[]");
+                setResult(-1, intent);
+                finish();
+            }
+        });
+
         m_textureViewer = findViewById(R.id.texture);
         assert m_textureViewer != null;
 
@@ -150,8 +162,6 @@ public class CameraViewer extends AppCompatActivity {
                 takePicture();
             }
         });
-
-
         setMessage("단지 대표 이미지용\n사진을 촬영해주세요", 2000);
 
 
