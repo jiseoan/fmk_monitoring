@@ -40,7 +40,6 @@ public class DownloadActivity extends AppCompatActivity {
     private String m_filename;
     //private ProgressBar m_progressBar;
     private MediaController m_mediaController;
-    private int m_confirm_type = 0; //0:파일 다운로드, 1:기타
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -77,6 +76,8 @@ public class DownloadActivity extends AppCompatActivity {
         });
 
         videoView.setVisibility(View.GONE);
+
+        ((TextView)findViewById(R.id.title)).setText(intent.getStringExtra("title"));
         findViewById(R.id.imageView).setVisibility(View.GONE);
         findViewById(R.id.btn_close).setOnClickListener(new View.OnClickListener() {
             @Override
@@ -87,13 +88,15 @@ public class DownloadActivity extends AppCompatActivity {
         findViewById(R.id.btn_confirm).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                switch (m_confirm_type) {
-                    case 0:
-                        //download now.
-                        final DownloadFileTask downloadFileTask = new DownloadFileTask(DownloadActivity.this);
-                        downloadFileTask.execute(m_url);
-                        break;
-                }
+                finish();
+            }
+        });
+        findViewById(R.id.btn_download).setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                //download now.
+                final DownloadFileTask downloadFileTask = new DownloadFileTask(DownloadActivity.this);
+                downloadFileTask.execute(m_url);
             }
         });
 
@@ -135,14 +138,11 @@ public class DownloadActivity extends AppCompatActivity {
 
         if(file.exists()) {
             //already exist.
-            //Toast.makeText(DownloadActivity.this, "같은 파일이 존재합니다.", Toast.LENGTH_LONG).show();
             playVideo();
-            m_confirm_type = 1;
         } else {
             findViewById(R.id.download_status).setVisibility(View.VISIBLE);
             int filesize = getFileSize(fileURL);
             setDownloadText(0, filesize);
-            m_confirm_type = 0;
         }
     }
 

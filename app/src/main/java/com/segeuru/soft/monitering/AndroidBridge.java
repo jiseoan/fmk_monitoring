@@ -236,8 +236,9 @@ public class AndroidBridge {
 //    }
 
     @JavascriptInterface
-    public void downloadMedia(String mimeType, String url) {
+    public void downloadMedia(String title, String mimeType, String url) {
         Intent intent = new Intent(m_webViewActivity, DownloadActivity.class);
+        intent.putExtra("title", title);
         intent.putExtra("mime_type", mimeType);
         intent.putExtra("url", url);
         m_webViewActivity.startActivity(intent);
