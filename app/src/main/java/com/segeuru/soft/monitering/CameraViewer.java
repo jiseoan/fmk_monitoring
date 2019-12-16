@@ -162,7 +162,7 @@ public class CameraViewer extends AppCompatActivity {
                 takePicture();
             }
         });
-        setMessage("단지 대표 이미지용\n사진을 촬영해주세요", 2000);
+        setMessage(intent.getStringExtra("frontMessage"), 2000);
 
 
     }

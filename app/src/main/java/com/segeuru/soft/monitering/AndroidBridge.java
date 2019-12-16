@@ -192,13 +192,14 @@ public class AndroidBridge {
     }
 
     @JavascriptInterface
-    public void camera(String requestId, String jsonParams) {
+    public void camera(String requestId, String frontMessage, String jsonParams) {
         JSONObject jsonObject = null;
         try {
             jsonObject = new JSONObject(jsonParams);
 //            Log.d(DEBUG_TAG, jsonObject.getString("address"));
             Intent intent = new Intent(m_webViewActivity, CameraViewer.class);
             intent.putExtra("request_id", requestId);
+            intent.putExtra("frontMessage", frontMessage);
             intent.putExtra("take_count", jsonObject.optInt("take_count", 1));
             intent.putExtra("title", jsonObject.optString("building_name"));
             intent.putExtra("address", jsonObject.optString("address"));

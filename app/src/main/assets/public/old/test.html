@@ -662,7 +662,7 @@ function NativeCallback(command, param, result)
       console.log("cancel");
     break;
     case "reMonitoringCamera":
-      window.android.camera("monitoring", "{take_count: 1, building_name:'송내 자이 아파트', address:'경기도 부천시 소사구 ...'}");
+      window.android.camera("monitoring", "단지 대표 이미지용\n사진을 촬영해주세요.", "{take_count: 1, building_name:'송내 자이 아파트', address:'경기도 부천시 소사구 ...'}");
     break;
     case "cameraResult":
       console.log(param);
@@ -676,7 +676,7 @@ function NativeCallback(command, param, result)
     break;
     case "reAdCamera":
       console.log("reAdCamera");
-      window.android.camera("ad", "{take_count:3, ad_name:'E편한 세상'}");
+      window.android.camera("ad", "테스트2222", "{take_count:3, ad_name:'E편한 세상'}");
     break;
     case "asProcessingReRegistration":
       console.log("asProcessingReRegistration");
