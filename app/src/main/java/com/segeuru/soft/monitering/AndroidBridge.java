@@ -186,6 +186,7 @@ public class AndroidBridge {
     @JavascriptInterface
     public void qrCode() {
         IntentIntegrator intentIntegrator = new IntentIntegrator(m_webViewActivity);
+        intentIntegrator.setPrompt("");
         intentIntegrator.setBeepEnabled(true);
         intentIntegrator.setCaptureActivity(QrReaderActivity.class);
         intentIntegrator.initiateScan();

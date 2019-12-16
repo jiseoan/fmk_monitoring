@@ -10,7 +10,10 @@
         android:id="@+id/qr_reader_view"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        />
+        app:zxing_scanner_layout="@layout/view_qrcode"
+        >
+
+    </com.journeyapps.barcodescanner.DecoratedBarcodeView>
 
     <RelativeLayout
         android:layout_width="match_parent"

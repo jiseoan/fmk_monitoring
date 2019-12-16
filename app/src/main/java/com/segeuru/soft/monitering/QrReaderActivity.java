@@ -4,12 +4,16 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.app.Activity;
 import android.content.Intent;
+import android.graphics.Rect;
 import android.os.Bundle;
 import android.view.View;
 
 import com.google.zxing.client.android.Intents;
+import com.google.zxing.common.detector.WhiteRectangleDetector;
 import com.journeyapps.barcodescanner.CaptureManager;
 import com.journeyapps.barcodescanner.DecoratedBarcodeView;
+import com.journeyapps.barcodescanner.camera.CameraManager;
+
 import static com.google.zxing.integration.android.IntentIntegrator.REQUEST_CODE;
 
 public class QrReaderActivity extends AppCompatActivity implements DecoratedBarcodeView.TorchListener {
