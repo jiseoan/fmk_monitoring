@@ -68,7 +68,6 @@ public class WebviewActivity extends BaseAtivity {
         } else {
             //finish();
         }
-
     }
 
     protected void javaScriptCallback(String command, String param, String result) {

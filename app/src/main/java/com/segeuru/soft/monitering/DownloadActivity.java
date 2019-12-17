@@ -31,6 +31,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.net.URL;
 import java.net.URLConnection;
+import java.text.DecimalFormat;
 
 public class DownloadActivity extends AppCompatActivity {
 
@@ -147,9 +148,12 @@ public class DownloadActivity extends AppCompatActivity {
     }
 
     private void setDownloadText(int received, int total) {
-        received = received != 0 ? received / 1000000 : 0;
-        total = total != 0 ? total / 1000000 : 0;
-        ((TextView)findViewById(R.id.txt_download)).setText(received + "MB/" + total + "MB");
+
+        float receivedMB = received != 0 ? (float)received / 1000000 : 0f;
+        float totalMB = total != 0 ? (float)total / 1000000 : 0f;
+        DecimalFormat formatMB = new DecimalFormat("#.#");
+
+        ((TextView)findViewById(R.id.txt_download)).setText(formatMB.format(receivedMB) + "MB/" + formatMB.format(totalMB) + "MB");
     }
 
     private void playVideo() {

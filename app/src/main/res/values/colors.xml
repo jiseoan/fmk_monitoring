@@ -9,4 +9,6 @@
     <color name="fmk_color_secondary">#4b4bf2</color>
     <color name="fmk_color_third">#01ccbd</color>
     <color name="fmk_color_toolbar">#ba8009</color>
+    <color name="fmk_color_black">#000000</color>
+    <color name="fmk_color_white">#ffffff</color>
 </resources>
