@@ -371,7 +371,6 @@ public class CameraViewer extends AppCompatActivity {
         try {
 //            Bitmap bitmapTmp = bitmap.copy(bitmap.getConfig(), true);
             Bitmap bitmapTmp = rotateImage(bitmap, 90);
-            Canvas canvas = new Canvas(bitmapTmp);
 
             Paint paint = new Paint();
             paint.setTypeface(Typeface.DEFAULT);
@@ -380,9 +379,6 @@ public class CameraViewer extends AppCompatActivity {
 
             String txtAddress = ((TextView)findViewById(R.id.txt_address)).getText().toString();
             String txtDatetime = ((TextView)findViewById(R.id.txt_datetime)).getText().toString();
-
-            paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_OVER));
-            canvas.drawBitmap(bitmapTmp, 0, 0, paint);
 
             Rect bound = new Rect();
 
@@ -396,10 +392,19 @@ public class CameraViewer extends AppCompatActivity {
             paint.getTextBounds(txtAddress, 0, txtAddress.length(), bound);
             rectangleBound.bottom += bound.height();
 
+            int w = bitmapTmp.getWidth(), h = bitmapTmp.getHeight() + rectangleBound.height() + (padding * 2) + lineHeight;
+            Bitmap.Config conf = Bitmap.Config.ARGB_8888; // see other conf types
+            Bitmap bmpExtented = Bitmap.createBitmap(w, h, conf); // this creates a MUTABLE bitmap
+
+            Canvas canvas = new Canvas(bmpExtented);
+
+            //paint.setXfermode(new PorterDuffXfermode(PorterDuff.Mode.SRC_OVER));
+            canvas.drawBitmap(bitmapTmp, 0, rectangleBound.height() + (padding * 2) + lineHeight, paint);
+
             //draw rectangle
-            paint.setColor(Color.BLACK);
-            paint.setAlpha(200);
-            canvas.drawRect(0, 0, m_imageReader.getWidth(), rectangleBound.height() + (padding * 2) + lineHeight, paint);
+//            paint.setColor(Color.BLACK);
+//            paint.setAlpha(200);
+//            canvas.drawRect(0, 0, m_imageReader.getWidth(), rectangleBound.height() + (padding * 2) + lineHeight, paint);
 
             //draw text
             paint.setColor(Color.WHITE);
@@ -412,7 +417,7 @@ public class CameraViewer extends AppCompatActivity {
             canvas.drawText(txtDatetime, ((m_imageReader.getHeight() - bound.width()) * 0.5f), (bound.height() * 2) + padding + lineHeight, paint);
 
             output = new FileOutputStream(file);
-            bitmapTmp.compress(Bitmap.CompressFormat.JPEG, 60, output);
+            bmpExtented.compress(Bitmap.CompressFormat.JPEG, 60, output);
 
 //            ExifInterface exif = new ExifInterface(file.getPath());
 //            exif.setAttribute(ExifInterface.TAG_ORIENTATION, "90");
