@@ -31,14 +31,15 @@ function getPlatform()
   return platform;
 }
 
-function callNative(command, param, param2) {
+function callNative(command, param, param2, param3) {
   var result  = null;
   if (typeof(param) === "undefined") param = "";
   if (typeof(param2) === "undefined") param2 = "";
+  if (typeof(param2) === "undefined") param3 = "";
   var checkOS = getPlatform();
   try {
     if (checkOS == "Android") {
-      console.log("[INFO] callNative('" + command + "', '" + JSON.stringify(param) + "', '" + JSON.stringify(param2) + "')");
+      console.log("[INFO] callNative('" + command + "', '" + JSON.stringify(param) + "', '" + JSON.stringify(param2) + "')" + "', '" + JSON.stringify(param3) + "')");
       if (command == "hideToolBar") {
         // 상단바 안보이기
         result = window.android.hideToolBar();
@@ -81,13 +82,13 @@ function callNative(command, param, param2) {
         window.android.toastMessage(param);
       } else if (command == "downloadMedia") {
         // 동영상/이미지 보기화면 보이기
-        window.android.downloadMedia(param, param2);
+        window.android.downloadMedia(param, param2, param3);
       }
     } else {
-      console.log("ignore callNative('" + command + "', '" + JSON.stringify(param) + "', '" + JSON.stringify(param2) + "')");
+      console.log("ignore callNative('" + command + "', '" + JSON.stringify(param) + "', '" + JSON.stringify(param2) + "')" + "', '" + JSON.stringify(param3) + "')");
     }
   } catch (e) { 
-    console.log("ignore callNative('" + command + "', '" + JSON.stringify(param) + "', '" + JSON.stringify(param2) + "')");
+    console.log("ignore callNative('" + command + "', '" + JSON.stringify(param) + "', '" + JSON.stringify(param2) + "')" + "', '" + JSON.stringify(param3) + "')");
   }
 
   return result;
