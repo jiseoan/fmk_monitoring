@@ -99,12 +99,12 @@
             android:background="@color/fmk_color_third"
             >
 
-            <Button
+            <ImageButton
                 android:id="@+id/btn_cancel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="취소"
-                />
+                android:src="@drawable/btn_cancel"
+                android:background="?android:attr/selectableItemBackgroundBorderless"/>
 
         </LinearLayout>
 
@@ -206,11 +206,12 @@
             android:layout_weight="1"
             android:background="@color/fmk_color_default">
 
-            <Button
+            <ImageButton
                 android:id="@+id/btn_registration"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="등록"/>
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/btn_regist"/>
 
         </LinearLayout>
 
@@ -221,11 +222,12 @@
             android:layout_weight="1"
             android:background="@color/fmk_color_third">
 
-            <Button
+            <ImageButton
                 android:id="@+id/btn_cancel_registration"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="취소" />
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/btn_cancel"/>
 
         </LinearLayout>
 
@@ -241,12 +243,12 @@
         app:layout_constraintBottom_toBottomOf="parent"
         >
 
-        <Button
+        <ImageButton
             android:id="@+id/btn_asProcessingReRegistration"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="AS 처리 재등록"
-            />
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/btn_reasconfirm"/>
 
     </LinearLayout>
 
@@ -306,12 +308,12 @@
         app:layout_constraintBottom_toBottomOf="parent"
         >
 
-        <Button
+        <ImageButton
             android:id="@+id/btn_asProcessingRegistration"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="AS 처리등록"
-            />
+            android:background="?android:attr/selectableItemBackgroundBorderless"
+            android:src="@drawable/btn_asconfirm"/>
 
     </LinearLayout>
 
@@ -333,12 +335,12 @@
             android:background="@color/fmk_color_default"
             >
 
-            <Button
+            <ImageButton
                 android:id="@+id/btn_complete"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="완료"
-                />
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/btn_cancel"/>
 
         </LinearLayout>
 
@@ -350,12 +352,12 @@
             android:background="@color/fmk_color_third"
             >
 
-            <Button
+            <ImageButton
                 android:id="@+id/btn_cancel_complete"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="취소"
-                />
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/btn_cancel"/>
 
         </LinearLayout>
 
