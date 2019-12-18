@@ -106,6 +106,8 @@ public class WebviewActivity extends BaseAtivity {
                 if(null != data) {
                     Log.i(DEBUG_TAG, data.getStringExtra("pics"));
                     String result = data.getStringExtra("pics");
+                    if(result.compareTo("[]") == 0) return; //canceled.
+
                     javaScriptCallback("cameraResult", data.getStringExtra("request_id"), result);
                 }
             }

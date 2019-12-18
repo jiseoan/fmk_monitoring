@@ -130,9 +130,7 @@ $(document).ready(function(){
 
 function cameraResult(param, result) {
   console.log(result);
-  var fileList = JSON.parse(result);
-  if(0 == fileList.length) return; //cancled.
-
+  
   // 촬영 타입과 결과이미지를 저장후 이동한다.
   var mode = param;
   window.localStorage.setItem("shot_result", result);
