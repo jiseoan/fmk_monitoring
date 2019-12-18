@@ -115,7 +115,7 @@ public class WebviewActivity extends BaseAtivity {
             case com.google.zxing.integration.android.IntentIntegrator.REQUEST_CODE: {
                 IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
                 javaScriptCallback("qrScanResult", "null", result.getContents());
-                Toast.makeText(this, "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show();
+//                Toast.makeText(this, "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show();
             }
                 break;
         }

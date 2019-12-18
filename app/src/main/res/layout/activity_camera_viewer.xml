@@ -27,7 +27,8 @@
                 android:layout_gravity="center"
                 android:textColor="#ffffff"
                 android:textSize="18dp"
-                android:text="타이틀"
+                android:maxLines="1"
+                android:ellipsize="end"
                 />
 
             <ImageView

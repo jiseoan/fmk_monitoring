@@ -229,11 +229,10 @@ public class AndroidBridge {
         });
     }
 
-//    @JavascriptInterface
-//    public void downloadVideo() {
-//        Intent intent = new Intent(m_webViewActivity, DownloadActivity.class);
-//        m_webViewActivity.startActivity(intent);
-//    }
+    @JavascriptInterface
+    public void deleteFiles(String jsonFiles) {
+
+    }
 
     @JavascriptInterface
     public void downloadMedia(String title, String mimeType, String url) {

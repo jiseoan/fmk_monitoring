@@ -195,7 +195,8 @@ public class CameraViewer extends AppCompatActivity {
     }
 
     private void updateTakeCount() {
-        setMessage(m_currentPic_count + "/" + m_needPic_count, 2000);
+        if(m_needPic_count > 1)
+            setMessage(m_currentPic_count + "/" + m_needPic_count, 2000);
     }
 
     @SuppressLint("MissingPermission")
