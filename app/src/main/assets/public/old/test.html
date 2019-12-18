@@ -662,7 +662,7 @@ function NativeCallback(command, param, result)
       console.log("cancel");
     break;
     case "reMonitoringCamera":
-      window.android.camera("monitoring", "단지 대표 이미지용\n사진을 촬영해주세요.", "{take_count: 1, building_name:'송내 자이 아파트', address:'경기도 부천시 소사구 ...'}");
+      window.android.camera("monitoring", "단지 대표 이미지용\n사진을 촬영해주세요.", "{take_count: 1, title:'송내 자이 아파트', address:'경기도 부천시 소사구 ...'}");
     break;
     case "cameraResult":
       console.log(param);

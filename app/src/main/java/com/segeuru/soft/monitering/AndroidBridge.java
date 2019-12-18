@@ -202,7 +202,7 @@ public class AndroidBridge {
             intent.putExtra("request_id", requestId);
             intent.putExtra("frontMessage", frontMessage);
             intent.putExtra("take_count", jsonObject.optInt("take_count", 1));
-            intent.putExtra("title", jsonObject.optString("building_name"));
+            intent.putExtra("title", jsonObject.optString("title"));
             intent.putExtra("address", jsonObject.optString("address"));
             intent.putExtra("ad_name", jsonObject.optString("ad_name"));
             m_webViewActivity.startActivityForResult(intent, WebviewActivity.REQUEST_CODE);
