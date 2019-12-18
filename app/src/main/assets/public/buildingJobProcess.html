@@ -44,7 +44,9 @@ var buildingLocateId = null;
 var jobId = null;
 var shotResult = null;
 var buildingData = null;
+var jobData = null;
 var shotListSliderVue = null;
+var titleTxt = null;
 $(document).ready(function(){
   callNative('toolBar', 'main', "");
   callNative("hideBottomActionBar");
@@ -63,23 +65,45 @@ $(document).ready(function(){
     buildingData = buildingRes;
   }
   
-  callNative('setTitle', buildingData.building_locate_name);
+  titleTxt = buildingData.building_locate_name;
+
+  if (mode =='monitoring') {
+    // 모니터링 리스트 가져옴
+    var jobData = dbRowArray("SELECT * FROM monitoring_request WHERE  monitoring_request_id='" + jobId + "'");
+  } else if (mode =='ad') {
+    // 게첨 리스트 가져옴
+    var jobData = dbRowArray("SELECT * FROM ad_check_request WHERE  ad_check_building_id='" + jobId + "'");
+
+    titleTxt = jobData.ad_name;
+  }
+  
+  callNative('setTitle', titleTxt);
 
   if (mode == "monitoring") {
     // 모니터링 촬영촬영용 설정을 한다.
     callNative('bottomActionBar', 'retakeAndAsAndConfirm', mode);
-    var h = ($( window ).height() - 180);
+    var h = $( window ).height();
     $(".return .img img").attr("height", h);
 
   } else if (mode == "building") {
     // 단지 대표 이미지 촬영용 설정을 한다.
     callNative('bottomActionBar', 'retakeAndConfirm', mode);
-    var h = ($( window ).height() - 180);
+    var h = $( window ).height();
   } else if (mode == "ad") {
     // 광고촬영용 설정을 한다.
     callNative('bottomActionBar', 'retakeAndConfirm', mode);
-    var h = ($( window ).height() - 180);
+    var h = $( window ).height();
   }
+
+  $( window ).resize(function() {
+    if (mode == "ad") {
+      var ht = $( window ).height();
+      if (shotListSliderVue) shotListSliderVue.height = ht;
+    } else {
+      var ht = $( window ).height();
+      $(".return .img img").attr("height", ht);
+    }
+  });
 
   if (mode == "ad") {
     Vue.use(VueAwesomeSwiper);
@@ -121,9 +145,10 @@ $(document).ready(function(){
 
 function paramData() {
   if (mode == "monitoring") {
-    return ["모니터링용\n매체사진을 촬영해주세요.", {take_count: 1, title: buildingData.building_locate_name, address: buildingData.address}];
+    return ["모니터링용\n매체사진을 촬영해주세요.", {take_count: 1, title: titleTxt, address: buildingData.address}];
   } else if (mode == "ad") {
-    return ["광고게첨용\n매체사진을 5장 촬영해주세요.", {take_count: 5, title: null, address: buildingData.address}];
+    shotListSliderVue.$refs.awesomeSwiper.swiper.slideTo(0);
+    return ["광고게첨용\n매체사진을 5장 촬영해주세요.", {take_count: 5, title: titleTxt, address: buildingData.address}];
   }
 }
 
