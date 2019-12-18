@@ -384,11 +384,11 @@ public class CameraViewer extends AppCompatActivity {
 
             //calculate rectangle bound box
             Rect rectangleBound = new Rect();
-            paint.setTextSize(Math.round(20 * m_font_scale));
+            paint.setTextSize(Math.round(13 * m_font_scale));
             paint.getTextBounds(txtAddress, 0, txtAddress.length(), bound);
             rectangleBound.bottom = bound.height();
 
-            paint.setTextSize(Math.round(16 * m_font_scale));
+            paint.setTextSize(Math.round(13 * m_font_scale));
             paint.getTextBounds(txtAddress, 0, txtAddress.length(), bound);
             rectangleBound.bottom += bound.height();
 
@@ -397,11 +397,11 @@ public class CameraViewer extends AppCompatActivity {
 
             //draw text
             paint.setColor(Color.WHITE);
-            paint.setTextSize(Math.round(20 * m_font_scale));
+            paint.setTextSize(Math.round(13 * m_font_scale));
             paint.getTextBounds(txtAddress, 0, txtAddress.length(), bound);
             canvas.drawText(txtAddress, ((m_imageReader.getHeight() - bound.width()) * 0.5f), bound.height() + padding, paint);
 
-            paint.setTextSize(Math.round(16 * m_font_scale));
+            paint.setTextSize(Math.round(13 * m_font_scale));
             paint.getTextBounds(txtDatetime, 0, txtDatetime.length(), bound);
             canvas.drawText(txtDatetime, ((m_imageReader.getHeight() - bound.width()) * 0.5f), (bound.height() * 2) + padding + lineHeight, paint);
 
