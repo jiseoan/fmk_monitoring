@@ -79,14 +79,14 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:layout_weight="1"
-            android:background="@color/fmk_color_default"
+            android:background="@color/fmk_color_cancel"
             >
 
             <ImageButton
-                android:id="@+id/btn_monitoringCamera"
+                android:id="@+id/btn_cancel"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/btn_work"
+                android:src="@drawable/btn_cancel"
                 android:background="?android:attr/selectableItemBackgroundBorderless"/>
 
         </LinearLayout>
@@ -100,10 +100,10 @@
             >
 
             <ImageButton
-                android:id="@+id/btn_cancel"
+                android:id="@+id/btn_monitoringCamera"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:src="@drawable/btn_cancel"
+                android:src="@drawable/btn_work"
                 android:background="?android:attr/selectableItemBackgroundBorderless"/>
 
         </LinearLayout>
@@ -199,19 +199,20 @@
         android:background="@drawable/bg_border"
         app:layout_constraintBottom_toBottomOf="parent"
         >
+
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:gravity="center"
             android:layout_weight="1"
-            android:background="@color/fmk_color_default">
+            android:background="@color/fmk_color_cancel">
 
             <ImageButton
-                android:id="@+id/btn_registration"
+                android:id="@+id/btn_cancel_registration"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/btn_regist"/>
+                android:src="@drawable/btn_cancel"/>
 
         </LinearLayout>
 
@@ -223,11 +224,11 @@
             android:background="@color/fmk_color_third">
 
             <ImageButton
-                android:id="@+id/btn_cancel_registration"
+                android:id="@+id/btn_registration"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/btn_cancel"/>
+                android:src="@drawable/btn_regist"/>
 
         </LinearLayout>
 
@@ -243,12 +244,37 @@
         app:layout_constraintBottom_toBottomOf="parent"
         >
 
-        <ImageButton
-            android:id="@+id/btn_asProcessingReRegistration"
-            android:layout_width="wrap_content"
+        <LinearLayout
+            android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/btn_reasconfirm"/>
+            android:gravity="center"
+            android:layout_weight="1"
+            android:background="@color/fmk_color_cancel">
+
+            <ImageButton
+                android:id="@+id/btn_cancel_asssssss"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/btn_cancel"/>
+
+        </LinearLayout>
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:gravity="center"
+            android:layout_weight="1"
+            android:background="@color/fmk_color_third">
+
+            <ImageButton
+                android:id="@+id/btn_asProcessingReRegistration"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:background="?android:attr/selectableItemBackgroundBorderless"
+                android:src="@drawable/btn_reasconfirm"/>
+
+        </LinearLayout>
 
     </LinearLayout>
 
@@ -332,11 +358,11 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:layout_weight="1"
-            android:background="@color/fmk_color_default"
+            android:background="@color/fmk_color_cancel"
             >
 
             <ImageButton
-                android:id="@+id/btn_complete"
+                android:id="@+id/btn_cancel_complete"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
@@ -353,11 +379,11 @@
             >
 
             <ImageButton
-                android:id="@+id/btn_cancel_complete"
+                android:id="@+id/btn_complete"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/btn_cancel"/>
+                android:src="@drawable/btn_complete"/>
 
         </LinearLayout>
 
