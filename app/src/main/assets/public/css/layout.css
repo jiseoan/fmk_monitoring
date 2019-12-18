@@ -619,7 +619,8 @@ input {
 .return .slider .swiper-container .swiper-slide {
   text-align: center;
 }
-.return .slider .swiper-navigation > a {
+.return .slider .swiper-container .swiper-button-prev,
+.return .slider .swiper-container .swiper-button-next{
   width: 1.625rem;
   height: 2.8125rem;
   margin-top: -1.375rem;
@@ -628,15 +629,14 @@ input {
   background-size: 13px auto;
   background-position: center;
 }
-.return .slider .swiper-navigation > a:active {
+.return .slider .swiper-container .swiper-button-prev:active,
+.return .slider .swiper-container .swiper-button-next:active, {
   opacity: 0.3;
 }
-.return .slider .swiper-navigation .swiper-button-prev {
-  left: -4px;
+.return .slider .swiper-container .swiper-button-prev {
   transform: rotate(180deg);
 }
-.return .slider .swiper-navigation .swiper-button-next {
-  right: -4px;
+.return .slider .swiper-container .swiper-button-next {
 }
 .return .slider .swiper-pagination {
   font-size: 0.8125rem;

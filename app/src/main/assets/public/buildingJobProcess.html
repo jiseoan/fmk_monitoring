@@ -7,115 +7,136 @@
   <title>Focus Media Korea Monitoring App</title>
   <link rel="stylesheet" type="text/css" href="css/base.css"/>
   <link rel="stylesheet" type="text/css" href="css/layout.css"/>
+  <link rel="stylesheet" type="text/css" href="css/swiper.css"/>
   <link rel="stylesheet" type="text/css" href="../vendor/jquery-confirm/dist/jquery-confirm.min.css">
   <script type="text/javascript" src="../vendor/jquery/jquery-3.1.1.min.js"></script>
   <script type="text/javascript" src="../vendor/vue/vue.js"></script>
   <script type="text/javascript" src="../vendor/jquery-confirm/dist/jquery-confirm.min.js"></script>
   <script type="text/javascript" src="js/swiper.js"></script>
+  <script type="text/javascript" src="js/vue-awesome-swiper.js"></script>
   <script type="text/javascript" src="../vendor/common/common.js"></script>
+  <style type="text/css">
+    .return .slider .swiper-pagination {
+      line-height: 2.4;
+    }
+  </style>
 </head>
 <body style="background: #000" id="buildingJobProcess">
-  <article class="return">
-    <div class="slider">
-      <div class="swiper-container">
-        <div class="swiper-wrapper">
-          <div class="swiper-slide"><img src="asset/images/return-img.png" alt=""></div>
-          <div class="swiper-slide"><img src="asset/images/return-img.png" alt=""></div>
-          <div class="swiper-slide"><img src="asset/images/return-img.png" alt=""></div>
-          <div class="swiper-slide"><img src="asset/images/return-img.png" alt=""></div>
-        </div>
-      </div>
-      <div class="swiper-pagination"></div>
-      <div class="swiper-navigation">
-        <a class="swiper-button-prev"></a>
-        <a class="swiper-button-next"></a>
-      </div>
+  <article class="return" style="padding: 0 0;display: none;" id="shotListSlider">
+    <div class="slider" v-if="mode == 'ad'" v-on:height="height" v-on:shotList="shotList">
+      <swiper ref="awesomeSwiper" :options="swiperOption">
+        <!-- slides -->
+        <swiper-slide v-for="(item, index) in shotList" v-bind:key="item.id"><img v-bind:src="item.filepath" v-bind:height="height"></swiper-slide>
+        <!-- Optional controls -->
+        <div class="swiper-pagination"  slot="pagination"></div>
+        <div class="swiper-button-prev" slot="button-prev"></div>
+        <div class="swiper-button-next" slot="button-next"></div>
+      </swiper>
     </div>
-    <div class="content">
-      <p>반려</p>
-      <div class="table">
-        <table>
-          <tr>
-            <th>반려 유형</th>
-            <td>동일 광고 컷 반복</td>
-          </tr>
-          <tr>
-            <th>반려 사유</th>
-            <td>
-              광고 컷이 겹칩니다. <br>
-              각기 다른 컷으로 촬영해주세요.
-            </td>
-          </tr>
-        </table>
-      </div>
+    <div class="img" v-else style="text-align: center;">
+      <img v-for="(item, index) in shotList" v-bind:src="item.filepath" v-bind:height="height">
     </div>
   </article>
 
 <script language="javascript" type="text/javascript">
-var param2 = {take_count: 1, building_name : "송내 자이 아파트 101동 1호기", address: "경기도 부천시 소사구 송내동 409"};
-var param3 = {take_count: 5, ad_name : "설화수 이영애 2차"};
-var shotMode = window.localStorage.getItem("shot_mode");
-var shotResult = window.localStorage.getItem("shot_result");
+var mode = null;
+var buildingLocateId = null;
+var jobId = null;
+var shotResult = null;
+var buildingData = null;
+var shotListSliderVue = null;
 $(document).ready(function(){
-  new Swiper('.return .swiper-container', {
-    loop: true,
-    pagination: {
-      el: '.swiper-pagination',
-      type: 'fraction',
-    },
-    navigation: {
-      nextEl: '.swiper-button-next',
-      prevEl: '.swiper-button-prev',
-    },
-  });
-  callNative('toolBar', 'main', '송내 자이 아파트 101동 1호기(test)');
-  if (shotMode == "monitoring") {
-    // 모니터링 촬영촬영용 설정을 한다.
-    callNative('bottomActionBar', 'retakeAndAsAndConfirm', shotMode);
-  } else if (shotMode == "building") {
-    // 단지 대표 이미지 촬영용 설정을 한다.
-    callNative('bottomActionBar', 'retakeAndConfirm', shotMode);
-  } else if (shotMode == "ad") {
-    // 광고촬영용 설정을 한다.
-    callNative('bottomActionBar', 'retakeAndConfirm', shotMode);
+  callNative('toolBar', 'main', "");
+  callNative("hideBottomActionBar");
+
+  mode = $.urlParam("mode");
+  buildingLocateId = $.urlParam("id");
+  jobId = $.urlParam("jobId");
+  shotResult = window.localStorage.getItem("shot_result");
+  //shotResult = JSON.stringify([{"filepath":"./images/return-img.png"},{"filepath":"./images/return-img.png"},{"filepath":"./images/return-img.png"},{"filepath":"./images/return-img.png"},{"filepath":"./images/return-img.png"}]);
+
+  var buildingRes = dbRowArray("SELECT b.building_id,bl.building_locate_id, b.building_name, bl.dong, bl.unit_name, b.building_name||' '||bl.dong||' '||bl.unit_name AS building_locate_name, b.address FROM building_locate bl JOIN building b ON bl.building_id=b.building_id WHERE bl.building_locate_id='" + buildingLocateId + "'");
+
+  //var buildingRes = [{"building_id":"1329","building_locate_id":"18424","building_name":"전농동아아파트","dong":"103동","unit_name":"1호기","building_locate_name":"전농동아아파트 103동 1호기","address":"서울시 동대문구 전농1동 645-3번지"}]
+
+  if (buildingRes) {
+    buildingData = buildingRes;
   }
+  
+  callNative('setTitle', buildingData.building_locate_name);
+
+  if (mode == "monitoring") {
+    // 모니터링 촬영촬영용 설정을 한다.
+    callNative('bottomActionBar', 'retakeAndAsAndConfirm', mode);
+    var h = ($( window ).height() - 180);
+    $(".return .img img").attr("height", h);
+
+  } else if (mode == "building") {
+    // 단지 대표 이미지 촬영용 설정을 한다.
+    callNative('bottomActionBar', 'retakeAndConfirm', mode);
+    var h = ($( window ).height() - 180);
+  } else if (mode == "ad") {
+    // 광고촬영용 설정을 한다.
+    callNative('bottomActionBar', 'retakeAndConfirm', mode);
+    var h = ($( window ).height() - 180);
+  }
+
+  if (mode == "ad") {
+    Vue.use(VueAwesomeSwiper);
+
+    shotListSliderVue = new Vue({
+      el: '#shotListSlider',
+      data: {
+        mode: mode,
+        height: h,
+        shotList:[],
+        swiperOption: {
+          pagination: {
+            el: '.swiper-pagination',
+            type: 'fraction',
+          },
+          navigation: {
+            nextEl: '.swiper-button-next',
+            prevEl: '.swiper-button-prev'
+          }
+        },
+      }
+    });
+  } else {
+
+    shotListSliderVue = new Vue({
+      el: '#shotListSlider',
+      data: {
+        mode: mode,
+        height: h,
+        shotList:[]
+      }
+    });
+  }
+
+  shotListSliderVue.shotList = $.parseJSON(shotResult);
+
+  $(".return").css("display", "block");
 });
 
 function paramData() {
-  if (shotMode == "ad") {
-    return param3;
-  } else {
-    return param2;
+  if (mode == "monitoring") {
+    return ["모니터링용\n매체사진을 촬영해주세요.", {take_count: 1, building_name : buildingData.building_locate_name, address: buildingData.address}];
+  } else if (mode == "ad") {
+    return ["광고게첨용\n매체사진을 5장 촬영해주세요.", {take_count: 5, ad_name : null, address: buildingData.address}];
   }
 }
 
 function cameraResult(param, result) {
   // 촬영 타입과 결과이미지를 저장후 이동한다.
-  window.localStorage.setItem("shot_mode", param);
   window.localStorage.setItem("shot_result", result);
-
-  // shotMode = window.localStorage.getItem("shot_mode");
-  // shotResult = window.localStorage.getItem("shot_result");
-
-  // 이미지 미리보는 화면을 재갱신한다.
-  preview(result);
+  shotResult = window.localStorage.getItem("shot_result");
+  shotListSliderVue.shotList = $.parseJSON(shotResult);
 }
 
 function asRequest() {
   //AS요청으로 이동한다.
   location.href = "asRequest.html";
-}
-
-//let jsonString = window.localStorage.getItem("shot_result");
-preview(window.localStorage.getItem("shot_result"));
-
-function preview(jsonString) {
-  let jsonObject = JSON.parse(jsonString);
-  console.log("xxxxx----------------------------");
-  console.log(jsonString);
-  console.log(jsonObject.length);
-  console.log(jsonObject[0].filepath);
-  $('#preview').attr("src", jsonObject[0].filepath);
 }
 
 </script>

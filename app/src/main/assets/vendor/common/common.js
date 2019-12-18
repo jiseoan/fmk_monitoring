@@ -35,11 +35,11 @@ function callNative(command, param, param2, param3) {
   var result  = null;
   if (typeof(param) === "undefined") param = "";
   if (typeof(param2) === "undefined") param2 = "";
-  if (typeof(param2) === "undefined") param3 = "";
+  if (typeof(param3) === "undefined") param3 = "";
   var checkOS = getPlatform();
   try {
     if (checkOS == "Android") {
-      console.log("[INFO] callNative('" + command + "', '" + JSON.stringify(param) + "', '" + JSON.stringify(param2) + "')" + "', '" + JSON.stringify(param3) + "')");
+      console.log("[INFO] callNative('" + command + "', '" + JSON.stringify(param) + "', '" + JSON.stringify(param2) + "', '" + JSON.stringify(param3) + "')");
       if (command == "hideToolBar") {
         // 상단바 안보이기
         result = window.android.hideToolBar();
@@ -74,7 +74,7 @@ function callNative(command, param, param2, param3) {
         window.android.newWebView(param);
       } else if (command == "camera") {
         // 카메라 촬영 보이기
-        window.android.camera(param, JSON.stringify(param2));
+        window.android.camera(param, param2, JSON.stringify(param3));
       } else if (command == "massQueries") {
         window.android.massQueries(JSON.stringify(param));
       } else if (command == "toastMessage") {
@@ -85,10 +85,10 @@ function callNative(command, param, param2, param3) {
         window.android.downloadMedia(param, param2, param3);
       }
     } else {
-      console.log("ignore callNative('" + command + "', '" + JSON.stringify(param) + "', '" + JSON.stringify(param2) + "')" + "', '" + JSON.stringify(param3) + "')");
+      console.log("ignore callNative('" + command + "', '" + JSON.stringify(param) + "', '" + JSON.stringify(param2) + "', '" + JSON.stringify(param3) + "')");
     }
   } catch (e) { 
-    console.log("ignore callNative('" + command + "', '" + JSON.stringify(param) + "', '" + JSON.stringify(param2) + "')" + "', '" + JSON.stringify(param3) + "')");
+    console.log("ignore callNative('" + command + "', '" + JSON.stringify(param) + "', '" + JSON.stringify(param2) + "', '" + JSON.stringify(param3) + "')");
   }
 
   return result;
@@ -146,15 +146,25 @@ function NativeCallback(command, param, result)
         // 모니터링 촬영, 모니터링 재촬영, 단지 대표이미지 재촬영, 광고 재촬영
         var param = "";
         var param2 = "";
-
+        var param3 = "";
+        console.log("1");
         if (typeof window["paramData"] === "function") {
-          param2 = paramData();
+          console.log("2");
+          var addParam = paramData();
+          console.log(addParam);
+          param2 = addParam[0];
+          param3 = addParam[1];
+        } else {
+          console.log("no function paramData()");
         }
+        console.log("3");
 
         if(command == "monitoringCamera" || command == "reMonitoringCamera") param = "monitoring";
         if (command == "reBuildingCamera") param = "building";
         if (command == "reAdCamera") param = "ad";
-        window.android.camera(param, JSON.stringify(param2));
+
+        console.log("ignore callNative('" + command + "', '" + JSON.stringify(param) + "', '" + JSON.stringify(param2) + "', '" + JSON.stringify(param3) + "')");
+        window.android.camera(param, param2, JSON.stringify(param3));
       }
       else if (command == "cameraResult")
       {

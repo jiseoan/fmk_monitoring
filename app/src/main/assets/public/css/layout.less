@@ -150,14 +150,12 @@ input { border: 0; }
   .slider { .rel;
     .swiper-container {
       .swiper-slide { .tc; }
-    }
-    .swiper-navigation {
-      > a { .wh(26,45); .mt(-22); .bg('../images/slider-arrow.png'); .no-repeat; background-size: 13px auto; background-position: center;
+      .swiper-button-prev, .swiper-button-next { .wh(26,45); .mt(-22); .bg('../images/slider-arrow.png'); .no-repeat; background-size: 13px auto; background-position: center;
         &:active { opacity: 0.3; }
       }
-      .swiper-button-prev { left: -4px; transform: rotate(180deg); }
-      .swiper-button-next { right: -4px; }
     }
+    .swiper-button-prev { transform: rotate(180deg); }
+    .swiper-button-next {}
     .swiper-pagination { .fs(13); color: #fff; .mont; bottom:-5px; letter-spacing: -1px; }
   }
   .content { .mt(10); border-radius: 5px; overflow: hidden;;
