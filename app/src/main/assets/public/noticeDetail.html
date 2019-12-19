@@ -1,0 +1,51 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, user-scalable=no">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Focus Media Korea Monitoring App</title>
+  <link rel="stylesheet" type="text/css" href="css/base.css"/>
+  <link rel="stylesheet" type="text/css" href="css/layout.css"/>
+  <link rel="stylesheet" type="text/css" href="../vendor/jquery-confirm/dist/jquery-confirm.min.css">
+  <script type="text/javascript" src="../vendor/jquery/jquery-3.1.1.min.js"></script>
+  <script type="text/javascript" src="../vendor/vue/vue.js"></script>
+  <script type="text/javascript" src="../vendor/jquery-confirm/dist/jquery-confirm.min.js"></script>
+  <script type="text/javascript" src="../vendor/common/common.js"></script>
+</head>
+<body style="background: #fff">
+  <article class="notice-detail" id="noticeDetail">
+    <div class="head" v-cloak>
+      <p class="ttl">{{ title }}</p>
+      <p class="date">{{ createDate }}</p>
+    </div>
+    <div class="content" v-cloak>
+      <pre>{{ content }}</pre>
+    </div>
+  </article>
+
+  <script language="javascript" type="text/javascript">
+  $(document).ready(function(){
+    callNative('toolBar', 'main', '');
+    callNative("bottomActionBar","onlyList");
+
+    var noticeId = $.urlParam("id");
+    var noticeData = dbRowArray("SELECT * FROM notice WHERE notice_id = '" + noticeId + "'");
+
+    if (noticeData) {
+      callNative('setTitle', noticeData.title);
+
+      new Vue({
+        el: '#noticeDetail',
+        data: {
+          title: noticeData.title,
+          createDate: noticeData.create_date,
+          content: noticeData.content,
+        }
+      });      
+    }
+  });
+  </script>
+
+</body>
+</html>

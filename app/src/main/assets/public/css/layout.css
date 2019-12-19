@@ -524,6 +524,15 @@ input {
   line-height: 1;
   margin-top: 0.375rem;
 }
+.notice .list li.point {
+  background-color: #c68b28;
+}
+.notice .list li.point p {
+  color:#fff;
+}
+.notice .list li.point a:after {
+  background-image: url(../images/slider-arrow.png);
+}
 .notice .list li + li {
   margin-top: 0.625rem;
 }
@@ -1258,3 +1267,5 @@ input {
   border-radius: 0.25rem;
   background: #01CCBD;
 }
+
+[v-cloak] { display: none !important; }

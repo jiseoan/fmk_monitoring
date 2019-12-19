@@ -7,21 +7,110 @@
   <title>Focus Media Korea Monitoring App</title>
   <link rel="stylesheet" type="text/css" href="css/base.css"/>
   <link rel="stylesheet" type="text/css" href="css/layout.css"/>
+  <link rel="stylesheet" type="text/css" href="css/swiper.css"/>
   <link rel="stylesheet" type="text/css" href="../vendor/jquery-confirm/dist/jquery-confirm.min.css">
   <script type="text/javascript" src="../vendor/jquery/jquery-3.1.1.min.js"></script>
   <script type="text/javascript" src="../vendor/vue/vue.js"></script>
   <script type="text/javascript" src="../vendor/jquery-confirm/dist/jquery-confirm.min.js"></script>
+  <script type="text/javascript" src="js/swiper.js"></script>
+  <script type="text/javascript" src="js/vue-awesome-swiper.js"></script>
   <script type="text/javascript" src="../vendor/common/common.js"></script>
+  <style type="text/css">
+    .return .slider .swiper-pagination {
+      line-height: 2.4;
+    }
+  </style>
 </head>
 <body id="buildingJobProcessList">
-<div class="container">
-  <article>
+  <article class="monitoring-ad">
     <div class="tab">
       <a href="#" class="on"><span>모니터링</span></a>
       <a href="#"><span>광고촬영</span></a>
     </div>
-    <div class="monitoring wrapper" id="monitoringJob">
-      <ul class="monitoring-list" id="monitoringJobList">
+    <div class="cont-wrap">
+      <div class="monitoring on">
+        <ul class="monitoring-list">
+        <li>
+          <a href="#">
+            <span class="img"><img src="asset/images/monitoring-img.png" alt=""></span>
+            <span class="location">
+              <span>201동</span>
+              <span>1호기</span>
+            </span>
+          </a>
+        </li>
+        <li>
+          <a href="#">
+            <span class="img"><img src="asset/images/monitoring-img.png" alt=""></span>
+            <span class="location">
+              <span>201동</span>
+              <span>1호기</span>
+            </span>
+          </a>
+        </li>
+        <li>
+          <a href="#">
+            <span class="img"><img src="asset/images/monitoring-img.png" alt=""></span>
+            <span class="location">
+              <span>201동</span>
+              <span>1호기</span>
+            </span>
+          </a>
+        </li>
+        <li>
+          <a href="#">
+            <span class="img"><img src="asset/images/monitoring-img.png" alt=""></span>
+            <span class="location">
+              <span>201동</span>
+              <span>1호기</span>
+            </span>
+          </a>
+        </li>
+        <li>
+          <a href="#">
+            <span class="img"><img src="asset/images/monitoring-img.png" alt=""></span>
+            <span class="location">
+              <span>201동</span>
+              <span>1호기</span>
+            </span>
+          </a>
+        </li>
+        <li>
+          <a href="#">
+            <span class="img"><img src="asset/images/monitoring-img.png" alt=""></span>
+            <span class="location">
+              <span>201동</span>
+              <span>1호기</span>
+            </span>
+          </a>
+        </li>
+        <li>
+          <a href="#">
+            <span class="img"><img src="asset/images/monitoring-img.png" alt=""></span>
+            <span class="location">
+              <span>201동</span>
+              <span>1호기</span>
+            </span>
+          </a>
+        </li>
+        <li>
+          <a href="#">
+            <span class="img"><img src="asset/images/monitoring-img.png" alt=""></span>
+            <span class="location">
+              <span>201동</span>
+              <span>1호기</span>
+            </span>
+          </a>
+        </li>
+        <li>
+          <a href="#">
+            <span class="img"><img src="asset/images/monitoring-img.png" alt=""></span>
+            <span class="location">
+              <span>201동</span>
+              <span>1호기</span>
+            </span>
+          </a>
+        </li>
         <li>
           <a href="#">
             <span class="img"><img src="asset/images/monitoring-img.png" alt=""></span>
@@ -131,118 +220,121 @@
           </a>
         </li>
       </ul>
-    </div>
-    <div class="ad wrapper" id="adJob">
-      <ul class="ad-list" id="adJobList">
-        <li>
-          <a>
-            <span class="badge red">반려</span>
-            <p>광고촬영</p>
-            <p class="red">반려유형 : 동일 광고 컷 촬영</p>
-          </a>
-          <div>
-            <p>&lt;버거킹 IRON DRAGON편 1차&gt;</p>
-          </div>
-        </li>
-        <li>
-          <a>
-            <span class="badge gray">미완료</span>
-            <p>광고촬영</p>
-          </a>
-          <div>
-            <p>&lt;버거킹 IRON DRAGON편 1차&gt;</p>
-          </div>
-        </li>
-        <li>
-          <a>
-            <span class="badge green">완료</span>
-            <p>광고촬영</p>
-          </a>
-          <div>
-            <p>&lt;버거킹 IRON DRAGON편 1차&gt;</p>
-            <ul class="monitoring-list">
-              <li>
-                <a href="#">
-                  <span class="img"><img src="asset/images/monitoring-img.png" alt=""></span>
-                  <span class="location">단지 대표 이미지</span>
-                </a>
-              </li>
-              <li>
-                <a href="#">
-                  <span class="img"><img src="asset/images/monitoring-img.png" alt=""></span>
-                  <span class="location">
-                    <span>201동</span>
-                    <span>1호기</span>
-                  </span>
-                </a>
-              </li>
-              <li>
-                <a href="#">
-                  <span class="img"><img src="asset/images/monitoring-img.png" alt=""></span>
-                  <span class="location">
-                    <span>201동</span>
-                    <span>1호기</span>
-                  </span>
-                </a>
-              </li>
-              <li>
-                <a href="#">
-                  <span class="img"><img src="asset/images/monitoring-img.png" alt=""></span>
-                  <span class="location">
-                    <span>201동</span>
-                    <span>1호기</span>
-                  </span>
-                </a>
-              </li>
-              <li>
-                <a href="#">
-                  <span class="img"><img src="asset/images/monitoring-img.png" alt=""></span>
-                  <span class="location">
-                    <span>201동</span>
-                    <span>1호기</span>
-                  </span>
-                </a>
-              </li>
-              <li>
-                <a href="#">
-                  <span class="img"><img src="asset/images/monitoring-img.png" alt=""></span>
-                  <span class="location">
-                    <span>201동</span>
-                    <span>1호기</span>
-                  </span>
-                </a>
-              </li>
-            </ul>
-          </div>
-        </li>
-      </ul>
+      </div>
+      <div class="ad">
+        <ul>
+          <li>
+            <div>
+              <span class="badge red">반려</span>
+              <p>광고촬영</p>
+              <p class="red">반려유형 : 동일 광고 컷 촬영</p>
+              <a class="btn" href="#"></a>
+            </div>
+            <div>
+              <p>&lt;버거킹 IRON DRAGON편 1차&gt;</p>
+            </div>
+          </li>
+          <li>
+            <div>
+              <span class="badge gray">미완료</span>
+              <p>광고촬영</p>
+              <a class="btn" href="#"></a>
+            </div>
+            <div>
+              <p>&lt;버거킹 IRON DRAGON편 1차&gt;</p>
+            </div>
+          </li>
+          <li>
+            <div>
+              <span class="badge green">완료</span>
+              <p>광고촬영</p>
+              <a class="btn" href="#"></a>
+            </div>
+            <div>
+              <p>&lt;버거킹 IRON DRAGON편 1차&gt;</p>
+              <ul class="monitoring-list">
+                <li>
+                  <a href="#">
+                    <span class="img"><img src="asset/images/monitoring-img.png" alt=""></span>
+                    <span class="location">단지 대표 이미지</span>
+                  </a>
+                </li>
+                <li>
+                  <a href="#">
+                    <span class="img"><img src="asset/images/monitoring-img.png" alt=""></span>
+                    <span class="location">
+                      <span>201동</span>
+                      <span>1호기</span>
+                    </span>
+                  </a>
+                </li>
+                <li>
+                  <a href="#">
+                    <span class="img"><img src="asset/images/monitoring-img.png" alt=""></span>
+                    <span class="location">
+                      <span>201동</span>
+                      <span>1호기</span>
+                    </span>
+                  </a>
+                </li>
+                <li>
+                  <a href="#">
+                    <span class="img"><img src="asset/images/monitoring-img.png" alt=""></span>
+                    <span class="location">
+                      <span>201동</span>
+                      <span>1호기</span>
+                    </span>
+                  </a>
+                </li>
+                <li>
+                  <a href="#">
+                    <span class="img"><img src="asset/images/monitoring-img.png" alt=""></span>
+                    <span class="location">
+                      <span>201동</span>
+                      <span>1호기</span>
+                    </span>
+                  </a>
+                </li>
+                <li>
+                  <a href="#">
+                    <span class="img"><img src="asset/images/monitoring-img.png" alt=""></span>
+                    <span class="location">
+                      <span>201동</span>
+                      <span>1호기</span>
+                    </span>
+                  </a>
+                </li>
+              </ul>
+            </div>
+          </li>
+        </ul>
+      </div>
     </div>
   </article>
-</div>
 
-<script language="javascript" type="text/javascript">
-$(document).ready(function(){
-  callNative('toolBar', 'main', "송내 자이 아파트");
-  callNative("hideBottomActionBar");
+  <script language="javascript" type="text/javascript">
+  $(document).ready(function(){
+    callNative('toolBar', 'main', "송내 자이 아파트");
+    callNative("hideBottomActionBar");
 
-  $("#monitoringJobList .list-item").on('click', function() {
-    var processflag = $(this).data("process-flag");
-    if (processflag == "Y") {
-      // 모니터링/광고촬영 처리 상세로 이동한다.
-      location.href = "buildingJobProcessDetail.html";
-    } 
-    else if (processflag == "N") {
+    $("#monitoringJobList .list-item").on('click', function() {
+      var processflag = $(this).data("process-flag");
+      if (processflag == "Y") {
+        // 모니터링/광고촬영 처리 상세로 이동한다.
+        location.href = "buildingJobProcessDetail.html";
+      } 
+      else if (processflag == "N") {
+        // qr코드 미인식 모니터링으로 이동한다.
+        location.href = "noQrProcess.html";
+      }
+    });
+
+    $("#adJobList .list-item").on('click', function() {
       // qr코드 미인식 모니터링으로 이동한다.
-      location.href = "noQrProcess.html";
-    }
+      location.href = "buildingJobProcessDetail.html";
+    });
   });
-
-  $("#adJobList .list-item").on('click', function() {
-    // qr코드 미인식 모니터링으로 이동한다.
-    location.href = "buildingJobProcessDetail.html";
-  });
-});
-</script>
+  </script>
 
 </body>
 </html>
