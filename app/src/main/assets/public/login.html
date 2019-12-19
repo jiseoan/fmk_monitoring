@@ -29,79 +29,79 @@
   <p class="copyright">Copyright © Focusmedia Korea 2019. All right reserved.</p>
   <p class="copyright"><a href="old/login.html">old Version</a></p>
 
-<script language="javascript" type="text/javascript">
-var vueLogin = null;
-var localAgentCode = window.localStorage.getItem("agent_code");
-$(document).ready(function(){
-  // if (localAgentCode) {
-  //   location.href = "main.html";
-  //   return;
-  // }
-  callNative("hideToolBar");
-  callNative("bottomActionBar", "login");
+  <script language="javascript" type="text/javascript">
+  var vueLogin = null;
+  var localAgentCode = window.localStorage.getItem("agent_code");
+  $(document).ready(function(){
+    // if (localAgentCode) {
+    //   location.href = "main.html";
+    //   return;
+    // }
+    callNative("hideToolBar");
+    callNative("bottomActionBar", "login");
 
-  vueLogin = new Vue({
-    el: '#login',
-    data: {
-      error: '',
-      userId: 'AGE_190001',
-      userPasswd: '1234'
-    },
-    methods: {
-      sendPost: function (e) {
-        this.error = '';
-        if (!this.userId) {
-          this.error = '아이디를 입력해 주세요.';
-        } else {
-          if (!this.userPasswd) {
-           this.error = '비밀번호를 입력해 주세요.';
-          }
-        }
-        
-        if (this.error) {
-          callNative("toastMessage", this.error);
-          return false;
-        }
-
-        $.post(BASE_URL + '/Bmm_api/loginCheck', {
-          agent_code: this.userId,
-          agent_passwd: this.userPasswd
-        })
-        .done(function(data) {
-          var result = parseResult(data);
-          console.log(result.data);
-          if (result.code == "success") {
-            var userData  = result.data;
-            var param = {};
-            param['agent_code'] = userData.agent_code;
-            param['agent_name'] = userData.agent_name;
-            param['agent_type'] = userData.agent_type;
-            param['job_area'] = userData.job_area;
-            param['job_week'] = userData.job_week;
-            param['mobile_code'] = callNative("deviceUniq");
-            var res = dbMerge("agent", param);
-            console.log(res);
-
-            window.localStorage.setItem("agent_code", userData.agent_code);
-            location.replace("main.html");
+    vueLogin = new Vue({
+      el: '#login',
+      data: {
+        error: '',
+        userId: 'AGE_190001',
+        userPasswd: '1234'
+      },
+      methods: {
+        sendPost: function (e) {
+          this.error = '';
+          if (!this.userId) {
+            this.error = '아이디를 입력해 주세요.';
           } else {
-            $.alert(result.data);
+            if (!this.userPasswd) {
+             this.error = '비밀번호를 입력해 주세요.';
+            }
           }
-        })
-        .fail(function() {
-          console.log('failed');
-          callNative("toastMessage", "로그인에 실패하였습니다.\n인터넷연결상태를 확인해주세요.");
-        });
-      }
-    }
-  });
-});
+          
+          if (this.error) {
+            callNative("toastMessage", this.error);
+            return false;
+          }
 
-function login () {
-  //console.log("function login()");
-  vueLogin.sendPost();
-}
-</script>
+          $.post(BASE_URL + '/Bmm_api/loginCheck', {
+            agent_code: this.userId,
+            agent_passwd: this.userPasswd
+          })
+          .done(function(data) {
+            var result = parseResult(data);
+            console.log(result.data);
+            if (result.code == "success") {
+              var userData  = result.data;
+              var param = {};
+              param['agent_code'] = userData.agent_code;
+              param['agent_name'] = userData.agent_name;
+              param['agent_type'] = userData.agent_type;
+              param['job_area'] = userData.job_area;
+              param['job_week'] = userData.job_week;
+              param['mobile_code'] = callNative("deviceUniq");
+              var res = dbMerge("agent", param);
+              console.log(res);
+
+              window.localStorage.setItem("agent_code", userData.agent_code);
+              location.replace("main.html");
+            } else {
+              $.alert(result.data);
+            }
+          })
+          .fail(function() {
+            console.log('failed');
+            callNative("toastMessage", "로그인에 실패하였습니다.\n인터넷연결상태를 확인해주세요.");
+          });
+        }
+      }
+    });
+  });
+
+  function login () {
+    //console.log("function login()");
+    vueLogin.sendPost();
+  }
+  </script>
 
 </body>
 </html>

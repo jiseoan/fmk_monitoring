@@ -12,6 +12,7 @@
   <script type="text/javascript" src="../vendor/vue/vue.js"></script>
   <script type="text/javascript" src="../vendor/jquery-confirm/dist/jquery-confirm.min.js"></script>
   <script type="text/javascript" src="js/swiper.js"></script>
+  <script type="text/javascript" src="js/vue-awesome-swiper.js"></script>
   <script type="text/javascript" src="../vendor/common/common.js"></script>
 </head>
 <body class="main" id="main">
@@ -50,14 +51,13 @@
         </tbody>
       </table>
     </div>
-    <div class="notice">
-      <div class="swiper-container">
-        <div class="swiper-wrapper">
-          <div class="swiper-slide"><a href="#">[공지] 모니터링 앱 튜토리얼</a></div>
-          <div class="swiper-slide"><a href="#">[공지] 모니터링 튜토리얼</a></div>
-        </div>
-      </div>
-      <div class="swiper-pagination"></div>
+    <div class="notice" id="noticeSlider">
+      <swiper ref="awesomeSwiper" :options="swiperOption" v-if="noticeList.length>0">
+        <!-- slides -->
+        <swiper-slide v-for="(notice, index) in noticeList" v-bind:key="notice.id" v-cloak>{{ notice.title }}</swiper-slide>
+        <!-- Optional controls -->
+        <div class="swiper-pagination"  slot="pagination"></div>
+      </swiper>
     </div>
   </div>
   <article id="buildingsJobList">
@@ -71,239 +71,258 @@
     </ul>
   </article>
 
-<script language="javascript" type="text/javascript">
-var agentCode = null;
-var thisWeeks = [];
-var jobDates = [];
-var jobWeek = null;
-var nowDate = null;
-var selDate = null;
-var mainTopVue = null;
-var mainCalendarVue = null;
-var mainBuildingJobListVue = null;
-$(document).ready(function(){
-  callNative("hideToolBar");
-  callNative("bottomActionBar", "jobStart");
+  <script language="javascript" type="text/javascript">
+  var agentCode = null;
+  var thisWeeks = [];
+  var jobDates = [];
+  var jobWeek = null;
+  var nowDate = null;
+  var selDate = null;
+  var mainTopVue = null;
+  var mainCalendarVue = null;
+  var mainBuildingJobListVue = null;
+  var noticeSliderVue = null;
+  $(document).ready(function(){
+    callNative("hideToolBar");
+    callNative("bottomActionBar", "jobStart");
 
-  agentCode = window.localStorage.getItem("agent_code");
+    agentCode = window.localStorage.getItem("agent_code");
 
-  var agentData = dbSelect("*", "agent", "agent_code='" + agentCode + "'");
-  console.log(agentData);
-  if (agentData) {
-    jobWeek = agentData[0]['job_week'];
-  } else {
-    jobWeek = '1,2,3,4,5';
-  }
-  getDateSet();
-
-  new Swiper('.notice .swiper-container', {
-    loop: true,
-    direction: 'vertical',
-    autoplay: {
-      delay: 2000,
-    },
-    pagination: {
-      el: '.swiper-pagination',
-      type: 'fraction',
-    },
-  });
-});
-
-function getDateSet() {  
-  nowDate = getNowDate();
-  selDate = nowDate;
-
-  var currentDay = new Date();
-  var theYear = currentDay.getFullYear();
-  var theMonth = currentDay.getMonth();
-  var theDate  = currentDay.getDate();
-  var theDayOfWeek = currentDay.getDay();
-  
-  for(var i=0; i<7; i++) {
-    var resultDay = new Date(theYear, theMonth, theDate + (i - theDayOfWeek));
-    var yyyy = resultDay.getFullYear();
-    var mm = Number(resultDay.getMonth()) + 1;
-    var dd = resultDay.getDate();
-   
-    mm = String(mm).length === 1 ? '0' + mm : mm;
-    day = dd;
-    dd = String(dd).length === 1 ? '0' + dd : dd;
-    weekNum = (i == 0)?7:i;
-    var ymd = yyyy + '-' + mm + '-' + dd;
-    thisWeeks[i] = {
-      date: ymd,
-      day: day,
-      week: weekNum,
-      status: (ymd == nowDate)?"on":((jobWeek && jobWeek.indexOf(weekNum) !== -1)?"dim":"")
-    };
-
-    if (jobWeek && jobWeek.indexOf(weekNum) !== -1) {
-      jobDates.push(ymd);
+    var agentData = dbSelect("*", "agent", "agent_code='" + agentCode + "'");
+    console.log(agentData);
+    if (agentData) {
+      jobWeek = agentData[0]['job_week'];
+    } else {
+      jobWeek = '1,2,3,4,5';
     }
-  }
-
-  Vue.component(
-    'today-item',
-    {
-      template: '<span class="date">{{ today }}</span>',
-      props: ['today']
-    }
-  );
-
-  mainTopVue = new Vue({
-    el: '#mainTop',
-    data: {
-      nowDate: parseInt(nowDate.substr(5,2)) + "." + parseInt(nowDate.substr(8,2))
-    },
-    methods: {
-      dataSync: function() {
-        // 데이터를 동기화하여 받는다.
-        dataSync(agentCode);
-      },
-      logout: function() {
-        // 로그아웃한다.
-        window.localStorage.setItem("agent_code", "");
-        console.log(window.localStorage.getItem("agent_code"));
-        location.href = "login.html";
-      }
-    }
+    getDateSet();
   });
 
-  Vue.component(
-    'calendar-item',
-    {
-      template: '<td v-on:click="$emit(\'change-day\')"><p v-bind:class="[status]">{{ day }}</p></td>',
-      props: ['status', 'day']
-    }
-  );
-
-  mainCalendarVue = new Vue({
-    el: '#mainCalendar',
-    data: {
-      items: thisWeeks
-    },
-    methods: {
-      changeDay: function(idx) {
-        var items = this.items;
-        var row = items[idx];
-        if ($.inArray(row.date, jobDates) === -1) return;
-        if (selDate == row.date) return;
-        console.log(this.items.length);
-        $.each(items, function(index, item){
-          if (index == idx) {
-            items[index].status = "on";
-            if (items[index].date == nowDate) {
-              callNative("bottomActionBar", "jobStart");
-            } else {
-              callNative("hideBottomActionBar");
-            }
-            selDate = items[index].date;
-            buildingsJobList(selDate);
-          } else {
-            if (items[index].status) {
-              items[index].status = "dim";
-            } else {
-              items[index].status = "";
+  function noticeList() {
+    var noticeData = dbResultArray("SELECT * FROM notice ORDER BY notice_type, create_date DESC");
+     
+    Vue.use(VueAwesomeSwiper);
+    if (noticeSliderVue === null) {        
+      noticeSliderVue = new Vue({
+        el: '#noticeSlider',
+        data: {
+          noticeList:[],
+          swiperOption: {
+            loop: true,
+            slidesPerView: 1,
+            spaceBetween: 30,
+            direction: 'vertical',
+            autoplay: {
+              delay: 3000,
+            },
+            pagination: {
+              el: '.swiper-pagination',
+              type: 'fraction',
             }
           }
-        });
-      }
+        }
+      });
     }
-  });
-  dataSync(agentCode);
-}
 
-function buildingsJobList(date) {
-  var jobListData = [];
-  var result = dbResultArray("SELECT t.building_id, b.building_name, b.address FROM ( SELECT mr.building_id, CASE WHEN mr.processing_flag='Y' THEN 1 ELSE 10 END AS sort_cnt FROM monitoring_request mr WHERE date(mr.request_date) = date('" + date + "') UNION SELECT acr.building_id, CASE WHEN acr.processing_flag='Y' THEN 1 WHEN acr.processing_flag='R' THEN 999 ELSE 10 END AS sort_cnt FROM ad_check_request acr WHERE date(acr.request_date) = date('" + date + "') ) t JOIN building b ON t.building_id = b.building_id GROUP BY t.building_id ORDER BY sum(t.sort_cnt) DESC");
-  //console.log(result);
-  if (result) {
-    $.each(result, function(index, item){
-      result[index].details = [];
-      var subResult = dbResultArray("SELECT t.* FROM (SELECT 0 AS class, 0 AS sort, mr.processing_flag, '모니터링' AS job_name FROM monitoring_request mr WHERE date(mr.request_date) = date('" + date + "') AND mr.building_id='" + item.building_id + "' UNION SELECT 1 AS class, acr.ad_check_request_id AS sort, acr.processing_flag, acr.ad_name AS job_name FROM ad_check_request acr WHERE date(acr.request_date) = date('" + date + "') AND acr.building_id='" + item.building_id + "' UNION SELECT 2 AS sort, ar.building_locate_id AS num, ar.processing_flag, (SELECT bl.dong||' '||bl.unit_name FROM building_locate bl WHERE bl.building_locate_id=ar.building_locate_id)||' <'||(SELECT group_concat(codename) FROM code c WHERE c.code_id IN (ar.request_type_code_ids))||'>' AS job_name FROM as_request ar WHERE date(ar.request_date) = date('" + date + "') AND ar.building_id='" + item.building_id + "') AS t ORDER BY t.class, t.sort");
-      //console.log(subResult);
-      if (subResult) result[index].details = subResult;
-    });
-    jobListData = result;
-    console.log(JSON.stringify(jobListData));
+    if (noticeData) noticeSliderVue.noticeList = noticeData; 
   }
 
-  if (mainBuildingJobListVue === null) {
+  function getDateSet() {  
+    nowDate = getNowDate();
+    selDate = nowDate;
+
+    var currentDay = new Date();
+    var theYear = currentDay.getFullYear();
+    var theMonth = currentDay.getMonth();
+    var theDate  = currentDay.getDate();
+    var theDayOfWeek = currentDay.getDay();
+    
+    for(var i=0; i<7; i++) {
+      var resultDay = new Date(theYear, theMonth, theDate + (i - theDayOfWeek));
+      var yyyy = resultDay.getFullYear();
+      var mm = Number(resultDay.getMonth()) + 1;
+      var dd = resultDay.getDate();
+     
+      mm = String(mm).length === 1 ? '0' + mm : mm;
+      day = dd;
+      dd = String(dd).length === 1 ? '0' + dd : dd;
+      weekNum = (i == 0)?7:i;
+      var ymd = yyyy + '-' + mm + '-' + dd;
+      thisWeeks[i] = {
+        date: ymd,
+        day: day,
+        week: weekNum,
+        status: (ymd == nowDate)?"on":((jobWeek && jobWeek.indexOf(weekNum) !== -1)?"dim":"")
+      };
+
+      if (jobWeek && jobWeek.indexOf(weekNum) !== -1) {
+        jobDates.push(ymd);
+      }
+    }
 
     Vue.component(
-      'job-item',
+      'today-item',
       {
-        template: '<li v-on:click="$emit(\'job-detail\')">\
-                    <a>\
-                      <p>{{ item.building_name }}</p>\
-                      <p>{{ item.address }}</p>\
-                    </a>\
-                    <div v-for="detail in item.details">\
-                      <span v-if="detail.class != \'2\' && detail.processing_flag === \'N\'" class="badge gray">미완료</span>\
-                      <span v-else-if="detail.class != \'2\' && detail.processing_flag === \'Y\'" class="badge green">완료</span>\
-                      <span v-else-if="detail.class != \'2\' && detail.processing_flag === \'R\'" class="badge red">반려</span>\
-                      <span v-else-if="detail.class == \'2\'" class="badge blue">AS요청</span>\
-                      {{ detail.job_name }}\
-                    </div>\
-                  </li>',
-        props: ['item']
+        template: '<span class="date">{{ today }}</span>',
+        props: ['today']
       }
     );
 
-    mainBuildingJobListVue = new Vue({
-      el: '#buildingsJobList',
+    mainTopVue = new Vue({
+      el: '#mainTop',
       data: {
-        items: []
+        nowDate: parseInt(nowDate.substr(5,2)) + "." + parseInt(nowDate.substr(8,2))
       },
       methods: {
-        jobDetail: function(idx) {
-          var items = this.items;
-          var row = items[idx];
-          var buildingId = row.building_id;
-          console.log(buildingId);
-
-          // 모니터링/광고촬영 처리 리스트로 이동한다.
-          location.href = "buildingJobProcessList.html?id=" + buildingId;
+        dataSync: function() {
+          // 데이터를 동기화하여 받는다.
+          dataSync(agentCode);
+        },
+        logout: function() {
+          // 로그아웃한다.
+          window.localStorage.setItem("agent_code", "");
+          console.log(window.localStorage.getItem("agent_code"));
+          location.href = "login.html";
         }
       }
     });
+
+    Vue.component(
+      'calendar-item',
+      {
+        template: '<td v-on:click="$emit(\'change-day\')"><p v-bind:class="[status]">{{ day }}</p></td>',
+        props: ['status', 'day']
+      }
+    );
+
+    mainCalendarVue = new Vue({
+      el: '#mainCalendar',
+      data: {
+        items: thisWeeks
+      },
+      methods: {
+        changeDay: function(idx) {
+          var items = this.items;
+          var row = items[idx];
+          if ($.inArray(row.date, jobDates) === -1) return;
+          if (selDate == row.date) return;
+          console.log(this.items.length);
+          $.each(items, function(index, item){
+            if (index == idx) {
+              items[index].status = "on";
+              if (items[index].date == nowDate) {
+                callNative("bottomActionBar", "jobStart");
+              } else {
+                callNative("hideBottomActionBar");
+              }
+              selDate = items[index].date;
+              buildingsJobList(selDate);
+            } else {
+              if (items[index].status) {
+                items[index].status = "dim";
+              } else {
+                items[index].status = "";
+              }
+            }
+          });
+        }
+      }
+    });
+    dataSync(agentCode);
   }
-  
-  mainBuildingJobListVue.items = jobListData;
-  
-}
 
-function qrScanResult(result) {
-  // 모니터링, 광고촬영에 있는지 체크
-  var qrCode = $.urlParam("cd", result);
-  if (qrCode === null) {
-    callNative("toastMessage", "인식이 불가능한 QR코드 입니다.");
-    return;
+  function buildingsJobList(date) {
+    var jobListData = [];
+    var result = dbResultArray("SELECT t.building_id, b.building_name, b.address FROM ( SELECT mr.building_id, CASE WHEN mr.processing_flag='Y' THEN 1 ELSE 10 END AS sort_cnt FROM monitoring_request mr WHERE date(mr.request_date) = date('" + date + "') UNION SELECT acr.building_id, CASE WHEN acr.processing_flag='Y' THEN 1 WHEN acr.processing_flag='R' THEN 999 ELSE 10 END AS sort_cnt FROM ad_check_request acr WHERE date(acr.request_date) = date('" + date + "') ) t JOIN building b ON t.building_id = b.building_id GROUP BY t.building_id ORDER BY sum(t.sort_cnt) DESC");
+    //console.log(result);
+    if (result) {
+      $.each(result, function(index, item){
+        result[index].details = [];
+        var subResult = dbResultArray("SELECT t.* FROM (SELECT 0 AS class, 0 AS sort, mr.processing_flag, '모니터링' AS job_name FROM monitoring_request mr WHERE date(mr.request_date) = date('" + date + "') AND mr.building_id='" + item.building_id + "' UNION SELECT 1 AS class, acr.ad_check_request_id AS sort, acr.processing_flag, acr.ad_name AS job_name FROM ad_check_request acr WHERE date(acr.request_date) = date('" + date + "') AND acr.building_id='" + item.building_id + "' UNION SELECT 2 AS sort, ar.building_locate_id AS num, ar.processing_flag, (SELECT bl.dong||' '||bl.unit_name FROM building_locate bl WHERE bl.building_locate_id=ar.building_locate_id)||' <'||(SELECT group_concat(codename) FROM code c WHERE c.code_id IN (ar.request_type_code_ids))||'>' AS job_name FROM as_request ar WHERE date(ar.request_date) = date('" + date + "') AND ar.building_id='" + item.building_id + "') AS t ORDER BY t.class, t.sort");
+        //console.log(subResult);
+        if (subResult) result[index].details = subResult;
+      });
+      jobListData = result;
+      console.log(JSON.stringify(jobListData));
+    }
+
+    if (mainBuildingJobListVue === null) {
+
+      Vue.component(
+        'job-item',
+        {
+          template: '<li v-on:click="$emit(\'job-detail\')">\
+                      <a>\
+                        <p>{{ item.building_name }}</p>\
+                        <p>{{ item.address }}</p>\
+                      </a>\
+                      <div v-for="detail in item.details">\
+                        <span v-if="detail.class != \'2\' && detail.processing_flag === \'N\'" class="badge gray">미완료</span>\
+                        <span v-else-if="detail.class != \'2\' && detail.processing_flag === \'Y\'" class="badge green">완료</span>\
+                        <span v-else-if="detail.class != \'2\' && detail.processing_flag === \'R\'" class="badge red">반려</span>\
+                        <span v-else-if="detail.class == \'2\'" class="badge blue">AS요청</span>\
+                        {{ detail.job_name }}\
+                      </div>\
+                    </li>',
+          props: ['item']
+        }
+      );
+
+      mainBuildingJobListVue = new Vue({
+        el: '#buildingsJobList',
+        data: {
+          items: []
+        },
+        methods: {
+          jobDetail: function(idx) {
+            var items = this.items;
+            var row = items[idx];
+            var buildingId = row.building_id;
+            console.log(buildingId);
+
+            // 모니터링/광고촬영 처리 리스트로 이동한다.
+            location.href = "buildingJobProcessList.html?id=" + buildingId;
+          }
+        }
+      });
+    }
+    
+    mainBuildingJobListVue.items = jobListData;
+    
   }
 
-  qrCode = "T00014";
-  var buildingData = dbRowArray("SELECT bl.building_locate_id, b.building_id, b.building_name, b.address FROM building_locate bl JOIN building b ON bl.building_id=b.building_id WHERE qr_serial_code = '" + qrCode + "'");
-  if (!buildingData) {
-    callNative("toastMessage", "작업이 가능한 단지가 아닙니다.");
-    return;
+  function qrScanResult(result) {
+    // 모니터링, 광고촬영에 있는지 체크
+    var qrCode = $.urlParam("cd", result);
+    if (qrCode === null) {
+      callNative("toastMessage", "인식이 불가능한 QR코드 입니다.");
+      return;
+    }
+
+    qrCode = "T00014";
+    var buildingData = dbRowArray("SELECT bl.building_locate_id, b.building_id, b.building_name, b.address FROM building_locate bl JOIN building b ON bl.building_id=b.building_id WHERE qr_serial_code = '" + qrCode + "'");
+    if (!buildingData) {
+      callNative("toastMessage", "작업이 가능한 단지가 아닙니다.");
+      return;
+    }
+
+    var monitoringData = dbRowArray("SELECT COUNT(*) AS cnt FROM monitoring_request WHERE date(request_date) = date('" + nowDate + "') AND building_id='" + buildingData.building_id + "'");
+    if (monitoringData.cnt == 0) {
+      callNative("toastMessage", "오늘 작업이 없는 단지입니다.");
+      return;
+    }
+
+    var buildingLocateId = buildingData.building_locate_id;
+    location.href = "buildingJobList.html?id=" + buildingLocateId;
   }
 
-  var monitoringData = dbRowArray("SELECT COUNT(*) AS cnt FROM monitoring_request WHERE date(request_date) = date('" + nowDate + "') AND building_id='" + buildingData.building_id + "'");
-  if (monitoringData.cnt == 0) {
-    callNative("toastMessage", "오늘 작업이 없는 단지입니다.");
-    return;
+  // 동기화 완료시 콜백
+  function dataUpdateCallBack() {
+    noticeList();
+    buildingsJobList(selDate);
   }
 
-  var buildingLocateId = buildingData.building_locate_id;
-  location.href = "buildingJobList.html?id=" + buildingLocateId;
-}
-
-// 동기화 완료시 콜백
-function dataUpdateCallBack() {
-  buildingsJobList(selDate);
-}
-
-</script>
+  </script>
 
 </body>
 </html>

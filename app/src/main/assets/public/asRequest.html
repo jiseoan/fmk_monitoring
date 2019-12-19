@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, user-scalable=no">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Focus Media Korea Monitoring App</title>
+  <link rel="stylesheet" type="text/css" href="css/base.css"/>
+  <link rel="stylesheet" type="text/css" href="css/layout.css"/>
+  <link rel="stylesheet" type="text/css" href="../vendor/jquery-confirm/dist/jquery-confirm.min.css">
+  <script type="text/javascript" src="../vendor/jquery/jquery-3.1.1.min.js"></script>
+  <script type="text/javascript" src="../vendor/vue/vue.js"></script>
+  <script type="text/javascript" src="../vendor/jquery-confirm/dist/jquery-confirm.min.js"></script>
+  <script type="text/javascript" src="../vendor/common/common.js"></script>
+</head>
+<body id="asRequest">
+
+  <article class="as">
+    <h2>AS 요청</h2>
+    <div class="wrapper">
+      <p>AS 유형을 선택해주세요.</p>
+      <ul class="select">
+        <li><a>모니터 꺼짐</a></li>
+        <li><a class="on">모니터 깨짐</a></li>
+        <li><a>시스템 오류</a></li>
+        <li><a>네트워크 오류</a></li>
+        <li><a>기타</a></li>
+      </ul>
+      <textarea placeholder="추가 AS 요청 내용을 입력해주세요."></textarea>
+    </div>
+  </article>
+
+<script language="javascript" type="text/javascript">
+var mode = null;
+var buildingLocateId = null;
+var jobId = null;
+var shotResult = null;
+var buildingData = null;
+var jobData = null;
+$(document).ready(function(){
+  callNative('toolBar', 'main', "");
+  callNative("hideBottomActionBar");
+
+  mode = $.urlParam("mode");
+  buildingLocateId = $.urlParam("id");
+  jobId = $.urlParam("jobId");
+  shotResult = window.localStorage.getItem("shot_result");
+  //shotResult = JSON.stringify([{"filepath":"./images/return-img.png"},{"filepath":"./images/return-img.png"},{"filepath":"./images/return-img.png"},{"filepath":"./images/return-img.png"},{"filepath":"./images/return-img.png"}]);
+
+  var buildingRes = dbRowArray("SELECT b.building_id,bl.building_locate_id, b.building_name, bl.dong, bl.unit_name, b.building_name||' '||bl.dong||' '||bl.unit_name AS building_locate_name, b.address FROM building_locate bl JOIN building b ON bl.building_id=b.building_id WHERE bl.building_locate_id='" + buildingLocateId + "'");
+
+  //var buildingRes = [{"building_id":"1329","building_locate_id":"18424","building_name":"전농동아아파트","dong":"103동","unit_name":"1호기","building_locate_name":"전농동아아파트 103동 1호기","address":"서울시 동대문구 전농1동 645-3번지"}]
+
+  if (buildingRes) {
+    buildingData = buildingRes;
+  }
+
+  callNative('setTitle', buildingData.building_locate_name);
+  callNative("bottomActionBar","insertAndCancel");
+});
+
+function dataSaveProcess() {
+  // 데이터를 저장한다.
+  
+  window.localStorage.setItem("shot_result", "");
+  callNative("toastMessage", "저장되었습니다.");
+  // 작업리스트로 이동한다.
+  location.href = "buildingJobList.html?id=" + buildingLocateId;
+}
+</script>
+
+</body>
+</html>
