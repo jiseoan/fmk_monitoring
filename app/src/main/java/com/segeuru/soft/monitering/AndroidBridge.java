@@ -114,6 +114,7 @@ public class AndroidBridge {
 
     @JavascriptInterface
     public void bottomActionBar(String resourceName, final String style) {
+
         Resources res = null;
 
         try {
