@@ -104,7 +104,6 @@ public class WebviewActivity extends BaseAtivity {
         switch (requestCode) {
             case WebviewActivity.REQUEST_CODE: {
                 if(null != data) {
-                    Log.i(DEBUG_TAG, data.getStringExtra("pics"));
                     String result = data.getStringExtra("pics");
                     if(result.compareTo("[]") == 0) return; //canceled.
 
@@ -114,6 +113,8 @@ public class WebviewActivity extends BaseAtivity {
                 break;
             case com.google.zxing.integration.android.IntentIntegrator.REQUEST_CODE: {
                 IntentResult result = IntentIntegrator.parseActivityResult(requestCode, resultCode, data);
+                if(result.getContents().compareTo("cancel") == 0) return;
+
                 javaScriptCallback("qrScanResult", "null", result.getContents());
 //                Toast.makeText(this, "Scanned: " + result.getContents(), Toast.LENGTH_LONG).show();
             }
