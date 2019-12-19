@@ -196,6 +196,8 @@ function NativeCallback(command, param, result)
         // 데이터를 저장하는 프로세스 진행 <- 네이티브로 값을 보내어 서버로 저장되도록 해야 함
         if (typeof window["dataSaveProcess"] === "function") {
           dataSaveProcess();
+        } else if (typeof window["confirm"] === "function") {
+          confirm();
         } else {
           console.log("no function dataSaveProcess()");
         }
@@ -437,7 +439,7 @@ function stringFormat() {
   return expression;
 }
 
-var BASE_URL = "https://dev.treeter.net/fmksystem";
+var BASE_URL = "http://dev.treeter.net/fmksystem";
 
 
 

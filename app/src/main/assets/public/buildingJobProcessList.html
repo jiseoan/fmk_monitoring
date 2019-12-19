@@ -7,31 +7,87 @@
   <title>Focus Media Korea Monitoring App</title>
   <link rel="stylesheet" type="text/css" href="css/base.css"/>
   <link rel="stylesheet" type="text/css" href="css/layout.css"/>
-  <link rel="stylesheet" type="text/css" href="css/swiper.css"/>
   <link rel="stylesheet" type="text/css" href="../vendor/jquery-confirm/dist/jquery-confirm.min.css">
   <script type="text/javascript" src="../vendor/jquery/jquery-3.1.1.min.js"></script>
   <script type="text/javascript" src="../vendor/vue/vue.js"></script>
   <script type="text/javascript" src="../vendor/jquery-confirm/dist/jquery-confirm.min.js"></script>
-  <script type="text/javascript" src="js/swiper.js"></script>
-  <script type="text/javascript" src="js/vue-awesome-swiper.js"></script>
   <script type="text/javascript" src="../vendor/common/common.js"></script>
   <style type="text/css">
-    .return .slider .swiper-pagination {
-      line-height: 2.4;
+    .monitoring-ad .monitoring-list li .img {
+      background-color: #f4f4f4;
+      background-image: url('./images/no-img.png');
+      background-size: contain;
+      background-repeat: no-repeat;
+      background-position: center center;
     }
+
+    .building-shot > li {
+      padding-top: 0.75rem;
+      padding-right: 0.625rem;
+      padding-bottom: 0.75rem;
+      padding-left: 0.625rem;
+      border-radius: 5px;
+      box-shadow: 0 2px 3px 0 #d9d1be;
+      background-color: #fff;
+      margin-bottom: 0.625rem;
+    }
+
+    .building-shot > li > div:after {
+      content: '';
+      display: block;
+      position: absolute;
+      right: 0rem;
+      top: 50%;
+      left: auto;
+      bottom: auto;
+      margin-top: -0.4375rem;
+      width: 0.5rem;
+      height: 0.9375rem;
+      background-image: url(./images/arrow.png);
+      background-size: contain;
+      background-repeat: no-repeat;
+    }
+    .building-shot > li > div:first-child {
+      position: relative;
+      display: block;
+      padding-left: 3.125rem;
+      align-items: center;
+      min-height: 24px;
+    }
+    .building-shot > li > div:first-child .badge {
+    position: absolute;
+    left: 0rem;
+    top: 50%;
+    right: auto;
+    bottom: auto;
+    margin-top: -0.625rem;
+}
+.building-shot > li > div:first-child p {
+    font-size: 0.6875rem;
+    line-height: 2.0 !important;
+    font-weight: 700;
+}
+.monitoring-ad .monitoring-list li .badge {
+    position: absolute;
+    left: 0.625rem;
+    top: 0.625rem;
+    right: auto;
+    bottom: auto;
+}
   </style>
 </head>
 <body id="buildingJobProcessList">
   <article class="monitoring-ad">
     <div class="tab">
-      <a href="#" class="on"><span>모니터링</span></a>
-      <a href="#"><span>광고촬영</span></a>
+      <a class="on"><span>모니터링</span></a>
+      <a><span>광고촬영</span></a>
     </div>
     <div class="cont-wrap">
       <div class="monitoring on">
-        <ul class="monitoring-list">
-        <li>
+        <ul class="monitoring-list" id="monitoringList">
+        <!-- li>
           <a href="#">
+            <span class="badge blue">AS요청</span>
             <span class="img"><img src="asset/images/monitoring-img.png" alt=""></span>
             <span class="location">
               <span>201동</span>
@@ -41,187 +97,31 @@
         </li>
         <li>
           <a href="#">
+            <span class="badge green">완료</span>
             <span class="img"><img src="asset/images/monitoring-img.png" alt=""></span>
             <span class="location">
               <span>201동</span>
               <span>1호기</span>
             </span>
           </a>
-        </li>
-        <li>
-          <a href="#">
-            <span class="img"><img src="asset/images/monitoring-img.png" alt=""></span>
-            <span class="location">
-              <span>201동</span>
-              <span>1호기</span>
-            </span>
-          </a>
-        </li>
-        <li>
-          <a href="#">
-            <span class="img"><img src="asset/images/monitoring-img.png" alt=""></span>
-            <span class="location">
-              <span>201동</span>
-              <span>1호기</span>
-            </span>
-          </a>
-        </li>
-        <li>
-          <a href="#">
-            <span class="img"><img src="asset/images/monitoring-img.png" alt=""></span>
-            <span class="location">
-              <span>201동</span>
-              <span>1호기</span>
-            </span>
-          </a>
-        </li>
-        <li>
-          <a href="#">
-            <span class="img"><img src="asset/images/monitoring-img.png" alt=""></span>
-            <span class="location">
-              <span>201동</span>
-              <span>1호기</span>
-            </span>
-          </a>
-        </li>
-        <li>
-          <a href="#">
-            <span class="img"><img src="asset/images/monitoring-img.png" alt=""></span>
-            <span class="location">
-              <span>201동</span>
-              <span>1호기</span>
-            </span>
-          </a>
-        </li>
-        <li>
-          <a href="#">
-            <span class="img"><img src="asset/images/monitoring-img.png" alt=""></span>
-            <span class="location">
-              <span>201동</span>
-              <span>1호기</span>
-            </span>
-          </a>
-        </li>
-        <li>
-          <a href="#">
-            <span class="img"><img src="asset/images/monitoring-img.png" alt=""></span>
-            <span class="location">
-              <span>201동</span>
-              <span>1호기</span>
-            </span>
-          </a>
-        </li>
-        <li>
-          <a href="#">
-            <span class="img"><img src="asset/images/monitoring-img.png" alt=""></span>
-            <span class="location">
-              <span>201동</span>
-              <span>1호기</span>
-            </span>
-          </a>
-        </li>
-        <li>
-          <a href="#">
-            <span class="img"><img src="asset/images/monitoring-img.png" alt=""></span>
-            <span class="location">
-              <span>201동</span>
-              <span>1호기</span>
-            </span>
-          </a>
-        </li>
-        <li>
-          <a href="#">
-            <span class="img"><img src="asset/images/monitoring-img.png" alt=""></span>
-            <span class="location">
-              <span>201동</span>
-              <span>1호기</span>
-            </span>
-          </a>
-        </li>
-        <li>
-          <a href="#">
-            <span class="img"><img src="asset/images/monitoring-img.png" alt=""></span>
-            <span class="location">
-              <span>201동</span>
-              <span>1호기</span>
-            </span>
-          </a>
-        </li>
-        <li>
-          <a href="#">
-            <span class="img"><img src="asset/images/monitoring-img.png" alt=""></span>
-            <span class="location">
-              <span>201동</span>
-              <span>1호기</span>
-            </span>
-          </a>
-        </li>
-        <li>
-          <a href="#">
-            <span class="img"><img src="asset/images/monitoring-img.png" alt=""></span>
-            <span class="location">
-              <span>201동</span>
-              <span>1호기</span>
-            </span>
-          </a>
-        </li>
-        <li>
-          <a href="#">
-            <span class="img"><img src="asset/images/monitoring-img.png" alt=""></span>
-            <span class="location">
-              <span>201동</span>
-              <span>1호기</span>
-            </span>
-          </a>
-        </li>
-        <li>
-          <a href="#">
-            <span class="img"><img src="asset/images/monitoring-img.png" alt=""></span>
-            <span class="location">
-              <span>201동</span>
-              <span>1호기</span>
-            </span>
-          </a>
-        </li>
-        <li>
-          <a href="#">
-            <span class="img"><img src="asset/images/monitoring-img.png" alt=""></span>
-            <span class="location">
-              <span>201동</span>
-              <span>1호기</span>
-            </span>
-          </a>
-        </li>
-        <li>
-          <a href="#">
-            <span class="img"><img src="asset/images/monitoring-img.png" alt=""></span>
-            <span class="location">
-              <span>201동</span>
-              <span>1호기</span>
-            </span>
-          </a>
-        </li>
-        <li>
-          <a href="#">
-            <span class="img"><img src="asset/images/monitoring-img.png" alt=""></span>
-            <span class="location">
-              <span>201동</span>
-              <span>1호기</span>
-            </span>
-          </a>
-        </li>
-        <li>
-          <a href="#">
-            <span class="img"><img src="asset/images/monitoring-img.png" alt=""></span>
-            <span class="location">
-              <span>201동</span>
-              <span>1호기</span>
-            </span>
-          </a>
+        </li -->
+        <li
+          is="monitoring-item"
+          v-for="(item, index) in items.details"
+          v-bind:item="item"
+          v-on:monitoring-detail="monitoringDetail(index)" v-cloak>
         </li>
       </ul>
       </div>
       <div class="ad">
+        <ul class="building-shot">
+          <li>
+            <div>
+              <span class="badge gray">미완료</span>
+              <p>단지 대표이미지 촬영</p>
+            </div>
+          </li>
+        </ul>
         <ul>
           <li>
             <div>
@@ -313,25 +213,86 @@
   </article>
 
   <script language="javascript" type="text/javascript">
+  var buildingId = null;
+  var buildingData = null;
+  var selDate = null;
+  var monitoringListVue = null;
   $(document).ready(function(){
-    callNative('toolBar', 'main', "송내 자이 아파트");
+    callNative('toolBar', 'main', "");
     callNative("hideBottomActionBar");
 
-    $("#monitoringJobList .list-item").on('click', function() {
-      var processflag = $(this).data("process-flag");
-      if (processflag == "Y") {
-        // 모니터링/광고촬영 처리 상세로 이동한다.
-        location.href = "buildingJobProcessDetail.html";
-      } 
-      else if (processflag == "N") {
-        // qr코드 미인식 모니터링으로 이동한다.
-        location.href = "noQrProcess.html";
-      }
-    });
+    buildingId = $.urlParam("id");
+    selDate = $.urlParam("date");
+    //shotResult = JSON.stringify([{"filepath":"./images/return-img.png"},{"filepath":"./images/return-img.png"},{"filepath":"./images/return-img.png"},{"filepath":"./images/return-img.png"},{"filepath":"./images/return-img.png"}]);
 
-    $("#adJobList .list-item").on('click', function() {
-      // qr코드 미인식 모니터링으로 이동한다.
-      location.href = "buildingJobProcessDetail.html";
+    var buildingRes = dbRowArray("SELECT * FROM building WHERE building_id='" + buildingId + "'");
+
+    //var buildingRes = {"building_id":"1329","building_locate_id":"18424","building_name":"전농동아아파트","dong":"103동","unit_name":"1호기","building_locate_name":"전농동아아파트 103동 1호기","address":"서울시 동대문구 전농1동 645-3번지"};
+
+    if (buildingRes) {
+      buildingData = buildingRes;
+    }
+    
+    callNative('setTitle', buildingData.building_name);
+
+    var monitoringData = dbRowArray("SELECT * FROM monitoring_request mr WHERE date(mr.request_date) = date('" + selDate + "') AND mr.building_id='" + buildingData.building_id + "'");
+    monitoringData.details = [];
+    if (monitoringData) {
+      var monitoringBuildingData = dbResultArray("SELECT bl.*, CASE WHEN p.processing_date !='' THEN 'Y' ELSE 'N' END AS processing_flag, p.processing_file_url, p.processing_date, p.qr_flag, p.monitoring_request_id, CASE WHEN ar.request_type_code_ids !='' THEN 'Y' ELSE 'N' END AS as_request_flag FROM building_locate bl LEFT JOIN processing p ON bl.building_id=p.building_id AND bl.building_locate_id=p.building_locate_id AND p.monitoring_request_id='" + monitoringData.monitoring_request_id + "' LEFT JOIN as_request ar  ON bl.building_id=ar.building_id AND bl.building_locate_id=ar.building_locate_id AND date(ar.request_date) = date('" + selDate + "') WHERE bl.building_id='" + buildingData.building_id + "' AND bl.building_locate_id IN (" + monitoringData.building_locate_ids + ")");
+      if (monitoringBuildingData) {
+        monitoringData.details = monitoringBuildingData;
+      }
+    }
+    console.log(JSON.stringify(monitoringData));
+
+    if (monitoringListVue === null) {
+
+      Vue.component(
+        'monitoring-item',
+        {
+          template: '<li v-on:click="$emit(\'monitoring-detail\')">\
+                      <a>\
+                        <span class="badge red" v-if="item.qr_flag == \'N\'">QR미인식</span>\
+                        <span class="badge green" v-if="item.processing_flag == \'Y\'">완료</span>\
+                        <span class="badge blue" v-if="item.as_request_flag == \'Y\'">AS요청</span>\
+                        <span class="img"><img v-bind:src="item.filepath"></span>\
+                        <span class="location">\
+                          <span>{{ item.dong }}</span>\
+                          <span>{{ item.unit_name }}</span>\
+                        </span>\
+                      </a>\
+                    </li>',
+          props: ['item']
+        }
+      );
+
+      monitoringListVue = new Vue({
+        el: '#monitoringList',
+        data: {
+          items: []
+        },
+        methods: {
+          monitoringDetail: function(idx) {
+            var items = this.items.details;
+            var row = items[idx];
+            console.log(JSON.stringify(items));
+            var buildingLocateId = row.building_locate_id;
+            var monitoringRequestId = row.monitoring_request_id;
+
+            // 모니터링/광고촬영 처리 리스트로 이동한다.
+            callNative('newWebView', "buildingJobProcessDetail.html?&mode=monitoring" + "&id=" + buildingLocateId + "&jobId=" + monitoringRequestId);
+          }
+        }
+      });
+    }
+    
+    monitoringListVue.items = monitoringData;
+
+    $('.tab a').click(function() {
+      var idx = $(this).index();
+
+      $('.tab a').removeClass('on').eq(idx).addClass('on');
+      $('.cont-wrap > div').removeClass('on').eq(idx).addClass('on');
     });
   });
   </script>

@@ -93,6 +93,7 @@
     callNative("bottomActionBar", "jobStart");
 
     agentCode = window.localStorage.getItem("agent_code");
+    selDate = window.localStorage.getItem("sel_date");
 
     var agentData = dbSelect("*", "agent", "agent_code='" + agentCode + "'");
     console.log(agentData);
@@ -157,7 +158,6 @@
 
   function getDateSet() {  
     nowDate = getNowDate();
-    selDate = nowDate;
 
     var currentDay = new Date();
     var theYear = currentDay.getFullYear();
@@ -180,7 +180,7 @@
         date: ymd,
         day: day,
         week: weekNum,
-        status: (ymd == nowDate)?"on":((jobWeek && jobWeek.indexOf(weekNum) !== -1)?"dim":"")
+        status: (ymd == selDate)?"on":((jobWeek && jobWeek.indexOf(weekNum) !== -1)?"dim":"")
       };
 
       if (jobWeek && jobWeek.indexOf(weekNum) !== -1) {
@@ -199,7 +199,7 @@
     mainTopVue = new Vue({
       el: '#mainTop',
       data: {
-        nowDate: parseInt(nowDate.substr(5,2)) + "." + parseInt(nowDate.substr(8,2))
+        nowDate: parseInt(selDate.substr(5,2)) + "." + parseInt(selDate.substr(8,2))
       },
       methods: {
         dataSync: function() {
@@ -244,6 +244,7 @@
                 callNative("hideBottomActionBar");
               }
               selDate = items[index].date;
+              window.localStorage.setItem("sel_date", selDate);
               buildingsJobList(selDate);
             } else {
               if (items[index].status) {
@@ -309,7 +310,7 @@
             console.log(buildingId);
 
             // 모니터링/광고촬영 처리 리스트로 이동한다.
-            location.href = "buildingJobProcessList.html?id=" + buildingId;
+            location.href = "buildingJobProcessList.html?id=" + buildingId + "&date="+ selDate;
           }
         }
       });
