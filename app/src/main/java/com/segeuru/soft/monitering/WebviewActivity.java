@@ -46,6 +46,7 @@ public class WebviewActivity extends BaseAtivity {
         findViewById(R.id.btn_rebuildingCamera).setOnClickListener(rebuildingCamera_button_clickLisener);
         findViewById(R.id.btn_confirm_rebuilding).setOnClickListener(confirm_button_clickLisener);
         findViewById(R.id.btn_asProcessingReRegistration).setOnClickListener(reregistrationAs_button_clickLisener);
+        findViewById(R.id.btn_confirm_ext).setOnClickListener(confirm_button_clickLisener);
         findViewById(R.id.btn_complete).setOnClickListener(complete_button_clickLisener);
         findViewById(R.id.btn_cancel_complete).setOnClickListener(cancel_button_clickLisener);
         findViewById(R.id.btn_asProcessingRegistration).setOnClickListener(asProcessRegistration_button_clickLisener);
@@ -90,6 +91,7 @@ public class WebviewActivity extends BaseAtivity {
         findViewById(R.id.retakeAndConfirm).setVisibility(View.GONE);
         findViewById(R.id.asProcessing).setVisibility(View.GONE);
         findViewById(R.id.completeAndCancel).setVisibility(View.GONE);
+        findViewById(R.id.confirm).setVisibility(View.GONE);
     }
 
     protected void hideAllActionBars() {

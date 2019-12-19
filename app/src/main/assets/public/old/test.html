@@ -189,6 +189,7 @@
     <button id="reTakeAndConfirm_AD"> [재촬영] [확인] AD</button><br />
     <button id="asProcessing"> [AS처리등록] </button><br />
     <button id="completeAndCancel"> [완료] [취소] </button><br />
+    <button id="confirm"> [확인] </button><br />
 <br/>
     <button id="main"> *top-actionbar-A1 보이기 </button><br />
     <button id="popup"> *top-actionbar-A2 보이기 </button><br />
@@ -333,6 +334,10 @@ $(document).ready(function(){
 
     $("#completeAndCancel").on('click', function() {
       window.android.bottomActionBar("completeAndCancel", "");
+    })
+
+    $("#confirm").on('click', function() {
+      window.android.bottomActionBar("confirm", "");
     })
 
     $("#main").on('click', function() {
