@@ -20,9 +20,11 @@ import android.widget.Toast;
 
 import com.google.zxing.integration.android.IntentIntegrator;
 
+import org.apache.commons.io.FileUtils;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.File;
 import java.util.ArrayList;
 
 import androidx.appcompat.app.ActionBar;
@@ -231,7 +233,33 @@ public class AndroidBridge {
 
     @JavascriptInterface
     public void deleteFiles(String jsonFiles) {
+        try {
+            Log.i(DEBUG_TAG, jsonFiles);
+            JSONArray files = new JSONArray(jsonFiles);
+            for(int i=0;i<files.length();++i) {
+                JSONObject file = (JSONObject)files.get(i);
+                File fileToDelete = new File(MoniteringApp.APP_STORE_PICTURE_PATH, file.getString("filename"));
+                if(fileToDelete.exists()) fileToDelete.delete();
+                Log.i(DEBUG_TAG, file.getString("filename"));
+            }
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+    }
 
+    @JavascriptInterface
+    public void deleteFilesAll() {
+        try {
+            //delete directory
+            File directory = new File(MoniteringApp.APP_STORE_PICTURE_PATH);
+            FileUtils.deleteDirectory(directory);
+
+            //make directory
+            File dirPicture = new File(MoniteringApp.APP_STORE_PICTURE_PATH);
+            dirPicture.mkdirs();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @JavascriptInterface

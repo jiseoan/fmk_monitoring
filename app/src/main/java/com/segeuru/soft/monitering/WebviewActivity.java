@@ -283,6 +283,15 @@ public class WebviewActivity extends BaseAtivity {
         return super.onOptionsItemSelected(item);
     }
 
+    @Override
+    public void onBackPressed() {
+        if(m_webview.canGoBack()){
+            m_webview.goBack();
+        }else{
+            super.onBackPressed();
+        }
+    }
+
     public WebSupport support() {
         return m_webSupport;
     }

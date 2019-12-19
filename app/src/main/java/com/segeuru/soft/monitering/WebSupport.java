@@ -107,7 +107,7 @@ public class WebSupport {
                 dataOutputStream.writeBytes("Content-Disposition: form-data; name=\"uploaded_file[]\";filename=\"" + m_fileNames.get(i) + "\"" + lineEnd);
                 dataOutputStream.writeBytes(lineEnd);
 
-                File sourceFile = new File(MoniteringApp.APP_STORE_PATH + "/" + m_fileNames.get(i));
+                File sourceFile = new File(MoniteringApp.APP_STORE_PICTURE_PATH + "/" + m_fileNames.get(i));
                 if (!sourceFile.exists()) {
                     Log.i(DEBUG_TAG, "not exists");
                     return;

@@ -81,18 +81,16 @@
               param['mobile_code'] = callNative("deviceUniq");
               var res = dbMerge("agent", param);
               console.log(res);
-
-              window.localStorage.setItem("agent_code", userData.agent_code);
-              location.replace("main.html");
-            } else {
-              $.alert(result.data);
-            }
-          })
-          .fail(function() {
-            console.log('failed');
-            callNative("toastMessage", "로그인에 실패하였습니다.\n인터넷연결상태를 확인해주세요.");
-          });
-        }
+            window.localStorage.setItem("agent_code", userData.agent_code);
+            location.href="main.html";
+          } else {
+            $.alert(result.data);
+          }
+        })
+        .fail(function() {
+          console.log('failed');
+          callNative("toastMessage", "로그인에 실패하였습니다.\n인터넷연결상태를 확인해주세요.");
+        });
       }
     });
   });

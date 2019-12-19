@@ -11,6 +11,8 @@ public class MoniteringApp extends Application {
     private static float scale = 0;
     private static DBHelper m_dbHlper = null;
     public static final String APP_STORE_PATH = Environment.getExternalStorageDirectory().getAbsolutePath() + "/fmk";
+    public static final String APP_STORE_DOWNLOAD_PATH = APP_STORE_PATH + "/download";
+    public static final String APP_STORE_PICTURE_PATH = APP_STORE_PATH + "/picture";
 
     @Override
     public void onCreate() {
@@ -22,8 +24,11 @@ public class MoniteringApp extends Application {
         }
 
         //create folder.
-        File dir = new File(MoniteringApp.APP_STORE_PATH);
-        if(!dir.exists()) dir.mkdirs();
+        File dirDownload = new File(MoniteringApp.APP_STORE_DOWNLOAD_PATH);
+        if(!dirDownload.exists()) dirDownload.mkdirs();
+
+        File dirPicture = new File(MoniteringApp.APP_STORE_PICTURE_PATH);
+        if(!dirPicture.exists()) dirPicture.mkdirs();
 
 //        SQLiteDatabase db = m_dbHlper.getWritableDatabase();
 //        ContentValues cv = new ContentValues();

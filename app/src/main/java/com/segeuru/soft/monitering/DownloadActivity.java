@@ -135,7 +135,7 @@ public class DownloadActivity extends AppCompatActivity {
 
     private void downloadMedia() {
         final String fileURL = m_url;
-        File file = new File(MoniteringApp.APP_STORE_PATH, m_filename);
+        File file = new File(MoniteringApp.APP_STORE_DOWNLOAD_PATH, m_filename);
 
         if(file.exists()) {
             //already exist.
@@ -165,14 +165,14 @@ public class DownloadActivity extends AppCompatActivity {
         if(m_mimeType.compareTo("video") == 0) {
             findViewById(R.id.videoView).setVisibility(View.VISIBLE);
             final VideoView videoView = findViewById(R.id.videoView);
-            videoView.setVideoPath(MoniteringApp.APP_STORE_PATH + "/" + m_filename);
+            videoView.setVideoPath(MoniteringApp.APP_STORE_DOWNLOAD_PATH + "/" + m_filename);
             //videoView.setRotation(90);
             videoView.seekTo(0);
             videoView.start();
         } else {
         //이미지일 경우
             findViewById(R.id.imageView).setVisibility(View.VISIBLE);
-            File imgFile = new  File(MoniteringApp.APP_STORE_PATH + "/" + m_filename);
+            File imgFile = new  File(MoniteringApp.APP_STORE_DOWNLOAD_PATH + "/" + m_filename);
             if(imgFile.exists()) {
                 Bitmap bitmap = BitmapFactory.decodeFile(imgFile.getPath());
                 ImageView imageView = findViewById(R.id.imageView);
@@ -224,7 +224,7 @@ public class DownloadActivity extends AppCompatActivity {
 
                 fileSize = connection.getContentLength();
                 inputStream = new BufferedInputStream(url.openStream(), 8192);
-                outputFile = new File(MoniteringApp.APP_STORE_PATH, m_filename);
+                outputFile = new File(MoniteringApp.APP_STORE_DOWNLOAD_PATH, m_filename);
 
                 outputStream = new FileOutputStream(outputFile);
 
