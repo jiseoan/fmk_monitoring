@@ -4,17 +4,12 @@ import androidx.appcompat.app.AppCompatActivity;
 
 import android.content.Intent;
 import android.os.Bundle;
-import android.util.Log;
+import android.os.Handler;
 import android.view.animation.Animation;
 import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 
-import java.util.Timer;
-import java.util.TimerTask;
-
 public class SplashActivity extends AppCompatActivity {
-
-    Timer timer = new Timer();
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -32,7 +27,8 @@ public class SplashActivity extends AppCompatActivity {
 
             @Override
             public void onAnimationEnd(Animation animation) {
-                timer.schedule(new TimerTask() {
+
+                new Handler().postDelayed(new Runnable() {
                     @Override
                     public void run() {
                         Intent intent = new Intent(SplashActivity.this, WebviewActivity.class);
@@ -40,7 +36,7 @@ public class SplashActivity extends AppCompatActivity {
                         startActivity(intent);
                         finish();
                     }
-                }, 1000);
+                }, 500);
             }
 
             @Override
@@ -50,10 +46,6 @@ public class SplashActivity extends AppCompatActivity {
         });
 
         imageView.startAnimation(anim);
-    }
-
-    private void timerTask() {
-
     }
 
 }
