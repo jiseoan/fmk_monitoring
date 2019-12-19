@@ -25,7 +25,6 @@ public class BaseAtivity extends AppCompatActivity {
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        //m_db.close();
     }
 
     protected void initWebview(int id) {
@@ -37,18 +36,15 @@ public class BaseAtivity extends AppCompatActivity {
         m_webview.setWebViewClient(new WebViewCustom());
     }
 
-    protected SQLiteDatabase database() {
-        return ((MoniteringApp)getApplication()).m_db;
-    }
-
      protected String selectSQL(String sql) {
-         Cursor cursor = database().rawQuery(sql, null);
+        SQLiteDatabase db = MoniteringApp.dbHelper().getReadableDatabase();
+        Cursor cursor = db.rawQuery(sql, null);
 
-         JSONArray jsonArray = new JSONArray();
-         while (cursor.moveToNext()) {
-             JSONObject json = new JSONObject();
-             for (int i = 0; i < cursor.getColumnCount(); i++) {
-                 try {
+        JSONArray jsonArray = new JSONArray();
+        while (cursor.moveToNext()) {
+            JSONObject json = new JSONObject();
+            for (int i = 0; i < cursor.getColumnCount(); i++) {
+                try {
                      switch (cursor.getType(i)) {
                          case Cursor.FIELD_TYPE_NULL:
                              break;
@@ -67,14 +63,15 @@ public class BaseAtivity extends AppCompatActivity {
                      }
 
                      json.put(cursor.getColumnName(i), cursor.getString(i));
-                 } catch(Exception e) {
-
-                 }
-             }
-             jsonArray.put(json);
-         }
+                } catch(Exception e) {
+                    e.printStackTrace();
+                }
+            }
+            jsonArray.put(json);
+        }
 
          cursor.close();
+         db.close();
          return jsonArray.toString();
      }
 }

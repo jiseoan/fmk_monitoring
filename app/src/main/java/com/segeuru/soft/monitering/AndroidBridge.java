@@ -4,6 +4,7 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.res.Resources;
 import android.database.SQLException;
+import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Handler;
@@ -53,7 +54,9 @@ public class AndroidBridge {
         }
 
         try {
-            m_webViewActivity.database().execSQL(sql);
+            SQLiteDatabase db = MoniteringApp.dbHelper().getReadableDatabase();
+            db.execSQL(sql);
+            db.close();
         } catch (SQLException e) {
             return "failed";
         }
@@ -297,21 +300,23 @@ public class AndroidBridge {
         handler.post(new Runnable() {
             @Override
             public void run() {
-                m_webViewActivity.database().beginTransaction();
+                SQLiteDatabase db = MoniteringApp.dbHelper().getReadableDatabase();
+                db.beginTransaction();
                 try {
                     JSONArray queries = new JSONArray(jsonstr);
                     Log.i(DEBUG_TAG, "processing database queries " + Integer.toString(queries.length()));
                     for(int i=0;i<queries.length();++i) {
                         JSONObject query = (JSONObject)queries.get(i);
-                        m_webViewActivity.database().execSQL(query.getString("query"));
+                        db.execSQL(query.getString("query"));
                         //Log.i(DEBUG_TAG, query.getString("query"));
                         //if((i % 1000) == 0) Log.i(DEBUG_TAG, "processed 1000 queries");
                     }
-                    m_webViewActivity.database().setTransactionSuccessful();
+                    db.setTransactionSuccessful();
                 } catch(Exception e) {
                     e.printStackTrace();
                 } finally {
-                    m_webViewActivity.database().endTransaction();
+                    db.endTransaction();
+                    db.close();
                 }
                 Log.i(DEBUG_TAG, "ended processing.");
                 m_webViewActivity.javaScriptCallback("completeQueries", "", "");

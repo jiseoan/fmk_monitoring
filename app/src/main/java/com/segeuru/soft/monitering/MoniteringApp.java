@@ -11,7 +11,7 @@ public class MoniteringApp extends Application {
 
     private static float scale = 0;
     private static DBHelper m_dbHlper = null;
-    protected SQLiteDatabase m_db = null;
+    //protected SQLiteDatabase m_db = null;
     public static final String APP_STORE_PATH = Environment.getExternalStorageDirectory().getAbsolutePath() + "/fmk";
     public static final String APP_STORE_DOWNLOAD_PATH = APP_STORE_PATH + "/download";
     public static final String APP_STORE_PICTURE_PATH = APP_STORE_PATH + "/picture";
@@ -25,7 +25,7 @@ public class MoniteringApp extends Application {
             m_dbHlper = new DBHelper(getApplicationContext(), "monitering.db", null, 15);
         }
 
-        m_db = dbHelper().getWritableDatabase();
+        //m_db = dbHelper().getWritableDatabase();
 
         //create folder.
         File dirDownload = new File(MoniteringApp.APP_STORE_DOWNLOAD_PATH);
@@ -43,14 +43,6 @@ public class MoniteringApp extends Application {
 //        db.close();
 
         Log.e("segeuru", "app start.");
-    }
-
-
-
-    @Override
-    public void onTerminate() {
-        m_db.close();
-        super.onTerminate();
     }
 
     public static int convToDP(int dp) {
