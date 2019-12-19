@@ -249,22 +249,6 @@
             android:layout_height="wrap_content"
             android:gravity="center"
             android:layout_weight="1"
-            android:background="@color/fmk_color_cancel">
-
-            <ImageButton
-                android:id="@+id/btn_cancel_asssssss"
-                android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
-                android:background="?android:attr/selectableItemBackgroundBorderless"
-                android:src="@drawable/btn_cancel"/>
-
-        </LinearLayout>
-
-        <LinearLayout
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:gravity="center"
-            android:layout_weight="1"
             android:background="@color/fmk_color_third">
 
             <ImageButton

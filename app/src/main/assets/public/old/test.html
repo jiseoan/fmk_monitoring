@@ -202,6 +202,8 @@
     <button id="uploadImages"> *이미지 업로드 </button><br />
     <button id="checkNetwork"> *네트워크 체크 </button><br />
     <button id="toastMessage"> *토스트 메세지 </button><br />
+    <button id="deleteFiles"> *촬영 파일 선택 삭제 </button><br />
+    <button id="deleteFilesAll"> *촬영 파일 모두삭제 </button><br />
 <br/>
     <button id="btnContentActionMonitoringCamera"> 모니터링촬영 카메라 열기 (1장 사진) </button>
     <button id="btnContentActionBuildingCamera"> 단지촬영 카메라 열기 (1장 사진) </button>
@@ -429,6 +431,15 @@ $(document).ready(function(){
     $('#toastMessage').on('click', function() {
       window.android.toastMessage("토스트 메세지");
     });
+
+    $('#deleteFiles').on('click', function() {
+      window.android.deleteFiles('[{filename:"a.jpg"}, {filename:"b.jpg"}]')
+    });
+
+    $('#deleteFilesAll').on('click', function() {
+      window.android.deleteFilesAll();
+    });
+
 
 
 

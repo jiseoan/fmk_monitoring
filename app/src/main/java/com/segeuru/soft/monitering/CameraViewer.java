@@ -366,7 +366,7 @@ public class CameraViewer extends AppCompatActivity {
 
         int padding = Math.round(10 * m_font_scale);
         int lineHeight = Math.round(10 * m_font_scale);
-        final File file = new File(MoniteringApp.APP_STORE_PATH + "/" + System.currentTimeMillis() + ".jpg");
+        final File file = new File(MoniteringApp.APP_STORE_PICTURE_PATH + "/" + System.currentTimeMillis() + ".jpg");
         OutputStream output = null;
 
         try {
@@ -453,7 +453,7 @@ public class CameraViewer extends AppCompatActivity {
     }
 
     private void save(byte[] bytes) throws IOException {
-        final File file = new File(MoniteringApp.APP_STORE_PATH + "/" + System.currentTimeMillis() + ".jpg");
+        final File file = new File(MoniteringApp.APP_STORE_PICTURE_PATH + "/" + System.currentTimeMillis() + ".jpg");
         //Log.i(DEBUG_TAG, file.getAbsolutePath());
 
         OutputStream output = null;
