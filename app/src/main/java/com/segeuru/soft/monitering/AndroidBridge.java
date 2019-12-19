@@ -53,7 +53,7 @@ public class AndroidBridge {
         }
 
         try {
-            m_webViewActivity.m_db.execSQL(sql);
+            m_webViewActivity.database().execSQL(sql);
         } catch (SQLException e) {
             return "failed";
         }
@@ -297,21 +297,21 @@ public class AndroidBridge {
         handler.post(new Runnable() {
             @Override
             public void run() {
-                m_webViewActivity.m_db.beginTransaction();
+                m_webViewActivity.database().beginTransaction();
                 try {
                     JSONArray queries = new JSONArray(jsonstr);
                     Log.i(DEBUG_TAG, "processing database queries " + Integer.toString(queries.length()));
                     for(int i=0;i<queries.length();++i) {
                         JSONObject query = (JSONObject)queries.get(i);
-                        m_webViewActivity.m_db.execSQL(query.getString("query"));
+                        m_webViewActivity.database().execSQL(query.getString("query"));
                         //Log.i(DEBUG_TAG, query.getString("query"));
                         //if((i % 1000) == 0) Log.i(DEBUG_TAG, "processed 1000 queries");
                     }
-                    m_webViewActivity.m_db.setTransactionSuccessful();
+                    m_webViewActivity.database().setTransactionSuccessful();
                 } catch(Exception e) {
                     e.printStackTrace();
                 } finally {
-                    m_webViewActivity.m_db.endTransaction();
+                    m_webViewActivity.database().endTransaction();
                 }
                 Log.i(DEBUG_TAG, "ended processing.");
                 m_webViewActivity.javaScriptCallback("completeQueries", "", "");

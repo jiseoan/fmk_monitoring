@@ -12,24 +12,20 @@ import org.json.JSONObject;
 import androidx.annotation.Nullable;
 import androidx.appcompat.app.AppCompatActivity;
 
-import static com.segeuru.soft.monitering.MoniteringApp.dbHelper;
-
 public class BaseAtivity extends AppCompatActivity {
 
     protected WebView m_webview = null;
-    protected SQLiteDatabase m_db = null;
     protected final Handler handler = new Handler();
 
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        m_db = dbHelper().getWritableDatabase();
     }
 
     @Override
     protected void onDestroy() {
         super.onDestroy();
-        m_db.close();
+        //m_db.close();
     }
 
     protected void initWebview(int id) {
@@ -41,8 +37,12 @@ public class BaseAtivity extends AppCompatActivity {
         m_webview.setWebViewClient(new WebViewCustom());
     }
 
+    protected SQLiteDatabase database() {
+        return ((MoniteringApp)getApplication()).m_db;
+    }
+
      protected String selectSQL(String sql) {
-         Cursor cursor = m_db.rawQuery(sql, null);
+         Cursor cursor = database().rawQuery(sql, null);
 
          JSONArray jsonArray = new JSONArray();
          while (cursor.moveToNext()) {
