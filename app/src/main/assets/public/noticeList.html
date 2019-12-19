@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, user-scalable=no">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Focus Media Korea Monitoring App</title>
+  <link rel="stylesheet" type="text/css" href="css/base.css"/>
+  <link rel="stylesheet" type="text/css" href="css/layout.css"/>
+  <link rel="stylesheet" type="text/css" href="../vendor/jquery-confirm/dist/jquery-confirm.min.css">
+  <script type="text/javascript" src="../vendor/jquery/jquery-3.1.1.min.js"></script>
+  <script type="text/javascript" src="../vendor/vue/vue.js"></script>
+  <script type="text/javascript" src="../vendor/jquery-confirm/dist/jquery-confirm.min.js"></script>
+  <script type="text/javascript" src="../vendor/common/common.js"></script>
+</head>
+<body>
+  <article class="notice">
+    <ul class="list" id="noticeList">
+      <li
+        is="notice-item"
+        v-for="(item, index) in items"
+        v-bind:item="item"
+        v-on:notice-detail="noticeDetail(index)" v-cloak>
+      </li>
+    </ul>
+    <a class="btn-more" href="#" style="display: none;"><span>더보기</span></a>
+  </article>
+
+  <script language="javascript" type="text/javascript">
+    var noticeListVue = null;
+  $(document).ready(function(){
+    callNative('toolBar', 'main', "공지사항");
+    callNative("hideBottomActionBar");
+
+    var noticeListData = dbResultArray("SELECT * FROM notice ORDER BY notice_type, create_date DESC, notice_id DESC");
+
+    if (noticeListVue === null) {
+
+      Vue.component(
+        'notice-item',
+        {
+          template: '<li v-on:click="$emit(\'notice-detail\')" v-bind:class="[item.notice_type ==\'F\'?\'point\':\'\']">\
+                      <a>\
+                        <p class="ttl">{{ item.title }}</p>\
+                        <p class="date">{{ item.create_date }}</p>\
+                      </a>\
+                      </div>\
+                    </li>',
+          props: ['item']
+        }
+      );
+
+      noticeListVue = new Vue({
+        el: '#noticeList',
+        data: {
+          items: []
+        },
+        methods: {
+          noticeDetail: function(idx) {
+            var items = this.items;
+            var row = items[idx];
+            var noticeId = row.notice_id;
+            console.log('noticeId');
+
+            // 모니터링/광고촬영 처리 리스트로 이동한다.
+            location.href = "noticeDetail.html?id=" + noticeId;
+          }
+        }
+      });
+    }
+    
+    noticeListVue.items = noticeListData;
+  });
+  </script>
+
+</body>
+</html>
