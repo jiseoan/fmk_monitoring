@@ -114,8 +114,8 @@
       </ul>
       </div>
       <div class="ad">
-        <ul class="building-shot">
-          <li>
+        <ul class="building-shot" id="buildingShot">
+          <li v-on:click="shot()">
             <div>
               <span class="badge gray">미완료</span>
               <p>단지 대표이미지 촬영</p>
@@ -217,6 +217,7 @@
   var buildingData = null;
   var selDate = null;
   var monitoringListVue = null;
+  var buildingShotVue = null;
   $(document).ready(function(){
     callNative('toolBar', 'main', "");
     callNative("hideBottomActionBar");
@@ -287,6 +288,18 @@
     }
     
     monitoringListVue.items = monitoringData;
+
+    buildingShotVue = new Vue({
+      el: '#buildingShot',
+      data: {
+        items: []
+      },
+      methods: {
+        shot: function(idx) {
+          callNative('camera', 'building', "단지 대표이미지용\n사진을 촬영해주세요.", {take_count: 1, title: buildingData.building_name, address: buildingData.address});
+        }
+      }
+    });
 
     $('.tab a').click(function() {
       var idx = $(this).index();
