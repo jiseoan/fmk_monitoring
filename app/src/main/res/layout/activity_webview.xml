@@ -21,7 +21,7 @@
             >
             
             <TextView
-                android:layout_width="320dp"
+                android:layout_width="290dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:gravity="center"
@@ -49,7 +49,7 @@
             app:popupTheme="@style/AppTheme.PopupOverlay">
 
             <TextView
-                android:layout_width="320dp"
+                android:layout_width="290dp"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:gravity="center"
