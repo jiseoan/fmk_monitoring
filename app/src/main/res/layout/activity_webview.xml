@@ -36,8 +36,6 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="right"
                 android:src="@drawable/btn_home"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
                 />
 
@@ -66,8 +64,6 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="right"
                 android:src="@drawable/btn_close"
-                android:layout_alignParentEnd="true"
-                android:layout_alignParentRight="true"
                 android:background="?android:attr/selectableItemBackgroundBorderless"
                 />
 
