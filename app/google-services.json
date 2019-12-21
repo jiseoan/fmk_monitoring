@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "658958914286",
+    "firebase_url": "https://fcmtest-c091e.firebaseio.com",
+    "project_id": "fcmtest-c091e",
+    "storage_bucket": "fcmtest-c091e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:658958914286:android:7208dad4f62c2cf2d799ff",
+        "android_client_info": {
+          "package_name": "com.segeuru.soft.monitering"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "658958914286-egvj58e7gk59o1ulvnc1k0pb471fi3lg.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAAn4PX14ho19OvL4B2PmrhkWgnghNYIdY"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "658958914286-egvj58e7gk59o1ulvnc1k0pb471fi3lg.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
