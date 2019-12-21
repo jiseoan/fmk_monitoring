@@ -10,6 +10,10 @@ import android.graphics.BitmapFactory;
 import android.graphics.Color;
 import android.os.Build;
 import android.util.Log;
+
+import androidx.core.app.NotificationCompat;
+import androidx.core.app.NotificationManagerCompat;
+
 import com.google.firebase.messaging.FirebaseMessagingService;
 import com.google.firebase.messaging.RemoteMessage;
 
@@ -32,10 +36,7 @@ public class FirebaseInstanceIDService extends FirebaseMessagingService {
     @Override
     public void onMessageReceived(RemoteMessage remoteMessage) {
 
-        Log.i("segeuru.com", "onMessageReceived");
-        Log.i("segeuru.com", remoteMessage.getNotification().getBody());
         sendNotification(remoteMessage);
-
 
         if (remoteMessage != null && remoteMessage.getData().size() > 0) {
 //            String title = remoteMessage.getData().get("title");
@@ -53,38 +54,36 @@ public class FirebaseInstanceIDService extends FirebaseMessagingService {
      * **/
     private void sendNotification(RemoteMessage remoteMessage) {
 
+        String noticeChannelID = "default";
         String title = remoteMessage.getNotification().getTitle();
         String message = remoteMessage.getNotification().getBody();
 
-//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
-//            NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
-//            NotificationChannel notificationChannel = new NotificationChannel("channel_id", "channel_name", NotificationManager.IMPORTANCE_DEFAULT);
-//            notificationChannel.setDescription("channel description");
-//            notificationChannel.enableLights(true);
-//            notificationChannel.setLightColor(Color.GREEN);
-//            notificationChannel.enableVibration(true);
-//            notificationChannel.setVibrationPattern(new long[]{100, 200, 100, 200});
-//            notificationChannel.setLockscreenVisibility(Notification.VISIBILITY_PRIVATE);
-//            notificationManager.createNotificationChannel(notificationChannel);
-//        }
+        NotificationManagerCompat notificationManager = NotificationManagerCompat.from(this);
+        NotificationCompat.Builder builder;
 
-        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.O) {
+            NotificationChannel channel = new NotificationChannel(noticeChannelID, "notice", NotificationManager.IMPORTANCE_DEFAULT);
+            notificationManager.createNotificationChannel(channel);
+            builder = new NotificationCompat.Builder(this, channel.getId());
+        } else {
+            builder = new NotificationCompat.Builder(this, noticeChannelID);
+        }
+
         Intent intent = new Intent(this, WebviewActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-        Notification.Builder builder = new Notification.Builder(this);
+
         builder.setLargeIcon(BitmapFactory.decodeResource(getResources(),android.R.drawable.star_on));
         builder.setSmallIcon(android.R.drawable.star_on);
-        builder.setTicker("알람 간단한 설명");
-        builder.setContentTitle("알람 제목");
-        builder.setContentText("알람 내용");
+        //builder.setTicker("알람 간단한 설명");
+        builder.setContentTitle(title);
+        builder.setContentText(message);
         builder.setWhen(System.currentTimeMillis());
         builder.setDefaults(Notification.DEFAULT_SOUND | Notification.DEFAULT_VIBRATE);
         builder.setContentIntent(pendingIntent);
         builder.setAutoCancel(true);
-        //builder.setNumber(999);
+//        builder.setNumber(999);
+
+        Log.i("segeuru.com", "notified");
         notificationManager.notify(0, builder.build());
-        /**
-         * 오레오 버전부터는 Notification Channel이 없으면 푸시가 생성되지 않는 현상이 있습니다.
-         * **/
     }
 }
