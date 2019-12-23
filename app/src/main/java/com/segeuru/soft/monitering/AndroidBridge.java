@@ -19,6 +19,7 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.google.firebase.iid.FirebaseInstanceId;
 import com.google.zxing.integration.android.IntentIntegrator;
 
 import org.apache.commons.io.FileUtils;
@@ -65,7 +66,8 @@ public class AndroidBridge {
 
     @JavascriptInterface
     public String deviceUniq() {
-        return Settings.Secure.getString(m_webView.getContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+        //return Settings.Secure.getString(m_webView.getContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+        return MoniteringApp.m_fbToken;
     }
 
     @JavascriptInterface

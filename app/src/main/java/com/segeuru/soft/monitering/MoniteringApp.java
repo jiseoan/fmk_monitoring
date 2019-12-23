@@ -11,10 +11,10 @@ public class MoniteringApp extends Application {
 
     private static float scale = 0;
     private static DBHelper m_dbHlper = null;
-    //protected SQLiteDatabase m_db = null;
+    public static String m_fbToken = null;
     public static final String APP_STORE_PATH = Environment.getExternalStorageDirectory().getAbsolutePath() + "/fmk";
-    public static final String APP_STORE_DOWNLOAD_PATH = APP_STORE_PATH + "/download";
-    public static final String APP_STORE_PICTURE_PATH = APP_STORE_PATH + "/picture";
+    public static final String APP_STORE_DOWNLOAD_PATH = APP_STORE_PATH + "/fmk_download";
+    public static final String APP_STORE_PICTURE_PATH = APP_STORE_PATH + "/fmk_picture";
 
     @Override
     public void onCreate() {
