@@ -184,12 +184,6 @@ public class AndroidBridge {
     }
 
     @JavascriptInterface
-    public void webViewClose() {
-        //현재 웹뷰 닫기
-        m_webViewActivity.finish();
-    }
-
-    @JavascriptInterface
     public void qrCode() {
         IntentIntegrator intentIntegrator = new IntentIntegrator(m_webViewActivity);
         intentIntegrator.setPrompt("");
@@ -220,7 +214,22 @@ public class AndroidBridge {
     public void newWebView(String url) {
         Intent intent = new Intent(m_webViewActivity, WebviewActivity.class);
         intent.putExtra("url", url);
-        m_webViewActivity.startActivity(intent);
+        //m_webViewActivity.startActivity(intent);
+        m_webViewActivity.startActivityForResult(intent,0);
+    }
+
+    @JavascriptInterface
+    public void closeWebView() {
+        //현재 웹뷰 닫기
+        Intent intent = new Intent();
+        intent.putExtra("result", m_webViewActivity.m_webViewResult);
+        m_webViewActivity.setResult(0, intent);
+        m_webViewActivity.finish();
+    }
+
+    @JavascriptInterface
+    public void setWebViewResult(String result) {
+        m_webViewActivity.m_webViewResult = result;
     }
 
     @JavascriptInterface

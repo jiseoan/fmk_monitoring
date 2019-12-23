@@ -28,6 +28,7 @@ public class WebviewActivity extends BaseAtivity {
 
     private final String DEBUG_TAG = "segeuru.com";
     public static final int REQUEST_CODE = 0x0000c0dd;
+    public String m_webViewResult;
     private WebSupport m_webSupport;
     public String m_bottomBar_style;
 
@@ -123,6 +124,12 @@ public class WebviewActivity extends BaseAtivity {
         super.onActivityResult(requestCode, resultCode, data);
 
         switch (requestCode) {
+            case 0: {
+                String result = data.getStringExtra("result");
+                javaScriptCallback("newWebViewCallBack", null, result);
+                //Log.i(DEBUG_TAG, result);
+                break;
+            }
             case WebviewActivity.REQUEST_CODE: {
                 if(null != data) {
                     String result = data.getStringExtra("pics");

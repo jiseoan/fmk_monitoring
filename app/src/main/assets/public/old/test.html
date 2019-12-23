@@ -195,8 +195,9 @@
     <button id="popup"> *top-actionbar-A2 보이기 </button><br />
     <button id="setTitle">*타이틀 입력</button><br>
     <button id="hideAllActionBars"> *전체 액션바 숨기기 </button><br />
-    <button id="link"> *Active 링크 이동 </button><br />
-    <button id="closeActivity"> *Active 닫기 </button><br />
+    <button id="link"> *새창 열기 </button><br />
+    <button id="setResult"> *리턴 값 등록 </button><br />
+    <button id="closeActivity"> *새창 닫기 </button><br />
     <button id="loadingProgress"> *로딩 상태 표시 </button><br />
     <button id="downloadMedia"> *동영상 다운로드 </button><br />
     <button id="downloadImage"> *이미지 다운로드 </button><br />
@@ -358,11 +359,15 @@ $(document).ready(function(){
 
     $('#link').on('click', function() {
       //location.href = "test.html?mode=activity";
-      window.android.newWebView("test.html");
+      window.android.newWebView("old/test.html");
     });
 
     $('#closeActivity').on('click', function() {
-      window.android.webViewClose();
+      window.android.closeWebView();
+    });
+
+    $('#setResult').on('click', function() {
+      window.android.setWebViewResult("O.K");
     });
 
     $('#loadingProgress').on('click', function() {
@@ -708,6 +713,9 @@ function NativeCallback(command, param, result)
     break;
     case "confirm":
       console.log("confirm");
+    break;
+    case "newWebViewCallBack":
+      console.log(result);
     break;
     case "qrScan":
     {
