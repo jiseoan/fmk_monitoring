@@ -88,7 +88,7 @@
         template: '<li v-bind:class="[item.processing_flag ==\'Y\'?\'after\':item.processing_flag ==\'R\'?\'doing\':\'before\']" v-on:click="$emit(\'shot\')">\
             <p v-if="item.class == 0">{{ item.job_name }} {{ item.processing_flag ==\'N\' ? "촬영" : "재촬영" }}</p>\
             <p v-else-if="item.class == 1">{{ item.job_name }} {{ item.processing_flag ==\'N\' ? "촬영" : "재촬영" }} <br> &lt;{{ item.sub_name }}&gt; {{ item.processing_flag ==\'N\' ? "촬영" : "재촬영" }}</p>\
-            <a v-if="item.class == 1" href="javascript:void(0);" class="btn-ad" v-on:click.stop="$emit(\'ad-view\')">광고보기</a>\
+            <a v-if="item.class == 1" class="btn-ad" v-on:click.stop="$emit(\'ad-view\')">광고보기</a>\
           </li>',
         props: ['item']
       }

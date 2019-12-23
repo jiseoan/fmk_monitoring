@@ -32,7 +32,7 @@
       margin-bottom: 0.625rem;
     }
 
-    .building-shot > li > div:after {
+    .building-shot > li > div.title:after {
       content: '';
       display: block;
       position: absolute;
@@ -95,21 +95,11 @@
       </div>
       <div class="ad" id="adCheckList">
         <ul class="building-shot">
-          <li v-on:click="shot()" v-if="item.length > 0" v-cloak>
-            <div>
-              <span v-if="items[0].building_file_url !=''" class="badge green">완료</span>
+          <li v-on:click="shot()" v-if="items.length > 0" v-cloak>
+            <div class="title">
+              <span v-if="items[0].building_file_url != 'null' " class="badge green">완료</span>
               <span v-else class="badge gray">미완료</span>
               <p>단지 대표이미지 촬영</p>
-            </div>
-            <div v-if="items[0].building_file_url !=''">
-              <ul class="monitoring-list">
-                <li>
-                  <a>
-                    <span class="img"><img v-bind:src="item.filepath"></span>
-                    <span class="location">단지 대표 이미지</span>
-                  </a>
-                </li>
-              </ul>
             </div>
           </li>
         </ul>
@@ -118,7 +108,8 @@
             is="ad-item"
             v-for="(item, index) in items"
             v-bind:item="item"
-            v-on:ad-check-detail="adCheckDetail(index)" v-cloak>            
+            v-on:ad-check-detail="adCheckDetail(index)"
+            v-on:ad-view="adView(index)" v-cloak>            
           </li>
         </ul>
       </div>
@@ -146,9 +137,20 @@
     if (buildingRes) {
       buildingData = buildingRes;
     }
+
+    $('.tab a').click(function() {
+      var idx = $(this).index();
+
+      $('.tab a').removeClass('on').eq(idx).addClass('on');
+      $('.cont-wrap > div').removeClass('on').eq(idx).addClass('on');
+    });
     
     callNative('setTitle', buildingData.building_name);
+    monitoringList();
+    adCheckList();
+  });
 
+  function monitoringList() {
     var monitoringData = dbRowArray("SELECT * FROM monitoring_request mr WHERE date(mr.request_date) = date('" + selDate + "') AND mr.building_id='" + buildingData.building_id + "'");
     if (monitoringData) {
       monitoringData.details = [];
@@ -193,33 +195,40 @@
             var buildingLocateId = row.building_locate_id;
             var monitoringRequestId = row.monitoring_request_id;
 
-            // 모니터링/광고촬영 처리 리스트로 이동한다.
-            callNative('newWebView', "buildingJobProcessDetail.html?&mode=monitoring" + "&id=" + buildingLocateId + "&jobId=" + monitoringRequestId);
+            if (row.processing_flag == 'N') {
+              callNative('newWebView', "noQrProcess.html?id=" + buildingLocateId + "&jobId=" + monitoringRequestId);
+            } else {
+              // 모니터링/광고촬영 처리 리스트로 이동한다.
+              callNative('newWebView', "buildingJobProcessDetail.html?mode=monitoring" + "&id=" + buildingLocateId + "&jobId=" + monitoringRequestId);
+            }
           }
         }
       });
     }
     
     monitoringListVue.items = monitoringData;
+  }
 
+  function adCheckList() {
+    var adCheckData = dbResultArray("SELECT acr.*, c.codename FROM ad_check_request acr LEFT JOIN code c ON c.code_id = acr.return_code_id WHERE date(acr.request_date) = date('" + selDate + "') AND acr.building_id='" + buildingData.building_id + "'");
 
-    var adCheckData = dbResultArray("SELECT acr.*, c.codename FROM ad_check_request acr LEFT JOIN code c ON c.return_code_id = c.code_id WHERE date(acr.request_date) = date('" + selDate + "') AND acr.building_id='" + buildingData.building_id + "'");
+    console.log(JSON.stringify(adCheckData));
     
     if (adCheckData) {
       $.each(adCheckData, function(index, item){
         adCheckData[index].details = [];
-        var processingData = dbResultArray("SELECT * FROM processing WHERE ad_check_request_id='" + adCheckData.ad_check_request_id + "' AND building_id='" + buildingData.building_id + "'");
+        var processingData = dbResultArray("SELECT * FROM processing WHERE ad_check_building_id='" + adCheckData[index].ad_check_building_id + "' AND building_id='" + buildingData.building_id + "'");
         if (processingData) {
           adCheckData[index].details = processingData;
         }
-      }
+      });
     }
     console.log(JSON.stringify(adCheckData));
 
-    if (monitoringListVue === null) {
+    if (adCheckListVue === null) {
 
       Vue.component(
-        'monitoring-item',
+        'ad-item',
         {
           template: '<li v-on:click="$emit(\'ad-check-detail\')">\
                       <div>\
@@ -228,7 +237,7 @@
                         <span v-else-if="item.processing_flag === \'R\'" class="badge red">반려</span>\
                         <p>광고촬영</p>\
                         <p v-if="item.processing_flag === \'R\'" class="red">반려유형 : {{ item.codename }} </p>\
-                        <a class="btn"></a>\
+                        <a class="btn" v-on:click.stop="$emit(\'ad-view\')"></a>\
                       </div>\
                       <div>\
                         <p>&lt;{{ item.ad_name }}&gt;</p>\
@@ -245,7 +254,7 @@
                         </ul>\
                       </div>\
                     </li>',
-          props: ['items']
+          props: ['item']
         }
       );
 
@@ -263,24 +272,23 @@
             var row = items[idx];
             console.log(JSON.stringify(items));
             var buildingId = row.building_id;
-            var adCheckRequestId = row.ad_check_request_id;
+            var adCheckBuildingId = row.ad_check_building_id;
 
             // 모니터링/광고촬영 처리 리스트로 이동한다.
-            callNative('newWebView', "buildingJobProcessDetail.html?&mode=ad" + "&id=" + buildingId + "&jobId=" + adCheckRequestId);
+            callNative('newWebView', "buildingJobProcessDetail.html?mode=ad" + "&id=" + buildingId + "&jobId=" + adCheckBuildingId);
+          },
+          adView: function(idx) {
+            var items = this.items;
+            var row = items[idx];
+            console.log('adView', JSON.stringify(row));
+            callNative('downloadMedia', row.ad_name, row.ad_type, row.ad_url);
           }
         }
       });
     }
     
     adCheckListVue.items = adCheckData;
-
-    $('.tab a').click(function() {
-      var idx = $(this).index();
-
-      $('.tab a').removeClass('on').eq(idx).addClass('on');
-      $('.cont-wrap > div').removeClass('on').eq(idx).addClass('on');
-    });
-  });
+  }
   </script>
 
 </body>

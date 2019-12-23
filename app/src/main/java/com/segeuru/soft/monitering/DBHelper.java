@@ -35,8 +35,8 @@ public class DBHelper extends SQLiteOpenHelper {
         
         db.execSQL("CREATE TABLE IF NOT EXISTS code ( code_id INTEGER, parent_id INTEGER, code TEXT, codename TEXT)");
         
-        db.execSQL("CREATE TABLE IF NOT EXISTS as_request ( building_id INTEGER, building_locate_id INTEGER, machine_code TEXT, request_date TEXT, request_type_code_ids TEXT, request_desc TEXT, processing_flag TEXT, as_request_id INTEGER)");
-        db.execSQL("CREATE TABLE IF NOT EXISTS temp_save_as_request ( building_id INTEGER, building_locate_id INTEGER, machine_code TEXT, request_date TEXT, request_type_code_ids TEXT, request_desc TEXT, processing_flag TEXT, as_request_id INTEGER)");
+        db.execSQL("CREATE TABLE IF NOT EXISTS as_request ( building_id INTEGER, building_locate_id INTEGER, machine_code TEXT, request_date TEXT, request_type_code_ids TEXT, request_desc TEXT, request_file_url TEXT, processing_flag TEXT, as_request_id INTEGER)");
+        db.execSQL("CREATE TABLE IF NOT EXISTS temp_save_as_request ( building_id INTEGER, building_locate_id INTEGER, machine_code TEXT, request_date TEXT, request_type_code_ids TEXT, request_desc TEXT, request_file_url TEXT, processing_flag TEXT, as_request_id INTEGER)");
         
         db.execSQL("CREATE TABLE IF NOT EXISTS as_processing ( as_request_id INTEGER, processing_type_code_id INTEGER, processing_desc TEXT, processing_date TEXT, as_processing_id INTEGER)");
         db.execSQL("CREATE TABLE IF NOT EXISTS temp_save_as_processing ( as_request_id INTEGER, processing_type_code_id INTEGER, processing_desc TEXT, processing_date TEXT, as_processing_id INTEGER)");
