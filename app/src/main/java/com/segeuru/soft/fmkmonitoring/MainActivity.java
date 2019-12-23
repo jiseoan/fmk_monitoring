@@ -1,4 +1,4 @@
-package com.segeuru.soft.monitering;
+package com.segeuru.soft.fmkmonitoring;
 
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;

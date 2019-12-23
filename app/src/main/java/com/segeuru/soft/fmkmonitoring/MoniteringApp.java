@@ -1,7 +1,6 @@
-package com.segeuru.soft.monitering;
+package com.segeuru.soft.fmkmonitoring;
 
 import android.app.Application;
-import android.database.sqlite.SQLiteDatabase;
 import android.os.Environment;
 import android.util.Log;
 

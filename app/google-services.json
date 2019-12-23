@@ -1,34 +1,34 @@
 {
   "project_info": {
-    "project_number": "658958914286",
-    "firebase_url": "https://fcmtest-c091e.firebaseio.com",
-    "project_id": "fcmtest-c091e",
-    "storage_bucket": "fcmtest-c091e.appspot.com"
+    "project_number": "624598009419",
+    "firebase_url": "https://fmkmonitoring-902c7.firebaseio.com",
+    "project_id": "fmkmonitoring-902c7",
+    "storage_bucket": "fmkmonitoring-902c7.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:658958914286:android:7208dad4f62c2cf2d799ff",
+        "mobilesdk_app_id": "1:624598009419:android:0067fa1fe97fd84764afce",
         "android_client_info": {
-          "package_name": "com.segeuru.soft.monitering"
+          "package_name": "com.segeuru.soft.fmkmonitoring"
         }
       },
       "oauth_client": [
         {
-          "client_id": "658958914286-egvj58e7gk59o1ulvnc1k0pb471fi3lg.apps.googleusercontent.com",
+          "client_id": "624598009419-rtcafgs1jmrr3c55h8ssnq9k1bgti2bf.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyAAn4PX14ho19OvL4B2PmrhkWgnghNYIdY"
+          "current_key": "AIzaSyDCr2cc7NZBmHd8HBXNPzsJ_I_DxA_RVtQ"
         }
       ],
       "services": {
         "appinvite_service": {
           "other_platform_oauth_client": [
             {
-              "client_id": "658958914286-egvj58e7gk59o1ulvnc1k0pb471fi3lg.apps.googleusercontent.com",
+              "client_id": "624598009419-rtcafgs1jmrr3c55h8ssnq9k1bgti2bf.apps.googleusercontent.com",
               "client_type": 3
             }
           ]
