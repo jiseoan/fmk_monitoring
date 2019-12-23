@@ -431,7 +431,8 @@ $(document).ready(function(){
       param["custom_data3"] = "abc!!한글테스트";
       uploadData['data'] = param;
 
-      window.android.uploadData(JSON.stringify(uploadData));
+      //window.android.uploadData(JSON.stringify(uploadData));
+      window.android.uploadData("{url:'http://test.raonworks.com/upload.php', fileData:[{filename:'a.jpg'}, {filename:'b.jpg'}], id:'58', mode:'monitoring', data:{a:'a', b:'b',data:{c:'c', d:'한국인'}}}");
     });
 
     $('#checkNetwork').on('click', function() {
@@ -663,8 +664,8 @@ function NativeCallback(command, param, result)
     case "uploadData":
     {
       // /fmksystem/mobile/upload 페이지 결과가 뿌려짐
+      console.log(param);
       console.log(result);
-      $.alert("uploaded data");
     }
     break;
     case "back":
@@ -731,7 +732,7 @@ function NativeCallback(command, param, result)
       console.log("list");
     break;
     case "uploadData":
-      console.log("vvvvvvvvvvvvvvvvvvvvvvvvvvvvvvv");
+      console.log(param + ":" + result);
       $.alert("uploadedData");
     break;
   }

@@ -20,6 +20,8 @@ public class WebSupport {
     private Context m_context;
     private WebviewActivity m_webviewActivity;
     private ArrayList<String> m_fileNames;
+    private int m_serverResponseCode;
+    private String m_serverResponseMessage;
 
     public WebSupport(WebviewActivity webviewActivity) {
         m_webviewActivity = webviewActivity;
@@ -44,7 +46,7 @@ public class WebSupport {
             Log.i(DEBUG_TAG, uploadURL);
 
             //test, list of params.
-            params = (JSONObject)jsonRoot.get("data");
+            params = jsonRoot;
             for(int i=0;i<params.length();++i) {
                 Log.i(DEBUG_TAG, params.names().getString(i));
                 Log.i(DEBUG_TAG, params.get(params.names().getString(i)).toString());
@@ -52,11 +54,13 @@ public class WebSupport {
 
             //list of file paths.
             m_fileNames = new ArrayList<>();
-            filePaths = (JSONArray)jsonRoot.get("fileData");
-            for(int i=0;i<filePaths.length();++i) {
-                JSONObject filePath = (JSONObject)filePaths.get(i);
-                m_fileNames.add(filePath.getString("path"));
-                //Log.i(DEBUG_TAG, filePath.getString("path"));
+            if(jsonRoot.has("fileData")) {
+                filePaths = (JSONArray) jsonRoot.get("fileData");
+                for (int i = 0; i < filePaths.length(); ++i) {
+                    JSONObject filePath = (JSONObject) filePaths.get(i);
+                    m_fileNames.add(filePath.getString("filename"));
+                    //Log.i(DEBUG_TAG, filePath.getString("path"));
+                }
             }
 
         } catch (Exception e) {
@@ -138,35 +142,16 @@ public class WebSupport {
 
             dataOutputStream.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
 
-                // Responses from the server (code and message)
-            int serverResponseCode = httpConn.getResponseCode();
-            String serverResponseMessage = httpConn.getResponseMessage();
+            // Responses from the server (code and message)
+            m_serverResponseCode = httpConn.getResponseCode();
+            m_serverResponseMessage = httpConn.getResponseMessage();
 
             Log.i("uploadFile", "HTTP Response is : "
-                        + serverResponseMessage + ": " + serverResponseCode);
+                        + m_serverResponseMessage + ": " + m_serverResponseCode);
 
-//                if (serverResponseCode == 200) {
-//
-//                    activity.runOnUiThread(new Runnable() {
-//                        public void run() {
-//
-//                        String msg = "File Upload Completed.\n\n See uploaded file here : \n\n"
-//                                +" http://www.androidexample.com/media/uploads/"
-//                                +uploadFileName;
-//
-//                        messageText.setText(msg);
-//                        Toast.makeText(UploadToServer.this, "File Upload Complete.",
-//                                Toast.LENGTH_SHORT).show();
-//                        }
-//                    });
-//                }
-
-                //close the streams //
+            //close the streams //
             dataOutputStream.flush();
             dataOutputStream.close();
-
-//            int responseCode = httpConn.getResponseCode();
-//            Log.i("segeuru.com", Integer.toString(responseCode));
 
         } catch(Exception e) {
             e.printStackTrace();
@@ -190,7 +175,7 @@ public class WebSupport {
         @Override
         protected void onPostExecute(Integer integer) {
             super.onPostExecute(integer);
-            m_webviewActivity.javaScriptCallback("uploadData", "", "");
+            m_webviewActivity.javaScriptCallback("uploadData", m_serverResponseMessage, Integer.toString(m_serverResponseCode));
         }
     }
 
