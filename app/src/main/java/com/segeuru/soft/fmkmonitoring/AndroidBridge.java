@@ -1,4 +1,4 @@
-package com.segeuru.soft.monitering;
+package com.segeuru.soft.fmkmonitoring;
 
 import android.content.Context;
 import android.content.Intent;
@@ -8,7 +8,6 @@ import android.database.sqlite.SQLiteDatabase;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.os.Handler;
-import android.provider.Settings;
 import android.util.Log;
 import android.view.Gravity;
 import android.view.View;
@@ -28,7 +27,6 @@ import org.json.JSONObject;
 import java.io.File;
 import java.util.ArrayList;
 
-import androidx.appcompat.app.ActionBar;
 import androidx.appcompat.widget.Toolbar;
 import androidx.constraintlayout.widget.ConstraintLayout;
 import androidx.constraintlayout.widget.ConstraintSet;
@@ -65,7 +63,9 @@ public class AndroidBridge {
 
     @JavascriptInterface
     public String deviceUniq() {
-        return Settings.Secure.getString(m_webView.getContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+        //return Settings.Secure.getString(m_webView.getContext().getContentResolver(), Settings.Secure.ANDROID_ID);
+        Log.i(DEBUG_TAG, MoniteringApp.m_fbToken);
+        return MoniteringApp.m_fbToken;
     }
 
     @JavascriptInterface

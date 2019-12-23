@@ -1,9 +1,8 @@
-package com.segeuru.soft.monitering;
+package com.segeuru.soft.fmkmonitoring;
 
 import android.content.Context;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
-import android.util.Log;
 
 import androidx.annotation.Nullable;
 

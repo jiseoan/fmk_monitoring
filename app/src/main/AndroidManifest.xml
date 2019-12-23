@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
-    package="com.segeuru.soft.monitering">
+    package="com.segeuru.soft.fmkmonitoring">
 
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
@@ -11,7 +11,7 @@
     <uses-feature android:name="android.hardware.camera" />
 
     <application
-        android:name=".MoniteringApp"
+        android:name="com.segeuru.soft.fmkmonitoring.MoniteringApp"
         android:allowBackup="true"
         android:hardwareAccelerated="true"
         android:icon="@mipmap/ic_launcher"
@@ -23,7 +23,7 @@
         android:usesCleartextTraffic="true">
 
         <activity
-            android:name=".SplashActivity"
+            android:name="com.segeuru.soft.fmkmonitoring.SplashActivity"
             android:theme="@style/AppTheme.Splash">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
@@ -31,30 +31,30 @@
             </intent-filter>
         </activity>
         <activity
-            android:name=".DownloadActivity"
+            android:name="com.segeuru.soft.fmkmonitoring.DownloadActivity"
             android:configChanges="keyboardHidden|orientation|screenSize"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".QrReaderActivity"
+            android:name="com.segeuru.soft.fmkmonitoring.QrReaderActivity"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".CameraViewer"
+            android:name="com.segeuru.soft.fmkmonitoring.CameraViewer"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar" />
         <activity
-            android:name=".WebviewActivity"
+            android:name="com.segeuru.soft.fmkmonitoring.WebviewActivity"
             android:label="@string/title_activity_webview"
             android:screenOrientation="portrait"
             android:theme="@style/AppTheme.NoActionBar">
         </activity>
         <activity
-            android:name=".MainActivity"
+            android:name="com.segeuru.soft.fmkmonitoring.MainActivity"
             android:screenOrientation="portrait" />
 
         <service
-            android:name=".FirebaseInstanceIDService"
+            android:name="com.segeuru.soft.fmkmonitoring.FirebaseInstanceIDService"
             android:stopWithTask="false">
             <intent-filter>
                 <action android:name="com.google.firebase.MESSAGING_EVENT" />
