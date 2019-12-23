@@ -22,7 +22,7 @@ public class MoniteringApp extends Application {
         MoniteringApp.scale = getResources().getDisplayMetrics().density;
 
         if(null == m_dbHlper) {
-            m_dbHlper = new DBHelper(getApplicationContext(), "monitering.db", null, 15);
+            m_dbHlper = new DBHelper(getApplicationContext(), "monitering.db", null, 16);
         }
 
         //m_db = dbHelper().getWritableDatabase();
