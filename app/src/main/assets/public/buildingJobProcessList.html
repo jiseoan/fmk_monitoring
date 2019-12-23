@@ -85,26 +85,6 @@
     <div class="cont-wrap">
       <div class="monitoring on">
         <ul class="monitoring-list" id="monitoringList">
-        <!-- li>
-          <a href="#">
-            <span class="badge blue">AS요청</span>
-            <span class="img"><img src="asset/images/monitoring-img.png" alt=""></span>
-            <span class="location">
-              <span>201동</span>
-              <span>1호기</span>
-            </span>
-          </a>
-        </li>
-        <li>
-          <a href="#">
-            <span class="badge green">완료</span>
-            <span class="img"><img src="asset/images/monitoring-img.png" alt=""></span>
-            <span class="location">
-              <span>201동</span>
-              <span>1호기</span>
-            </span>
-          </a>
-        </li -->
         <li
           is="monitoring-item"
           v-for="(item, index) in items.details"
@@ -113,99 +93,32 @@
         </li>
       </ul>
       </div>
-      <div class="ad">
-        <ul class="building-shot" id="buildingShot">
-          <li v-on:click="shot()">
+      <div class="ad" id="adCheckList">
+        <ul class="building-shot">
+          <li v-on:click="shot()" v-if="item.length > 0" v-cloak>
             <div>
-              <span class="badge gray">미완료</span>
+              <span v-if="items[0].building_file_url !=''" class="badge green">완료</span>
+              <span v-else class="badge gray">미완료</span>
               <p>단지 대표이미지 촬영</p>
             </div>
-          </li>
-        </ul>
-        <ul>
-          <li>
-            <div>
-              <span class="badge red">반려</span>
-              <p>광고촬영</p>
-              <p class="red">반려유형 : 동일 광고 컷 촬영</p>
-              <a class="btn" href="#"></a>
-            </div>
-            <div>
-              <p>&lt;버거킹 IRON DRAGON편 1차&gt;</p>
-            </div>
-          </li>
-          <li>
-            <div>
-              <span class="badge gray">미완료</span>
-              <p>광고촬영</p>
-              <a class="btn" href="#"></a>
-            </div>
-            <div>
-              <p>&lt;버거킹 IRON DRAGON편 1차&gt;</p>
-            </div>
-          </li>
-          <li>
-            <div>
-              <span class="badge green">완료</span>
-              <p>광고촬영</p>
-              <a class="btn" href="#"></a>
-            </div>
-            <div>
-              <p>&lt;버거킹 IRON DRAGON편 1차&gt;</p>
+            <div v-if="items[0].building_file_url !=''">
               <ul class="monitoring-list">
                 <li>
-                  <a href="#">
-                    <span class="img"><img src="asset/images/monitoring-img.png" alt=""></span>
+                  <a>
+                    <span class="img"><img v-bind:src="item.filepath"></span>
                     <span class="location">단지 대표 이미지</span>
-                  </a>
-                </li>
-                <li>
-                  <a href="#">
-                    <span class="img"><img src="asset/images/monitoring-img.png" alt=""></span>
-                    <span class="location">
-                      <span>201동</span>
-                      <span>1호기</span>
-                    </span>
-                  </a>
-                </li>
-                <li>
-                  <a href="#">
-                    <span class="img"><img src="asset/images/monitoring-img.png" alt=""></span>
-                    <span class="location">
-                      <span>201동</span>
-                      <span>1호기</span>
-                    </span>
-                  </a>
-                </li>
-                <li>
-                  <a href="#">
-                    <span class="img"><img src="asset/images/monitoring-img.png" alt=""></span>
-                    <span class="location">
-                      <span>201동</span>
-                      <span>1호기</span>
-                    </span>
-                  </a>
-                </li>
-                <li>
-                  <a href="#">
-                    <span class="img"><img src="asset/images/monitoring-img.png" alt=""></span>
-                    <span class="location">
-                      <span>201동</span>
-                      <span>1호기</span>
-                    </span>
-                  </a>
-                </li>
-                <li>
-                  <a href="#">
-                    <span class="img"><img src="asset/images/monitoring-img.png" alt=""></span>
-                    <span class="location">
-                      <span>201동</span>
-                      <span>1호기</span>
-                    </span>
                   </a>
                 </li>
               </ul>
             </div>
+          </li>
+        </ul>
+        <ul>
+          <li
+            is="ad-item"
+            v-for="(item, index) in items"
+            v-bind:item="item"
+            v-on:ad-check-detail="adCheckDetail(index)" v-cloak>            
           </li>
         </ul>
       </div>
@@ -217,7 +130,7 @@
   var buildingData = null;
   var selDate = null;
   var monitoringListVue = null;
-  var buildingShotVue = null;
+  var adCheckListVue = null;
   $(document).ready(function(){
     callNative('toolBar', 'main', "");
     callNative("hideBottomActionBar");
@@ -237,8 +150,8 @@
     callNative('setTitle', buildingData.building_name);
 
     var monitoringData = dbRowArray("SELECT * FROM monitoring_request mr WHERE date(mr.request_date) = date('" + selDate + "') AND mr.building_id='" + buildingData.building_id + "'");
-    monitoringData.details = [];
     if (monitoringData) {
+      monitoringData.details = [];
       var monitoringBuildingData = dbResultArray("SELECT bl.*, CASE WHEN p.processing_date !='' THEN 'Y' ELSE 'N' END AS processing_flag, p.processing_file_url, p.processing_date, p.qr_flag, p.monitoring_request_id, CASE WHEN ar.request_type_code_ids !='' THEN 'Y' ELSE 'N' END AS as_request_flag FROM building_locate bl LEFT JOIN processing p ON bl.building_id=p.building_id AND bl.building_locate_id=p.building_locate_id AND p.monitoring_request_id='" + monitoringData.monitoring_request_id + "' LEFT JOIN as_request ar  ON bl.building_id=ar.building_id AND bl.building_locate_id=ar.building_locate_id AND date(ar.request_date) = date('" + selDate + "') WHERE bl.building_id='" + buildingData.building_id + "' AND bl.building_locate_id IN (" + monitoringData.building_locate_ids + ")");
       if (monitoringBuildingData) {
         monitoringData.details = monitoringBuildingData;
@@ -289,17 +202,77 @@
     
     monitoringListVue.items = monitoringData;
 
-    buildingShotVue = new Vue({
-      el: '#buildingShot',
-      data: {
-        items: []
-      },
-      methods: {
-        shot: function(idx) {
-          callNative('camera', 'building', "단지 대표이미지용\n사진을 촬영해주세요.", {take_count: 1, title: buildingData.building_name, address: buildingData.address});
+
+    var adCheckData = dbResultArray("SELECT acr.*, c.codename FROM ad_check_request acr LEFT JOIN code c ON c.return_code_id = c.code_id WHERE date(acr.request_date) = date('" + selDate + "') AND acr.building_id='" + buildingData.building_id + "'");
+    
+    if (adCheckData) {
+      $.each(adCheckData, function(index, item){
+        adCheckData[index].details = [];
+        var processingData = dbResultArray("SELECT * FROM processing WHERE ad_check_request_id='" + adCheckData.ad_check_request_id + "' AND building_id='" + buildingData.building_id + "'");
+        if (processingData) {
+          adCheckData[index].details = processingData;
         }
       }
-    });
+    }
+    console.log(JSON.stringify(adCheckData));
+
+    if (monitoringListVue === null) {
+
+      Vue.component(
+        'monitoring-item',
+        {
+          template: '<li v-on:click="$emit(\'ad-check-detail\')">\
+                      <div>\
+                        <span v-if="item.processing_flag === \'N\'" class="badge gray">미완료</span>\
+                        <span v-else-if="item.processing_flag === \'Y\'" class="badge green">완료</span>\
+                        <span v-else-if="item.processing_flag === \'R\'" class="badge red">반려</span>\
+                        <p>광고촬영</p>\
+                        <p v-if="item.processing_flag === \'R\'" class="red">반려유형 : {{ item.codename }} </p>\
+                        <a class="btn"></a>\
+                      </div>\
+                      <div>\
+                        <p>&lt;{{ item.ad_name }}&gt;</p>\
+                        <ul class="ad-list" v-if="item.details.length > 0">\
+                          <li v-for="detail in item.details">\
+                            <a>\
+                              <span class="img"><img v-bind:src="detail.filepath"></span>\
+                              <span class="location">\
+                                <span>{{ detail.dong }}</span>\
+                                <span>{{ detail.unit_name }}</span>\
+                              </span>\
+                            </a>\
+                          </li>\
+                        </ul>\
+                      </div>\
+                    </li>',
+          props: ['items']
+        }
+      );
+
+      adCheckListVue = new Vue({
+        el: '#adCheckList',
+        data: {
+          items: []
+        },
+        methods: {
+          shot: function(idx) {
+            callNative('camera', 'building', "단지 대표이미지용\n사진을 촬영해주세요.", {take_count: 1, title: buildingData.building_name, address: buildingData.address});
+          },
+          adCheckDetail: function(idx) {
+            var items = this.items;
+            var row = items[idx];
+            console.log(JSON.stringify(items));
+            var buildingId = row.building_id;
+            var adCheckRequestId = row.ad_check_request_id;
+
+            // 모니터링/광고촬영 처리 리스트로 이동한다.
+            callNative('newWebView', "buildingJobProcessDetail.html?&mode=ad" + "&id=" + buildingId + "&jobId=" + adCheckRequestId);
+          }
+        }
+      });
+    }
+    
+    adCheckListVue.items = adCheckData;
 
     $('.tab a').click(function() {
       var idx = $(this).index();
