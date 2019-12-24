@@ -70,7 +70,7 @@ public class WebSupport {
             e.printStackTrace();
         }
 
-        final String SERVER_URL = "http://test.raonworks.com/upload.php";
+        final String SERVER_URL = uploadURL;
         final String boundary = "*****";
         final String twoHyphens = "--";
         final String lineEnd = "\r\n";
