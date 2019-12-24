@@ -328,7 +328,7 @@
       return;
     }
 
-    //qrCode = "T00006";
+    qrCode = "T00006";
     var buildingData = dbRowArray("SELECT bl.building_locate_id, b.building_id, b.building_name, b.address FROM building_locate bl JOIN building b ON bl.building_id=b.building_id WHERE qr_serial_code = '" + qrCode + "'");
     if (!buildingData) {
       callNative("toastMessage", "작업이 가능한 단지가 아닙니다.");

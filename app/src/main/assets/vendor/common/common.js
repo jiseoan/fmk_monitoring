@@ -246,9 +246,9 @@ function NativeCallback(command, param, result)
       else if (command == "uploadData")
       { 
         // 데이터를 저장하는 프로세스 진행 - upload 페이지 결과가 뿌려짐
-        console.log(result);
+        console.log(result, param);
         if (typeof window["uploadDataCallBack"] === "function") {
-          uploadDataCallBack(result);
+          uploadDataCallBack(result, param);
         } else {
           console.log("no function uploadDataCallBack()");
         }
