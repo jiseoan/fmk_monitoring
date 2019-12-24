@@ -65,7 +65,7 @@
     shotResult = window.localStorage.getItem("shot_result");
     //shotResult = JSON.stringify([{"filepath":"./images/return-img.png"},{"filepath":"./images/return-img.png"},{"filepath":"./images/return-img.png"},{"filepath":"./images/return-img.png"},{"filepath":"./images/return-img.png"}]);
 
-    var buildingRes = dbRowArray("SELECT b.building_id,bl.building_locate_id, b.building_name, bl.dong, bl.unit_name, b.building_name||' '||bl.dong||' '||bl.unit_name AS building_locate_name, b.address FROM building_locate bl JOIN building b ON bl.building_id=b.building_id WHERE bl.building_locate_id='" + buildingLocateId + "'");
+    var buildingRes = dbRowArray("SELECT b.building_id,bl.building_locate_id, b.building_name, bl.dong, bl.unit_name, b.building_name||' '||bl.dong||' '||bl.unit_name AS building_locate_name, b.address, bl.machine_code FROM building_locate bl JOIN building b ON bl.building_id=b.building_id WHERE bl.building_locate_id='" + buildingLocateId + "'");
 
     //var buildingRes = [{"building_id":"1329","building_locate_id":"18424","building_name":"전농동아아파트","dong":"103동","unit_name":"1호기","building_locate_name":"전농동아아파트 103동 1호기","address":"서울시 동대문구 전농1동 645-3번지"}]
 
@@ -177,10 +177,13 @@
     console.log("dataSaveProcess!!!");
 
     let uploadData = {};
-    let uploadList = [];
 
     uploadData['url'] = BASE_URL + '/Bmm_api/uploadProcessing';
-    uploadData["fileData"] = shotResult;
+    uploadData["fileData"] = $.map( shotListSliderVue.shotList, function( el, index ) {
+      let arrEl = el.filepath.split("fmk_picture/");
+      let filename = arrEl[1];
+      return {filename: filename};
+    });
     uploadData["data"] = {};
 
     let param = {};
@@ -205,12 +208,14 @@
     uploadData['data']['mode'] = mode;
     uploadData['data']['in_data'] = param;
 
+    console.log(uploadData);
+
     callNative('uploadData', uploadData);
   }
 
-  function uploadDataCallBack(data) {
+  function uploadDataCallBack(resCode, data) {
+    console.log(data);
     var result = parseResult(data);
-    console.log(result.data);
     /*if (result.code == "success") {
       callNative("toastMessage", "저장이 완료되었습니다.");
       // 데이터를 동기화하여 받는다.
