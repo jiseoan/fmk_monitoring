@@ -7,9 +7,11 @@ import android.util.Log;
 import org.json.JSONArray;
 import org.json.JSONObject;
 
+import java.io.ByteArrayOutputStream;
 import java.io.DataOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
@@ -22,6 +24,7 @@ public class WebSupport {
     private ArrayList<String> m_fileNames;
     private int m_serverResponseCode;
     private String m_serverResponseMessage;
+    private String m_serverResponseBody;
 
     public WebSupport(WebviewActivity webviewActivity) {
         m_webviewActivity = webviewActivity;
@@ -146,8 +149,22 @@ public class WebSupport {
             m_serverResponseCode = httpConn.getResponseCode();
             m_serverResponseMessage = httpConn.getResponseMessage();
 
-            Log.i("uploadFile", "HTTP Response is : "
-                        + m_serverResponseMessage + ": " + m_serverResponseCode);
+            // 응답 내용(BODY) 구하기
+            try (InputStream in = httpConn.getInputStream();
+                 ByteArrayOutputStream out = new ByteArrayOutputStream()) {
+                byte[] buf = new byte[1024 * 8];
+                int length = 0;
+                while ((length = in.read(buf)) != -1) {
+                    out.write(buf, 0, length);
+                }
+                out.close();
+                //System.out.println(new String(out.toByteArray(), "UTF-8"));
+                //Log.i(DEBUG_TAG, new String(out.toByteArray()));
+                m_serverResponseBody = new String(out.toByteArray());
+            }
+
+//            Log.i(DEBUG_TAG, "HTTP Response is : " + m_serverResponseMessage + ": " + m_serverResponseCode);
+            Log.i(DEBUG_TAG, m_serverResponseBody);
 
             //close the streams //
             dataOutputStream.flush();
@@ -175,7 +192,7 @@ public class WebSupport {
         @Override
         protected void onPostExecute(Integer integer) {
             super.onPostExecute(integer);
-            m_webviewActivity.javaScriptCallback("uploadData", m_serverResponseMessage, Integer.toString(m_serverResponseCode));
+            m_webviewActivity.javaScriptCallback("uploadData", m_serverResponseBody, Integer.toString(m_serverResponseCode));
         }
     }
 
