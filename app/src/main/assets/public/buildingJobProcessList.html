@@ -80,7 +80,7 @@
   <article class="monitoring-ad">
     <div class="tab">
       <a class="on"><span>모니터링</span></a>
-      <a><span>광고촬영</span></a>
+      <a><span>게첨</span></a>
     </div>
     <div class="cont-wrap">
       <div class="monitoring on">
@@ -196,7 +196,7 @@
             var monitoringRequestId = row.monitoring_request_id;
 
             if (row.processing_flag == 'N') {
-              callNative('newWebView', "noQrProcess.html?id=" + buildingLocateId + "&jobId=" + monitoringRequestId);
+              location.href = "noQrProcess.html?id=" + buildingLocateId + "&jobId=" + monitoringRequestId;
             } else {
               // 모니터링/광고촬영 처리 리스트로 이동한다.
               callNative('newWebView', "buildingJobProcessDetail.html?mode=monitoring" + "&id=" + buildingLocateId + "&jobId=" + monitoringRequestId);

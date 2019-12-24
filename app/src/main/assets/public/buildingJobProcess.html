@@ -211,13 +211,13 @@
   function uploadDataCallBack(data) {
     var result = parseResult(data);
     console.log(result.data);
-    if (result.code == "success") {
+    /*if (result.code == "success") {
       callNative("toastMessage", "저장이 완료되었습니다.");
       // 데이터를 동기화하여 받는다.
       dataSync(agentCode);
     } else {
       dataLocalSave();
-    }
+    }*/
   }
 
   function dataLocalSave() {
