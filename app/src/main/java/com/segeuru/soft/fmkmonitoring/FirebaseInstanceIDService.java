@@ -70,8 +70,9 @@ public class FirebaseInstanceIDService extends FirebaseMessagingService {
         Intent intent = new Intent(this, WebviewActivity.class);
         PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
 
-        builder.setLargeIcon(BitmapFactory.decodeResource(getResources(),android.R.drawable.star_on));
-        builder.setSmallIcon(android.R.drawable.star_on);
+        //builder.setLargeIcon(BitmapFactory.decodeResource(getResources(), android.R.drawable.star_on));
+        builder.setLargeIcon(BitmapFactory.decodeResource(getResources(), R.drawable.notification_icon));
+        builder.setSmallIcon(R.drawable.notification_icon);
         //builder.setTicker("알람 간단한 설명");
         builder.setContentTitle(title);
         builder.setContentText(message);
