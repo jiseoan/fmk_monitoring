@@ -83,6 +83,9 @@ function callNative(command, param, param2, param3) {
       } else if (command == "downloadMedia") {
         // 동영상/이미지 보기화면 보이기
         window.android.downloadMedia(param, param2, param3);
+      } else if (command == "uploadData") {
+        // 서버로 업로드
+       window.android.uploadData(JSON.stringify(param));
       }
     } else {
       console.log("ignore callNative('" + command + "', '" + JSON.stringify(param) + "', '" + JSON.stringify(param2) + "', '" + JSON.stringify(param3) + "')");
@@ -238,6 +241,16 @@ function NativeCallback(command, param, result)
           completeQueries();
         } else {
           console.log("no function completeQueries()");
+        }
+      }
+      else if (command == "uploadData")
+      { 
+        // 데이터를 저장하는 프로세스 진행 - upload 페이지 결과가 뿌려짐
+        console.log(result);
+        if (typeof window["uploadDataCallBack"] === "function") {
+          uploadDataCallBack(result);
+        } else {
+          console.log("no function uploadDataCallBack()");
         }
       }
     } else {
@@ -445,11 +458,12 @@ var BASE_URL = "http://dev.treeter.net/fmksystem";
 
 var getRemoteVersionData = null;
 
-function dataSync(agentCode) {
+function dataSync(agentCode, tost) {
+  if (typeof(tost) === "undefined") tost = true;
   // 서버에 업로드 되지않은 데이터를 업로드 한다.
   // 업로드가 완료되면 내려받기 위해 버전을 체크한다.
-  callNative("toastMessage", "동기화중 ...");
-  getRemoteVersion(agentCode);
+  if(tost) callNative("toastMessage", "동기화중 ...");
+  getRemoteVersion(agentCode, tost);
 }
 
 function getNowDate() {
@@ -485,7 +499,8 @@ function getThisWeekDates() {
   return thisWeekDates;
 }
 
-function getRemoteVersion(agentCode) {
+function getRemoteVersion(agentCode, tost) {
+  if (typeof(tost) === "undefined") tost = true;
   var thisWeekDates = getThisWeekDates();
   $.post(BASE_URL + '/Bmm_api/getRemoteVersion', {
     agent_code: agentCode,
@@ -507,11 +522,12 @@ function getRemoteVersion(agentCode) {
   })
   .fail(function() {
     console.log('failed');
-    callNative("toastMessage", "동기화에 실패하였습니다.\n인터넷연결상태를 확인해주세요.")
+    if(tost) callNative("toastMessage", "동기화에 실패하였습니다.\n인터넷연결상태를 확인해주세요.")
   });
 }
 
-function getDownloadData(agentCode, dataNames) {
+function getDownloadData(agentCode, dataNames, tost) {
+  if (typeof(tost) === "undefined") tost = true;
   var thisWeekDates = getThisWeekDates();
   $.post(BASE_URL + '/Bmm_api/getUpdateDataList', {
     agent_code: agentCode,
@@ -592,12 +608,12 @@ function getDownloadData(agentCode, dataNames) {
       console.log("encoded.... end");
       callNative('massQueries', queryList);
     } else {
-      callNative("toastMessage", "동기화에 실패하였습니다.");
+      if(tost) callNative("toastMessage", "동기화에 실패하였습니다.");
     }
   })
   .fail(function() {
     console.log('failed');
-    callNative("toastMessage", "동기화에 실패하였습니다.\n인터넷연결상태를 확인해주세요.");
+    if(tost) callNative("toastMessage", "동기화에 실패하였습니다.\n인터넷연결상태를 확인해주세요.");
   });
 }
 
@@ -605,7 +621,6 @@ function getDownloadData(agentCode, dataNames) {
 function completeQueries() {
   // version 테이블의 정보를 업데이트 한다.
   console.log(getRemoteVersionData);
-  callNative("toastMessage", "동기화가 완료되었습니다.");
   if (typeof window["dataUpdateCallBack"] === "function") {
     dataUpdateCallBack();
   } else {
