@@ -36,7 +36,7 @@ public class WebSupport {
 
     private void uploadDataAsync(String jsonString) {
 
-        Log.i(DEBUG_TAG, jsonString);
+        //Log.i(DEBUG_TAG, jsonString);
 
         String uploadURL = null;
         JSONObject params = null;
@@ -48,12 +48,12 @@ public class WebSupport {
             uploadURL = jsonRoot.getString("url");
             Log.i(DEBUG_TAG, uploadURL);
 
-            //test, list of params.
             params = jsonRoot;
-            for(int i=0;i<params.length();++i) {
-                Log.i(DEBUG_TAG, params.names().getString(i));
-                Log.i(DEBUG_TAG, params.get(params.names().getString(i)).toString());
-            }
+//            //test, list of params.
+//            for(int i=0;i<params.length();++i) {
+//                Log.i(DEBUG_TAG, params.names().getString(i));
+//                Log.i(DEBUG_TAG, params.get(params.names().getString(i)).toString());
+//            }
 
             //list of file paths.
             m_fileNames = new ArrayList<>();
@@ -164,7 +164,7 @@ public class WebSupport {
             }
 
 //            Log.i(DEBUG_TAG, "HTTP Response is : " + m_serverResponseMessage + ": " + m_serverResponseCode);
-            Log.i(DEBUG_TAG, m_serverResponseBody);
+//            Log.i(DEBUG_TAG, m_serverResponseBody);
 
             //close the streams //
             dataOutputStream.flush();
