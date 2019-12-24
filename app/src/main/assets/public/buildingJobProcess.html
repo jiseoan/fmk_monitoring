@@ -203,7 +203,7 @@
     }
 
     uploadData['data']['mode'] = mode;
-    uploadData['data']['in_data'] = JSON.stringify(param);
+    uploadData['data']['in_data'] = param;
 
     callNative('uploadData', uploadData);
   }
