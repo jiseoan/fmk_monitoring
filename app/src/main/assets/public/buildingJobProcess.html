@@ -39,7 +39,9 @@
   </article>
 
   <script language="javascript" type="text/javascript">
+  var agentCode = null;
   var mode = null;
+  var buildingId = null;
   var buildingLocateId = null;
   var jobId = null;
   var shotResult = null;
@@ -50,9 +52,15 @@
   $(document).ready(function(){
     callNative('toolBar', 'main', "");
     callNative("hideBottomActionBar");
+    
+    agentCode = window.localStorage.getItem("agent_code");
 
     mode = $.urlParam("mode");
-    buildingLocateId = $.urlParam("id");
+    if (mode == "building") {
+      buildingId = $.urlParam("id");
+    } else {
+      buildingLocateId = $.urlParam("id");
+    }
     jobId = $.urlParam("jobId");
     shotResult = window.localStorage.getItem("shot_result");
     //shotResult = JSON.stringify([{"filepath":"./images/return-img.png"},{"filepath":"./images/return-img.png"},{"filepath":"./images/return-img.png"},{"filepath":"./images/return-img.png"},{"filepath":"./images/return-img.png"}]);
@@ -69,10 +77,10 @@
 
     if (mode =='monitoring') {
       // 모니터링 리스트 가져옴
-      var jobData = dbRowArray("SELECT * FROM monitoring_request WHERE  monitoring_request_id='" + jobId + "'");
+      jobData = dbRowArray("SELECT * FROM monitoring_request WHERE  monitoring_request_id='" + jobId + "'");
     } else if (mode =='ad') {
       // 게첨 리스트 가져옴
-      var jobData = dbRowArray("SELECT * FROM ad_check_request WHERE  ad_check_building_id='" + jobId + "'");
+      jobData = dbRowArray("SELECT * FROM ad_check_request WHERE  ad_check_building_id='" + jobId + "'");
 
       titleTxt = jobData.ad_name;
     }
@@ -147,6 +155,8 @@
     } else if (mode == "ad") {
       shotListSliderVue.$refs.awesomeSwiper.swiper.slideTo(0);
       return ["광고게첨용\n매체사진을 5장 촬영해주세요.", {take_count: 5, title: titleTxt, address: buildingData.address}];
+    } else if (mode == "building") {
+      return ["단지 대표이미지용\n사진을 촬영해주세요.", {take_count: 1, title: titleTxt, address: buildingData.address}];
     }
   }
 
@@ -163,11 +173,67 @@
   }
 
   function dataSaveProcess() {
-    // 데이터를 저장한다.
-    
+
+    console.log("dataSaveProcess!!!");
+
+    let uploadData = {};
+    let uploadList = [];
+
+    uploadData['url'] = BASE_URL + '/Bmm_api/uploadProcessing';
+    uploadData["fileData"] = shotResult;
+    uploadData["data"] = {};
+
+    let param = {};
+    param["processing_agent_code"] = agentCode;
+    param["building_id"] = buildingData.building_id;
+    param["building_locate_id"] = buildingData.building_locate_id;
+    param["dong"] = buildingData.dong;
+    param["unit_name"] = buildingData.unit_name;
+    param["machine_code"] = buildingData.machine_code;
+    param["processing_date"] = getNowDate();
+    param["bmm_monitoring_request_id"] = "";
+    param["bmm_ad_check_building_id"] = "";
+
+    if (mode == "monitoring") {
+      param["bmm_monitoring_request_id"] = jobData.monitoring_request_id;
+      uploadData['data']['id'] = jobData.monitoring_request_id;
+    } else if (mode == "ad") {
+      param["bmm_ad_check_building_id"] = jobData.ad_check_building_id;
+      uploadData['data']['id'] = jobData.ad_check_building_id;
+    }
+
+    uploadData['data']['mode'] = mode;
+    uploadData['data']['in_data'] = JSON.stringify(param);
+
+    callNative('uploadData', uploadData);
+  }
+
+  function uploadDataCallBack(data) {
+    var result = parseResult(data);
+    console.log(result.data);
+    if (result.code == "success") {
+      callNative("toastMessage", "저장이 완료되었습니다.");
+      // 데이터를 동기화하여 받는다.
+      dataSync(agentCode);
+    } else {
+      dataLocalSave();
+    }
+  }
+
+  function dataLocalSave() {
+    console.log('failed');
+    callNative("toastMessage", "서버 저장에 실패하였습니다.\n내부로 저장합니다.");
+    dataSaveComplete();
+  }
+
+  function dataUpdateCallBack() {
+    dataSaveComplete();
+  }
+
+  function dataSaveComplete() {    
     window.localStorage.setItem("shot_result", "");
-    callNative("toastMessage", "저장되었습니다.");
     // 작업리스트로 이동한다.
+    var buildingLocateId = buildingData.building_locate_id;
     location.href = "buildingJobList.html?id=" + buildingLocateId;
   }
 

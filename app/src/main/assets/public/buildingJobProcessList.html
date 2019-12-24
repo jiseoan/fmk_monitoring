@@ -273,6 +273,8 @@
             console.log(JSON.stringify(items));
             var buildingId = row.building_id;
             var adCheckBuildingId = row.ad_check_building_id;
+            
+            if (row.processing_flag == 'N') return;
 
             // 모니터링/광고촬영 처리 리스트로 이동한다.
             callNative('newWebView', "buildingJobProcessDetail.html?mode=ad" + "&id=" + buildingId + "&jobId=" + adCheckBuildingId);
@@ -288,6 +290,15 @@
     }
     
     adCheckListVue.items = adCheckData;
+  }
+
+  function cameraResult(param, result) {
+    console.log(result);
+    
+    // 촬영 타입과 결과이미지를 저장후 이동한다.
+    var mode = param;
+    window.localStorage.setItem("shot_result", result);
+    location.href = "buildingJobProcess.html?mode=building&id=" + buildingId + "&jobId=" + jobId;
   }
   </script>
 
