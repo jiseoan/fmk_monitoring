@@ -23,9 +23,7 @@ public class QrReaderActivity extends AppCompatActivity implements DecoratedBarc
         findViewById(R.id.btn_close).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                Intent intent = new Intent();
-                intent.putExtra(Intents.Scan.RESULT, "cancel");
-                setResult(Activity.RESULT_OK, intent);
+                cancel();
                 finish();
             }
         });
@@ -83,5 +81,18 @@ public class QrReaderActivity extends AppCompatActivity implements DecoratedBarc
     protected void onDestroy() {
         super.onDestroy();
         m_captureManager.onDestroy();
+    }
+
+    @Override
+    public void onBackPressed() {
+        cancel();
+        super.onBackPressed();
+    }
+
+    private void cancel() {
+        Intent intent = new Intent();
+        intent.putExtra(Intents.Scan.RESULT, "cancel");
+        setResult(Activity.RESULT_OK, intent);
+
     }
 }
