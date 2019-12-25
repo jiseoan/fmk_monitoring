@@ -31,6 +31,7 @@ import android.hardware.camera2.TotalCaptureResult;
 import android.hardware.camera2.params.StreamConfigurationMap;
 import android.media.Image;
 import android.media.ImageReader;
+import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -96,6 +97,7 @@ public class CameraViewer extends AppCompatActivity {
     private int m_resolution_width = 640;
     private int m_resolution_height = 480;
     private float m_font_scale = 1;
+    private MediaPlayer m_shutter_player;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -118,6 +120,8 @@ public class CameraViewer extends AppCompatActivity {
             m_resolution_width = 1440;
             m_resolution_height = 810;
         }
+
+        m_shutter_player = MediaPlayer.create(this, R.raw.shutter);
 
         setSupportActionBar((Toolbar)findViewById(R.id.camera_toolbar));
         m_needPic_count = intent.getIntExtra("take_count", 0);
@@ -154,6 +158,7 @@ public class CameraViewer extends AppCompatActivity {
         m_btnTakePicture.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
+                m_shutter_player.start();
                 takePicture();
             }
         });
