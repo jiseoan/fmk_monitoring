@@ -221,10 +221,11 @@ public class AndroidBridge {
     @JavascriptInterface
     public void closeWebView() {
         //현재 웹뷰 닫기
-        Intent intent = new Intent();
-        intent.putExtra("result", m_webViewActivity.m_webViewResult);
-        m_webViewActivity.setResult(0, intent);
-        m_webViewActivity.finish();
+//        Intent intent = new Intent();
+//        intent.putExtra("result", m_webViewActivity.m_webViewResult);
+//        m_webViewActivity.setResult(0, intent);
+//        m_webViewActivity.finish();
+        m_webViewActivity.close();
     }
 
     @JavascriptInterface

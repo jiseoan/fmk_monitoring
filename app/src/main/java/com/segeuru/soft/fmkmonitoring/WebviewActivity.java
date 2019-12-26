@@ -161,7 +161,8 @@ public class WebviewActivity extends BaseAtivity {
     final View.OnClickListener close_button_clickLisener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            javaScriptCallback("close", "", "");
+            //javaScriptCallback("close", "", "");
+            close();
         }
     };
 
@@ -319,6 +320,13 @@ public class WebviewActivity extends BaseAtivity {
         }else{
             super.onBackPressed();
         }
+    }
+
+    public void close() {
+        Intent intent = new Intent();
+        intent.putExtra("result", m_webViewResult);
+        setResult(0, intent);
+        finish();
     }
 
     public WebSupport support() {
