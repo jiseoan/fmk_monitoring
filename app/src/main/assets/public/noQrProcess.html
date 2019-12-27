@@ -16,40 +16,93 @@
 <body id="noQrProcess">
   <article class="qr">
     <h2>QR코드 미인식 모니터링</h2>
-    <div class="wrapper">
+    <div class="wrapper" id="noQrProcessForm" v-cloak>
       <p>QR코드 인식 없이 모니터링 하시는 경우 <br>하기 사항을 기입 후 진행해주세요.</p>
       <p>QR코드 미인식 유형을 선택해주세요.</p>
       <div class="select">
-        <a>매체 QR코드 훼손</a>
-        <a class="on">매체 QR코드 이상 인식</a>
-        <a>기타</a>
+        <a v-for="(item, index) in items" v-bind:key="item.id" v-on:click="changeCode(index)" v-bind:class="{ on : item.is_on }">{{ item.codename }}</a>
       </div>
-      <textarea placeholder="기타 미인식 사유를 입력해주세요."></textarea>
+      <textarea placeholder="기타 미인식 사유를 입력해주세요." class="no-qr-desc"></textarea>
     </div>
   </article>
 
-  <script language="javascript" type="text/javascript">
-  var param2 = {take_count: 1, building_name : "송내 자이 아파트 101동 2호기", address: "경기도 부천시 소사구 송내동 409"};
+  <script language="javascript" type="text/javascript">    
+  var agentCode = null;
+  var buildingLocateId = null;
+  var buildingData = null;
+  var noQrProcessFormVue = null;
+  var codeData = null;
+  var selCodeIdx = 0;
   $(document).ready(function(){
-    callNative('toolBar', 'main', '송내 자이 아파트 101동 2호기');
+    callNative('toolBar', 'main', "");
+    callNative("hideBottomActionBar");
+
+    agentCode = window.localStorage.getItem("agent_code");
+    buildingLocateId = $.urlParam("id");
+    jobId = $.urlParam("jobId");
+
+    agentData = dbRowArray("SELECT * FROM agent WHERE agent_code='" + agentCode + "'");
+
+    var buildingRes = dbRowArray("SELECT b.building_id, bl.building_locate_id, b.building_name, bl.dong, bl.unit_name, b.building_name||' '||bl.dong||' '||bl.unit_name AS building_locate_name, b.address, bl.machine_code FROM building_locate bl JOIN building b ON bl.building_id=b.building_id WHERE bl.building_locate_id='" + buildingLocateId + "'");
+    if (buildingRes) {
+      buildingData = buildingRes;
+    }
+
+    callNative('setTitle', buildingData.building_locate_name);
     callNative("bottomActionBar","jobStartAndCancel");
 
-    $('.qr .select a').click(function() {
-      $('.qr .select a').removeClass('on');
-      $(this).addClass('on');
+    codeData = dbResultArray("SELECT * FROM code WHERE parent_id='2833' ORDER BY code");
+
+    if (codeData.length > 0) {
+      $.each(codeData, function(index, item){
+        codeData[index].is_on = (index == 0)?true:false;
+      });
+    }
+
+    noQrProcessFormVue = new Vue({
+      el: '#noQrProcessForm',
+      data: {
+        items:[]
+      },
+      methods: {
+        changeCode: function(idx) {
+          var items = this.items;
+          if (idx != selCodeIdx) {
+            items[selCodeIdx].is_on = false;
+            items[idx].is_on= true;
+            selCodeIdx = idx;
+          }
+        }
+      }
     });
+
+    noQrProcessFormVue.items = codeData;
   });
 
-  function paramData() {
-    return param2;
+  function jobStart() {
+    var selCode = null;
+    var selCodeName = null;
+
+    $.each( codeData, function( index, el ) {
+      if (el.is_on) {
+        selCode = el.code_id;
+        selCodeName = el.codename;
+      }
+    });
+
+    var param = {};
+    param["building_id"] = buildingData.building_id;
+    param["building_locate_id"] = buildingData.building_locate_id;
+    param["qr_flag"] = "N";
+    param["no_qr_type_code_id"] = selCode;
+    param["no_qr_type_code_name"] = selCodeName;
+    param["no_qr_desc"] = $(".no-qr-desc").val().trim();
+
+    var noQrData = JSON.stringify(param);
+    window.localStorage.setItem("noQrData", noQrData);
+    location.href = "buildingJobList.html?id=" + buildingLocateId;
   }
 
-  function cameraResult(param, result) {
-    // 촬영 타입과 결과이미지를 저장후 이동한다.
-    window.localStorage.setItem("shot_mode", param);
-    window.localStorage.setItem("shot_result", JSON.stringify(result));
-    location.href = "buildingJobProcess.html";
-  }
   </script>
 
 </body>

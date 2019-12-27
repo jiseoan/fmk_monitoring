@@ -90,7 +90,7 @@
   var noticeSliderVue = null;
   $(document).ready(function(){
     callNative("hideToolBar");
-    callNative("bottomActionBar", "jobStart");
+    callNative("hideBottomActionBar");
 
     agentCode = window.localStorage.getItem("agent_code");
     selDate = window.localStorage.getItem("sel_date");
@@ -103,6 +103,8 @@
       jobWeek = '1,2,3,4,5';
     }
     getDateSet();
+
+    window.localStorage.setItem("noQrData", "");
   });
   
   let vm = null;
@@ -318,31 +320,6 @@
     
     mainBuildingJobListVue.items = jobListData;
     
-  }
-
-  function qrScanResult(result) {
-    // 모니터링, 광고촬영에 있는지 체크
-    var qrCode = $.urlParam("cd", result);
-    if (qrCode === null) {
-      callNative("toastMessage", "인식이 불가능한 QR코드 입니다.");
-      return;
-    }
-
-    qrCode = "T00017";
-    var buildingData = dbRowArray("SELECT bl.building_locate_id, b.building_id, b.building_name, b.address FROM building_locate bl JOIN building b ON bl.building_id=b.building_id WHERE qr_serial_code = '" + qrCode + "'");
-    if (!buildingData) {
-      callNative("toastMessage", "작업이 가능한 단지가 아닙니다.");
-      return;
-    }
-
-    var monitoringData = dbRowArray("SELECT COUNT(*) AS cnt FROM monitoring_request WHERE date(request_date) = date('" + nowDate + "') AND building_id='" + buildingData.building_id + "'");
-    if (monitoringData.cnt == 0) {
-      callNative("toastMessage", "오늘 작업이 없는 단지입니다.");
-      return;
-    }
-
-    var buildingLocateId = buildingData.building_locate_id;
-    location.href = "buildingJobList.html?id=" + buildingLocateId;
   }
 
   // 동기화 완료시 콜백

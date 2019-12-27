@@ -40,6 +40,8 @@
 
   <script language="javascript" type="text/javascript">
   var agentCode = null;
+  var agentData = null;
+  var viewMode = null;
   var mode = null;
   var buildingId = null;
   var buildingLocateId = null;
@@ -49,11 +51,13 @@
   var jobData = null;
   var shotListSliderVue = null;
   var titleTxt = null;
+  var noQrData = null;
   $(document).ready(function(){
     callNative('toolBar', 'main', "");
     callNative("hideBottomActionBar");
     
     agentCode = window.localStorage.getItem("agent_code");
+    noQrData = window.localStorage.getItem("noQrData");
 
     mode = $.urlParam("mode");
     if (mode == "building") {
@@ -63,6 +67,8 @@
     }
     jobId = $.urlParam("jobId");
     shotResult = window.localStorage.getItem("shot_result");
+
+    agentData = dbRowArray("SELECT * FROM agent WHERE agent_code='" + agentCode + "'");
     //shotResult = JSON.stringify([{"filepath":"./images/return-img.png"},{"filepath":"./images/return-img.png"},{"filepath":"./images/return-img.png"},{"filepath":"./images/return-img.png"},{"filepath":"./images/return-img.png"}]);
     if (mode =='building') {
       var buildingRes = dbRowArray("SELECT * FROM building WHERE building_id='" + buildingId + "'");
@@ -88,6 +94,15 @@
 
       titleTxt = jobData.ad_name;
     } else if (mode =='building') {
+      if (shotResult) {
+        viewMode = "shot";
+      } else {
+        viewMode = "info";
+        jobData = dbRowArray("SELECT * FROM ad_check_request WHERE building_id='" + buildingId + "' AND request_date='" + getNowDate() + "' AND building_file_url != '' LIMIT 1");
+        if (jobData) {
+          shotResult = JSON.stringify([{"filepath": jobData.building_file_url }]);
+        }
+      }
       titleTxt = buildingData.building_name;
     }
     
@@ -168,6 +183,7 @@
 
   function cameraResult(param, result) {
     // 촬영 타입과 결과이미지를 저장후 이동한다.
+    viewMode = "shot";
     window.localStorage.setItem("shot_result", result);
     shotResult = window.localStorage.getItem("shot_result");
     shotListSliderVue.shotList = $.parseJSON(shotResult);
@@ -182,9 +198,13 @@
 
     console.log("dataSaveProcess!!!");
 
+    if(mode == "building" && viewMode == "info") {
+      location.href = "buildingJobProcessList.html?id=" + buildingId + "&date=" + getNowDate();
+      return;
+    }
+
     let uploadData = {};
 
-    uploadData['url'] = BASE_URL + '/Bmm_api/uploadProcessing';
     uploadData["fileData"] = $.map( $.parseJSON(shotResult), function( el, index ) {
       let arrEl = el.filepath.split("fmk_picture/");
       let filename = arrEl[1];
@@ -193,25 +213,69 @@
     uploadData["data"] = {};
 
     let param = {};
-    param["processing_agent_code"] = agentCode;
-    param["building_id"] = buildingData.building_id;
-    param["building_locate_id"] = buildingData.building_locate_id;
-    param["dong"] = buildingData.dong;
-    param["unit_name"] = buildingData.unit_name;
-    param["machine_code"] = buildingData.machine_code;
-    param["processing_date"] = getNowDate();
-    param["qr_flag"] = "Y";
+    var updateDataUrl = null;
 
-    if (mode == "monitoring") {
-      param["bmm_monitoring_request_id"] = jobData.monitoring_request_id;
-      uploadData['data']['id'] = jobData.monitoring_request_id;
-    } else if (mode == "ad") {
-      param["bmm_ad_check_building_id"] = jobData.ad_check_building_id;
-      uploadData['data']['id'] = jobData.ad_check_building_id;
+    if (mode == "building") {
+      param["assignment_agent_code"] = agentCode;
+      param["building_id"] = buildingData.building_id;
+      param["due_date"] = getNowDate();
+
+      uploadData['data']['sch_data'] = param;
+      updateDataUrl = '/Bmm_api/uploadAdCheckBuildingProcessing';
+    } else {
+      param["processing_agent_code"] = agentCode;
+      param["building_id"] = buildingData.building_id;
+      param["building_locate_id"] = buildingData.building_locate_id;
+      param["dong"] = buildingData.dong;
+      param["unit_name"] = buildingData.unit_name;
+      param["machine_code"] = buildingData.machine_code;
+      param["processing_date"] = getNowDate();
+      if (noQrData) {
+        var noQrParam = $.parseJSON(noQrData);
+        if (buildingData.building_locate_id == noQrParam["building_locate_id"]) {
+          param["qr_flag"] = noQrParam["qr_flag"];
+          param["no_qr_type_code_id"] = noQrParam["no_qr_type_code_id"];
+          param["no_qr_desc"] = noQrParam["no_qr_desc"];
+        } else {
+          param["qr_flag"] = "Y";
+        }
+      } else {
+        param["qr_flag"] = "Y";
+      }
+
+      if (mode == "monitoring") {
+        param["bmm_monitoring_request_id"] = jobData.monitoring_request_id;
+        uploadData['data']['id'] = jobData.monitoring_request_id;
+      } else if (mode == "ad") {
+        param["bmm_ad_check_building_id"] = jobData.ad_check_building_id;
+        uploadData['data']['id'] = jobData.ad_check_building_id;
+      }
+      updateDataUrl = '/Bmm_api/uploadProcessing';
+      
+      uploadData['data']['in_data'] = param;
+
+
+      if (noQrData) {
+        let asParam = {};
+        asParam["machine_code"] = buildingData.machine_code;
+        asParam["building_id"] = buildingData.building_id;
+        asParam["building_name"] = buildingData.building_name;
+        asParam["address"] = buildingData.address;
+        asParam["building_locate_id"] = buildingData.building_locate_id;
+        asParam["dong"] = buildingData.dong;
+        asParam["unit_name"] = buildingData.unit_name;
+        asParam["request_date"] = getNowDate();
+        asParam["request_type_code_ids"] = 2815;
+        asParam["request_desc"] = "[QR코드 미인식 - " + noQrParam['no_qr_type_code_name'] + "]\r\n" +  noQrParam['no_qr_desc'];
+        asParam["request_name"] = agentData.agent_name;
+        asParam["request_mobile"] = agentData.mobile;
+        asParam["request_agent_code"] = agentCode;
+
+        uploadData['data']['as_data'] = asParam;
+      }
     }
-
     uploadData['data']['mode'] = mode;
-    uploadData['data']['in_data'] = param;
+    uploadData['url'] = BASE_URL + updateDataUrl;
 
     console.log(uploadData);
 
@@ -243,11 +307,15 @@
     dataSaveComplete();
   }
 
-  function dataSaveComplete() {    
+  function dataSaveComplete() {
     window.localStorage.setItem("shot_result", "");
-    // 작업리스트로 이동한다.
-    var buildingLocateId = buildingData.building_locate_id;
-    location.href = "buildingJobList.html?id=" + buildingLocateId;
+    if (mode == "building") {
+      location.href = "buildingJobProcessList.html?id=" + buildingId + "&date=" + getNowDate();
+    } else {
+      // 작업리스트로 이동한다.
+      var buildingLocateId = buildingData.building_locate_id;
+      location.href = "buildingJobList.html?id=" + buildingLocateId;
+    }
   }
 
   </script>

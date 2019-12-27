@@ -178,6 +178,15 @@ function NativeCallback(command, param, result)
           console.log("no function cameraResult()");
         }
       }
+      else if (command == "jobStart")
+      {
+        // 작업시작
+        if (typeof window["jobStart"] === "function") {
+          jobStart();
+        } else {
+          console.log("no function jobStart()");
+        }
+      }
       else if (command == "cancel")
       {
         // 취소

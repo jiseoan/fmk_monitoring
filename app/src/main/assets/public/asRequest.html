@@ -37,11 +37,13 @@
   var jobData = null;
   var asRequestFormVue = null;
   var codeData = null;
+  var noQrData = null;
   $(document).ready(function(){
     callNative('toolBar', 'main', "");
     callNative("hideBottomActionBar");
 
     agentCode = window.localStorage.getItem("agent_code");
+    noQrData = window.localStorage.getItem("noQrData");
 
     mode = "monitoring";
     buildingLocateId = $.urlParam("id");
@@ -109,7 +111,18 @@
     param["unit_name"] = buildingData.unit_name;
     param["machine_code"] = buildingData.machine_code;
     param["processing_date"] = getNowDate();
-    param["qr_flag"] = "Y";
+    if (noQrData) {
+      var noQrParam = $.parseJSON(noQrData);
+      if (buildingData.building_locate_id == noQrParam["building_locate_id"]) {
+        param["qr_flag"] = noQrParam["qr_flag"];
+        param["no_qr_type_code_id"] = noQrParam["no_qr_type_code_id"];
+        param["no_qr_desc"] = noQrParam["no_qr_desc"];
+      } else {
+        param["qr_flag"] = "Y";
+      }
+    } else {
+      param["qr_flag"] = "Y";
+    }
     param["bmm_monitoring_request_id"] = jobData.monitoring_request_id;
 
     let asParam = {};
@@ -126,7 +139,11 @@
     });
 
     asParam["request_type_code_ids"] = asSelCodes.join();
-    asParam["request_desc"] = $(".request-desc").val().trim();
+    asParam["request_desc"] = "";
+    if (noQrData) {
+      asParam["request_desc"] = "[QR코드 미인식 - " + noQrParam['no_qr_type_code_name'] + "]\r\n" + noQrParam['no_qr_desc'] + "\r\n\r\n";
+    }
+    asParam["request_desc"] += $(".request-desc").val().trim();
     asParam["request_name"] = agentData.agent_name;
     asParam["request_mobile"] = agentData.mobile;
     asParam["request_agent_code"] = agentCode;

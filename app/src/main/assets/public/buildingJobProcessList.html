@@ -61,19 +61,24 @@
     right: auto;
     bottom: auto;
     margin-top: -0.625rem;
-}
-.building-shot > li > div:first-child p {
+  }
+  .building-shot > li > div:first-child p {
     font-size: 0.6875rem;
     line-height: 2.0 !important;
     font-weight: 700;
-}
-.monitoring-ad .monitoring-list li .badge {
+  }
+  .monitoring-ad .monitoring-list li .badge-icon {
     position: absolute;
     left: 0.625rem;
     top: 0.625rem;
     right: auto;
     bottom: auto;
-}
+  }
+  .monitoring-ad .monitoring-list li .badge-icon .badge {
+    position: relative;
+    padding-right: 10px;
+    padding-left: 10px;
+  }
   </style>
 </head>
 <body id="buildingJobProcessList">
@@ -146,8 +151,11 @@
     });
     
     callNative('setTitle', buildingData.building_name);
+    callNative("bottomActionBar", "jobStart");
     monitoringList();
     adCheckList();
+
+    window.localStorage.setItem("noQrData", "");
   });
 
   function monitoringList() {
@@ -168,9 +176,11 @@
         {
           template: '<li v-on:click="$emit(\'monitoring-detail\')">\
                       <a>\
-                        <span class="badge red" v-if="item.qr_flag == \'N\'">QR미인식</span>\
-                        <span class="badge green" v-if="item.processing_flag == \'Y\'">완료</span>\
-                        <span class="badge blue" v-if="item.as_request_flag == \'Y\'">AS요청</span>\
+                        <span class="badge-icon">\
+                          <span class="badge red" v-if="item.qr_flag == \'N\'">QR미인식</span>\
+                          <span class="badge green" v-if="item.qr_flag == \'Y\' && item.processing_flag == \'Y\' && item.as_request_flag == \'N\'">완료</span>\
+                          <span class="badge blue" v-if="item.as_request_flag == \'Y\'">AS요청</span>\
+                          </span>\
                         <span class="img"><img v-bind:src="item.processing_file_url"></span>\
                         <span class="location">\
                           <span>{{ item.dong }}</span>\
@@ -196,7 +206,7 @@
             var monitoringRequestId = row.monitoring_request_id;
 
             if (row.processing_flag == 'N') {
-              location.href = "noQrProcess.html?id=" + buildingLocateId + "&jobId=" + monitoringRequestId;
+              location.href = "noQrProcess.html?id=" + buildingLocateId;
             } else {
               // 모니터링/광고촬영 처리 리스트로 이동한다.
               callNative('newWebView', "buildingJobProcessDetail.html?mode=monitoring" + "&id=" + buildingLocateId + "&jobId=" + monitoringRequestId);
@@ -265,7 +275,15 @@
         },
         methods: {
           shot: function(idx) {
-            callNative('camera', 'building', "단지 대표이미지용\n사진을 촬영해주세요.", {take_count: 1, title: buildingData.building_name, address: buildingData.address});
+            var items = this.items;
+            var row = items[0];
+
+            if (row.building_file_url != 'null') {
+              window.localStorage.setItem("shot_result", "");
+              location.href = "buildingJobProcess.html?mode=building&id=" + buildingId;
+            } else {
+              callNative('camera', 'building', "단지 대표이미지용\n사진을 촬영해주세요.", {take_count: 1, title: buildingData.building_name, address: buildingData.address});
+            }
           },
           adCheckDetail: function(idx) {
             var items = this.items;
@@ -274,10 +292,19 @@
             var buildingId = row.building_id;
             var adCheckBuildingId = row.ad_check_building_id;
             
-            if (row.processing_flag == 'N') return;
+            if (row.processing_flag == 'N') {
+              var buildingLocateId = null;
+              $.each(monitoringListVue.items.details, function( index, el ) {
+                if (el.processing_flag == 'N' && buildingLocateId === null) buildingLocateId = el.building_locate_id;
+              });
 
-            // 모니터링/광고촬영 처리 리스트로 이동한다.
-            callNative('newWebView', "buildingJobProcessDetail.html?mode=ad" + "&id=" + buildingId + "&jobId=" + adCheckBuildingId);
+              if (buildingLocateId) {
+                location.href = "noQrProcess.html?id=" + buildingLocateId;
+              }
+            } else {
+              // 모니터링/광고촬영 처리 리스트로 이동한다.
+              callNative('newWebView', "buildingJobProcessDetail.html?mode=ad" + "&id=" + buildingId + "&jobId=" + adCheckBuildingId);
+            }
           },
           adView: function(idx) {
             var items = this.items;
@@ -299,6 +326,25 @@
     var mode = param;
     window.localStorage.setItem("shot_result", result);
     location.href = "buildingJobProcess.html?mode=building&id=" + buildingId;
+  }
+
+  function qrScanResult(result) {
+    // 모니터링, 광고촬영에 있는지 체크
+    var qrCode = $.urlParam("cd", result);
+    if (qrCode === null) {
+      callNative("toastMessage", "인식이 불가능한 QR코드 입니다.");
+      return;
+    }
+
+    qrCode = "T00012";
+    var jobBuildingData = dbRowArray("SELECT bl.building_locate_id, b.building_id, b.building_name, b.address FROM building_locate bl JOIN building b ON bl.building_id=b.building_id WHERE qr_serial_code = '" + qrCode + "' AND b.building_id='" + buildingId + "'");
+    if (!jobBuildingData) {
+      callNative("toastMessage", "단지내 매체가 아닙니다.");
+      return;
+    }
+
+    var buildingLocateId = jobBuildingData.building_locate_id;
+    location.href = "buildingJobList.html?id=" + buildingLocateId;
   }
   </script>
 
