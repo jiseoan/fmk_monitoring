@@ -204,7 +204,8 @@ public class WebviewActivity extends BaseAtivity {
     final View.OnClickListener monitoringCamera_button_clickLisener = new View.OnClickListener() {
         @Override
         public void onClick(View view) {
-            javaScriptCallback("monitoringCamera", "", "clicked");
+            //javaScriptCallback("monitoringCamera", "", "clicked");
+            javaScriptCallback("jobStart", "", "clicked");
         }
     };
 
