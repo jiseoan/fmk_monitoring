@@ -16,7 +16,7 @@ public class DBHelper extends SQLiteOpenHelper {
     public void onCreate(SQLiteDatabase db) {
         db.execSQL("create table test (id integer primary key autoincrement, name text, value text)");
         
-        db.execSQL("CREATE TABLE IF NOT EXISTS agent ( agent_code TEXT NOT NULL PRIMARY KEY, agent_name TEXT, agent_type TEXT, job_area TEXT, job_week TEXT, mobile_code TEXT)");
+        db.execSQL("CREATE TABLE IF NOT EXISTS agent ( agent_code TEXT NOT NULL PRIMARY KEY, agent_name TEXT, mobile TEXT, agent_type TEXT, job_area TEXT, job_week TEXT, mobile_code TEXT)");
         
         db.execSQL("CREATE TABLE IF NOT EXISTS notice ( notice_id INTEGER NOT NULL PRIMARY KEY, notice_type TEXT, title TEXT, content TEXT, create_date TEXT)");
         

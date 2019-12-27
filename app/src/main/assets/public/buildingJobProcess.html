@@ -64,8 +64,11 @@
     jobId = $.urlParam("jobId");
     shotResult = window.localStorage.getItem("shot_result");
     //shotResult = JSON.stringify([{"filepath":"./images/return-img.png"},{"filepath":"./images/return-img.png"},{"filepath":"./images/return-img.png"},{"filepath":"./images/return-img.png"},{"filepath":"./images/return-img.png"}]);
-
-    var buildingRes = dbRowArray("SELECT b.building_id,bl.building_locate_id, b.building_name, bl.dong, bl.unit_name, b.building_name||' '||bl.dong||' '||bl.unit_name AS building_locate_name, b.address, bl.machine_code FROM building_locate bl JOIN building b ON bl.building_id=b.building_id WHERE bl.building_locate_id='" + buildingLocateId + "'");
+    if (mode =='building') {
+      var buildingRes = dbRowArray("SELECT * FROM building WHERE building_id='" + buildingId + "'");
+    } else {
+      var buildingRes = dbRowArray("SELECT b.building_id,bl.building_locate_id, b.building_name, bl.dong, bl.unit_name, b.building_name||' '||bl.dong||' '||bl.unit_name AS building_locate_name, b.address, bl.machine_code FROM building_locate bl JOIN building b ON bl.building_id=b.building_id WHERE bl.building_locate_id='" + buildingLocateId + "'");
+    }
 
     //var buildingRes = [{"building_id":"1329","building_locate_id":"18424","building_name":"전농동아아파트","dong":"103동","unit_name":"1호기","building_locate_name":"전농동아아파트 103동 1호기","address":"서울시 동대문구 전농1동 645-3번지"}]
 
@@ -73,16 +76,19 @@
       buildingData = buildingRes;
     }
     
-    titleTxt = buildingData.building_locate_name;
 
     if (mode =='monitoring') {
       // 모니터링 리스트 가져옴
       jobData = dbRowArray("SELECT * FROM monitoring_request WHERE  monitoring_request_id='" + jobId + "'");
+
+      titleTxt = buildingData.building_locate_name;
     } else if (mode =='ad') {
       // 게첨 리스트 가져옴
       jobData = dbRowArray("SELECT * FROM ad_check_request WHERE  ad_check_building_id='" + jobId + "'");
 
       titleTxt = jobData.ad_name;
+    } else if (mode =='building') {
+      titleTxt = buildingData.building_name;
     }
     
     callNative('setTitle', titleTxt);
@@ -169,7 +175,7 @@
 
   function asRequest() {
     //AS요청으로 이동한다.
-    location.href = "asRequest.html?mode=" + mode + "&id=" + buildingLocateId + "&jobId=" + jobId;
+    location.href = "asRequest.html?id=" + buildingLocateId + "&jobId=" + jobId;
   }
 
   function dataSaveProcess() {
@@ -179,7 +185,7 @@
     let uploadData = {};
 
     uploadData['url'] = BASE_URL + '/Bmm_api/uploadProcessing';
-    uploadData["fileData"] = $.map( shotListSliderVue.shotList, function( el, index ) {
+    uploadData["fileData"] = $.map( $.parseJSON(shotResult), function( el, index ) {
       let arrEl = el.filepath.split("fmk_picture/");
       let filename = arrEl[1];
       return {filename: filename};
@@ -194,8 +200,7 @@
     param["unit_name"] = buildingData.unit_name;
     param["machine_code"] = buildingData.machine_code;
     param["processing_date"] = getNowDate();
-    param["bmm_monitoring_request_id"] = "";
-    param["bmm_ad_check_building_id"] = "";
+    param["qr_flag"] = "Y";
 
     if (mode == "monitoring") {
       param["bmm_monitoring_request_id"] = jobData.monitoring_request_id;
@@ -214,15 +219,18 @@
   }
 
   function uploadDataCallBack(resCode, data) {
-    console.log(data);
-    var result = parseResult(data);
-    /*if (result.code == "success") {
-      callNative("toastMessage", "저장이 완료되었습니다.");
-      // 데이터를 동기화하여 받는다.
-      dataSync(agentCode);
+    if (parseFloat(resCode) === 200) {
+      var result = parseResult(data);
+      if (result.code == "success") {
+        callNative("toastMessage", "저장이 완료되었습니다.");
+        // 데이터를 동기화하여 받는다.
+        dataSync(agentCode, false);
+      } else {
+        dataLocalSave();
+      }
     } else {
       dataLocalSave();
-    }*/
+    }
   }
 
   function dataLocalSave() {

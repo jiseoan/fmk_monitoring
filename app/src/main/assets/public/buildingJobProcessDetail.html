@@ -42,9 +42,9 @@
 
   <script language="javascript" type="text/javascript">
   var mode = null;
-  var buildingLocateId = null;
+  var id = null;
   var jobId = null;
-  var shotResult = null;
+  var shotResult = [];
   var buildingData = null;
   var jobData = null;
   var shotListSliderVue = null;
@@ -54,10 +54,14 @@
       callNative("hideBottomActionBar");
 
       mode = $.urlParam("mode");
-      buildingLocateId = $.urlParam("id");
+      id = $.urlParam("id");
       jobId = $.urlParam("jobId");
 
-      var buildingRes = dbRowArray("SELECT b.building_id,bl.building_locate_id, b.building_name, bl.dong, bl.unit_name, b.building_name||' '||bl.dong||' '||bl.unit_name AS building_locate_name, b.address FROM building_locate bl JOIN building b ON bl.building_id=b.building_id WHERE bl.building_locate_id='" + buildingLocateId + "'");
+      if (mode =='monitoring') {
+        var buildingRes = dbRowArray("SELECT b.building_id,bl.building_locate_id, b.building_name, bl.dong, bl.unit_name, b.building_name||' '||bl.dong||' '||bl.unit_name AS building_locate_name, b.address FROM building_locate bl JOIN building b ON bl.building_id=b.building_id WHERE bl.building_locate_id='" + id + "'");
+      } else if (mode =='ad') {
+        var buildingRes = dbRowArray("SELECT * FROM building WHERE building_id='" + id + "'");
+      }
 
       if (buildingRes) {
         buildingData = buildingRes;
@@ -67,26 +71,28 @@
 
       if (mode =='monitoring') {
         // 모니터링 리스트 가져옴
-        var jobData = dbRowArray("SELECT * FROM monitoring_request WHERE  monitoring_request_id='" + jobId + "'");
+        jobData = dbResultArray("SELECT * FROM processing WHERE  monitoring_request_id='" + jobId + "'");
       } else if (mode =='ad') {
         // 게첨 리스트 가져옴
-        var jobData = dbRowArray("SELECT * FROM ad_check_request WHERE  ad_check_building_id='" + jobId + "'");
+        jobData = dbResultArray("SELECT * FROM processing WHERE  ad_check_building_id='" + jobId + "'");
+        var jobRequestData = dbRowArray("SELECT * FROM ad_check_request WHERE ad_check_building_id='" + jobId + "'");
 
-        titleTxt = jobData.ad_name;
+        titleTxt = jobRequestData.ad_name;
       }
+
+      $.each(jobData, function(index, item){       
+        shotResult.push({filepath: item.processing_file_url});
+      });
       
       callNative('setTitle', titleTxt);
 
     if (mode == "monitoring") {
-      shotResult = JSON.stringify([{"filepath":"./images/return-img.png"}]);
       var h = $( window ).height();
       $(".return .img img").attr("height", h);
 
     } else if (mode == "building") {
-      shotResult = JSON.stringify([{"filepath":"./images/return-img.png"}]);
       var h = $( window ).height();
     } else if (mode == "ad") {
-      shotResult = JSON.stringify([{"filepath":"./images/return-img.png"},{"filepath":"./images/return-img.png"},{"filepath":"./images/return-img.png"},{"filepath":"./images/return-img.png"},{"filepath":"./images/return-img.png"}]);
       var h = $( window ).height();
     }
 
@@ -135,7 +141,7 @@
       });
     }
 
-    shotListSliderVue.shotList = $.parseJSON(shotResult);
+    shotListSliderVue.shotList = shotResult;
   });
 
   function confirm() {

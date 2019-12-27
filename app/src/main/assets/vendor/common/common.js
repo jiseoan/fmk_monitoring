@@ -118,7 +118,7 @@ function NativeCallback(command, param, result)
       else if (command == "close")
       {
         // 닫기
-        window.android.webViewClose();
+        window.android.closeWebView();
       }
       else if (command == "login")
       {
@@ -581,7 +581,7 @@ function getDownloadData(agentCode, dataNames, tost) {
       queryList.push({"query": "delete from processing"});
       for(i=0;i<result.data.processing.length;++i) {
         let currentData = result.data.processing[i];
-        queryList.push({"query": stringFormat("insert into processing (building_id, building_locate_id, machine_code, processing_file_url, processing_date, qr_flag, no_qr_type_code_id, no_qr_desc, monitoring_request_id, ad_check_building_id, processing_id) " + "values('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}', '{9}', '{10}', '{11}')", currentData.building_id, currentData.building_locate_id, currentData.machine_code, currentData.processing_file_url, currentData.processing_date, currentData.qr_flag, currentData.no_qr_type_code_id, currentData.no_qr_desc, currentData.monitoring_request_id, currentData.ad_check_building_id, currentData.processing_id)});
+        queryList.push({"query": stringFormat("insert into processing (building_id, building_locate_id, machine_code, processing_file_url, processing_date, qr_flag, no_qr_type_code_id, no_qr_desc, monitoring_request_id, ad_check_building_id, processing_id) " + "values('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}', '{9}', '{10}')", currentData.building_id, currentData.building_locate_id, currentData.machine_code, currentData.processing_file_url, currentData.processing_date, currentData.qr_flag, currentData.no_qr_type_code_id, currentData.no_qr_desc, currentData.monitoring_request_id, currentData.ad_check_building_id, currentData.processing_id)});
       }
 
       // 모니터링 전체 사용 코드

@@ -69,7 +69,7 @@
     jobList = (monitoringRes)?jobList.concat(monitoringRes):jobList;
 
     // 게첨 리스트 가져옴
-    var adRes = dbResultArray("SELECT 1 AS class, acr.ad_check_building_id AS job_id, CASE WHEN p.processing_date !='' THEN 'Y' ELSE 'N' END AS processing_flag, '광고' AS job_name, acr.ad_name AS sub_name, acr.ad_type, acr.ad_url FROM ad_check_request acr LEFT JOIN processing p ON acr.ad_check_building_id=p.ad_check_building_id WHERE date(acr.request_date) = date('" + nowDate + "') AND acr.building_id='" + buildingData.building_id + "'");
+    var adRes = dbResultArray("SELECT 1 AS class, acr.ad_check_building_id AS job_id, CASE WHEN p.processing_date !='' THEN 'Y' ELSE 'N' END AS processing_flag, '광고' AS job_name, acr.ad_name AS sub_name, acr.ad_type, acr.ad_url FROM ad_check_request acr LEFT JOIN processing p ON acr.ad_check_building_id=p.ad_check_building_id WHERE date(acr.request_date) = date('" + nowDate + "') AND acr.building_id='" + buildingData.building_id + "' GROUP BY acr.ad_check_building_id");
 
     jobList = (adRes)?jobList.concat(adRes):jobList;
     console.log(JSON.stringify(jobList));

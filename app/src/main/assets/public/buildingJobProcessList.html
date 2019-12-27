@@ -171,7 +171,7 @@
                         <span class="badge red" v-if="item.qr_flag == \'N\'">QR미인식</span>\
                         <span class="badge green" v-if="item.processing_flag == \'Y\'">완료</span>\
                         <span class="badge blue" v-if="item.as_request_flag == \'Y\'">AS요청</span>\
-                        <span class="img"><img v-bind:src="item.filepath"></span>\
+                        <span class="img"><img v-bind:src="item.processing_file_url"></span>\
                         <span class="location">\
                           <span>{{ item.dong }}</span>\
                           <span>{{ item.unit_name }}</span>\
@@ -217,7 +217,7 @@
     if (adCheckData) {
       $.each(adCheckData, function(index, item){
         adCheckData[index].details = [];
-        var processingData = dbResultArray("SELECT * FROM processing WHERE ad_check_building_id='" + adCheckData[index].ad_check_building_id + "' AND building_id='" + buildingData.building_id + "'");
+        var processingData = dbResultArray("SELECT p.*, bl.dong, bl.unit_name FROM processing p LEFT JOIN building_locate bl ON p.building_locate_id=bl.building_locate_id WHERE p.ad_check_building_id='" + adCheckData[index].ad_check_building_id + "' AND p.building_id='" + buildingData.building_id + "'");
         if (processingData) {
           adCheckData[index].details = processingData;
         }
@@ -241,10 +241,10 @@
                       </div>\
                       <div>\
                         <p>&lt;{{ item.ad_name }}&gt;</p>\
-                        <ul class="ad-list" v-if="item.details.length > 0">\
+                        <ul class="monitoring-list" v-if="item.details.length > 0">\
                           <li v-for="detail in item.details">\
                             <a>\
-                              <span class="img"><img v-bind:src="detail.filepath"></span>\
+                              <span class="img"><img v-bind:src="detail.processing_file_url"></span>\
                               <span class="location">\
                                 <span>{{ detail.dong }}</span>\
                                 <span>{{ detail.unit_name }}</span>\
@@ -298,7 +298,7 @@
     // 촬영 타입과 결과이미지를 저장후 이동한다.
     var mode = param;
     window.localStorage.setItem("shot_result", result);
-    location.href = "buildingJobProcess.html?mode=building&id=" + buildingId + "&jobId=" + jobId;
+    location.href = "buildingJobProcess.html?mode=building&id=" + buildingId;
   }
   </script>
 

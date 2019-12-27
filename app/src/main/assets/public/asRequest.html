@@ -17,56 +17,163 @@
 
   <article class="as">
     <h2>AS 요청</h2>
-    <div class="wrapper">
+    <div class="wrapper" id="asRequestForm" v-cloak>
       <p>AS 유형을 선택해주세요.</p>
       <ul class="select">
-        <li><a>모니터 꺼짐</a></li>
-        <li><a class="on">모니터 깨짐</a></li>
-        <li><a>시스템 오류</a></li>
-        <li><a>네트워크 오류</a></li>
-        <li><a>기타</a></li>
+        <li v-for="(item, index) in items" v-bind:key="item.id" v-on:click="changeCode(index)"><a v-bind:class="{ on : item.is_on }">{{ item.codename }}</a></li>
       </ul>
-      <textarea placeholder="추가 AS 요청 내용을 입력해주세요."></textarea>
+      <textarea placeholder="추가 AS 요청 내용을 입력해주세요." class="request-desc"></textarea>
     </div>
   </article>
 
-<script language="javascript" type="text/javascript">
-var mode = null;
-var buildingLocateId = null;
-var jobId = null;
-var shotResult = null;
-var buildingData = null;
-var jobData = null;
-$(document).ready(function(){
-  callNative('toolBar', 'main', "");
-  callNative("hideBottomActionBar");
+  <script language="javascript" type="text/javascript">
+  var agentCode = null;
+  var agentData = null;
+  var mode = null;
+  var buildingLocateId = null;
+  var jobId = null;
+  var shotResult = null;
+  var buildingData = null;
+  var jobData = null;
+  var asRequestFormVue = null;
+  var codeData = null;
+  $(document).ready(function(){
+    callNative('toolBar', 'main', "");
+    callNative("hideBottomActionBar");
 
-  mode = $.urlParam("mode");
-  buildingLocateId = $.urlParam("id");
-  jobId = $.urlParam("jobId");
-  shotResult = window.localStorage.getItem("shot_result");
-  //shotResult = JSON.stringify([{"filepath":"./images/return-img.png"},{"filepath":"./images/return-img.png"},{"filepath":"./images/return-img.png"},{"filepath":"./images/return-img.png"},{"filepath":"./images/return-img.png"}]);
+    agentCode = window.localStorage.getItem("agent_code");
 
-  var buildingRes = dbRowArray("SELECT b.building_id,bl.building_locate_id, b.building_name, bl.dong, bl.unit_name, b.building_name||' '||bl.dong||' '||bl.unit_name AS building_locate_name, b.address FROM building_locate bl JOIN building b ON bl.building_id=b.building_id WHERE bl.building_locate_id='" + buildingLocateId + "'");
+    mode = "monitoring";
+    buildingLocateId = $.urlParam("id");
+    jobId = $.urlParam("jobId");
+    shotResult = window.localStorage.getItem("shot_result");
 
-  //var buildingRes = [{"building_id":"1329","building_locate_id":"18424","building_name":"전농동아아파트","dong":"103동","unit_name":"1호기","building_locate_name":"전농동아아파트 103동 1호기","address":"서울시 동대문구 전농1동 645-3번지"}]
+    agentData = dbRowArray("SELECT * FROM agent WHERE agent_code='" + agentCode + "'");
+    //agentData = $.parseJSON('{"agent_code":"AGE_190001","agent_name":"최예람","mobile":"010-2688-4815","agent_type":"O","job_area":"강남구","job_week":"1,2,3,4,5","mobile_code":"d1SeMc7zw24:APA91bGjSugeUkcm4w3kFSPItZY_c4mf__mioQVH5wfKDOfKte-koEU6WjdsDTAVh0e_Cg2nYjxJJQeqLivt_JLx-rjUNc2q0pUtI3OmhVsb7bmf93OECcUyVmtN0yanowmDidYR9zLB"}');
 
-  if (buildingRes) {
-    buildingData = buildingRes;
+    var buildingRes = dbRowArray("SELECT b.building_id,bl.building_locate_id, b.building_name, bl.dong, bl.unit_name, b.building_name||' '||bl.dong||' '||bl.unit_name AS building_locate_name, b.address, bl.machine_code FROM building_locate bl JOIN building b ON bl.building_id=b.building_id WHERE bl.building_locate_id='" + buildingLocateId + "'");
+    //var buildingRes = $.parseJSON('{"building_id":"1683","building_locate_id":"24407","building_name":"효자워너빌","dong":"1동","unit_name":"1호기","building_locate_name":"효자워너빌 1동 1호기","address":"서울시 동대문구 휘경동 264-2","machine_code":"EV251809K04813"}');
+    if (buildingRes) {
+      buildingData = buildingRes;
+    }
+
+    // 모니터링 리스트 가져옴
+    jobData = dbRowArray("SELECT * FROM monitoring_request WHERE  monitoring_request_id='" + jobId + "'");
+    //jobData = $.parseJSON('{"monitoring_request_id":"66","building_id":"1683","machine_cnt":"4","building_locate_ids":"24407,24408,24409,30578","request_date":"2019-12-26","processing_flag":"N","processing_date":"2019-12-26"}');
+    callNative('setTitle', buildingData.building_locate_name);
+    callNative("bottomActionBar","insertAndCancel");
+
+    codeData = dbResultArray("SELECT * FROM code WHERE parent_id='2809' ORDER BY code");
+    //codeData = $.parseJSON('[{"code_id":"2812","parent_id":"2809","code":"1","codename":"꺼짐"},{"code_id":"2813","parent_id":"2809","code":"2","codename":"파손"},{"code_id":"2814","parent_id":"2809","code":"3","codename":"시스템오류"},{"code_id":"2815","parent_id":"2809","code":"4","codename":"기타"}]');
+    if (codeData.length > 0) {
+      $.each(codeData, function(index, item){
+        codeData[index].is_on = (index == 0)?true:false;
+      });
+    }
+
+    asRequestFormVue = new Vue({
+      el: '#asRequestForm',
+      data: {
+        items:[]
+      },
+      methods: {
+        changeCode: function(idx) {
+          var items = this.items;
+          items[idx].is_on= (items[idx].is_on === false)?true:false;
+        }
+      }
+    });
+
+    asRequestFormVue.items = codeData;
+  });
+
+  function dataSaveProcess() {
+
+    console.log("dataSaveProcess!!!");
+
+    let uploadData = {};
+
+    uploadData['url'] = BASE_URL + '/Bmm_api/uploadProcessing';
+    uploadData["fileData"] = $.map( $.parseJSON(shotResult), function( el, index ) {
+      let arrEl = el.filepath.split("fmk_picture/");
+      let filename = arrEl[1];
+      return {filename: filename};
+    });
+    uploadData["data"] = {};
+
+    let param = {};
+    param["processing_agent_code"] = agentCode;
+    param["building_id"] = buildingData.building_id;
+    param["building_locate_id"] = buildingData.building_locate_id;
+    param["dong"] = buildingData.dong;
+    param["unit_name"] = buildingData.unit_name;
+    param["machine_code"] = buildingData.machine_code;
+    param["processing_date"] = getNowDate();
+    param["qr_flag"] = "Y";
+    param["bmm_monitoring_request_id"] = jobData.monitoring_request_id;
+
+    let asParam = {};
+    asParam["machine_code"] = buildingData.machine_code;
+    asParam["building_id"] = buildingData.building_id;
+    asParam["building_name"] = buildingData.building_name;
+    asParam["address"] = buildingData.address;
+    asParam["building_locate_id"] = buildingData.building_locate_id;
+    asParam["dong"] = buildingData.dong;
+    asParam["unit_name"] = buildingData.unit_name;
+    asParam["request_date"] = getNowDate();
+    var asSelCodes = $.map( codeData, function( el, index ) {
+      if (el.is_on) return el.code_id;
+    });
+
+    asParam["request_type_code_ids"] = asSelCodes.join();
+    asParam["request_desc"] = $(".request-desc").val().trim();
+    asParam["request_name"] = agentData.agent_name;
+    asParam["request_mobile"] = agentData.mobile;
+    asParam["request_agent_code"] = agentCode;
+
+    uploadData['data']['id'] = jobData.monitoring_request_id;
+
+    uploadData['data']['mode'] = mode;
+    uploadData['data']['in_data'] = param;
+
+    uploadData['data']['as_data'] = asParam;
+
+    console.log(uploadData);
+
+    callNative('uploadData', uploadData);
   }
 
-  callNative('setTitle', buildingData.building_locate_name);
-  callNative("bottomActionBar","insertAndCancel");
-});
+  function uploadDataCallBack(resCode, data) {
+    if (parseFloat(resCode) === 200) {
+      var result = parseResult(data);
+      if (result.code == "success") {
+        callNative("toastMessage", "저장이 완료되었습니다.");
+        // 데이터를 동기화하여 받는다.
+        dataSync(agentCode, false);
+      } else {
+        dataLocalSave();
+      }
+    } else {
+      dataLocalSave();
+    }
+  }
 
-function dataSaveProcess() {
-  // 데이터를 저장한다.
-  
-  window.localStorage.setItem("shot_result", "");
-  callNative("toastMessage", "저장되었습니다.");
-  // 작업리스트로 이동한다.
-  location.href = "buildingJobList.html?id=" + buildingLocateId;
-}
+  function dataLocalSave() {
+    console.log('failed');
+    callNative("toastMessage", "서버 저장에 실패하였습니다.\n내부로 저장합니다.");
+    dataSaveComplete();
+  }
+
+  function dataUpdateCallBack() {
+    dataSaveComplete();
+  }
+
+  function dataSaveComplete() {    
+    window.localStorage.setItem("shot_result", "");
+    // 작업리스트로 이동한다.
+    var buildingLocateId = buildingData.building_locate_id;
+    location.href = "buildingJobList.html?id=" + buildingLocateId;
+  }
 </script>
 
 </body>
