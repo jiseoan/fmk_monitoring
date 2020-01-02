@@ -322,7 +322,7 @@ function dbInsert(table, param) {
       }
     };
 
-    result = dbSql("INSERT OR REPLACE INTO " + table + " (" + fields + ") VALUES (" + values + ")");
+    result = dbSql("INSERT INTO " + table + " (" + fields + ") VALUES (" + values + ")");
   }
   return result;
 }
@@ -583,7 +583,7 @@ function getDownloadData(agentCode, dataNames, tost) {
       queryList.push({"query": "delete from ad_check_request"});
       for(i=0;i<result.data.ad_check_request.length;++i) {
         let currentData = result.data.ad_check_request[i];
-        queryList.push({"query": stringFormat("insert into ad_check_request (ad_check_request_id, ad_name, ad_type, ad_url, request_date, ad_check_building_id, building_id, building_file_url, processing_flag) " + "values('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}')", currentData.ad_check_request_id, currentData.ad_name, currentData.ad_type, currentData.ad_url, currentData.request_date, currentData.ad_check_building_id, currentData.building_id, currentData.building_file_url, currentData.processing_flag)});
+        queryList.push({"query": stringFormat("insert into ad_check_request (ad_check_request_id, ad_name, ad_type, ad_url, request_date, ad_check_building_id, building_id, building_file_url, processing_flag, return_code_id, return_desc) " + "values('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}', '{9}', '{10}')", currentData.ad_check_request_id, currentData.ad_name, currentData.ad_type, currentData.ad_url, currentData.request_date, currentData.ad_check_building_id, currentData.building_id, currentData.building_file_url, currentData.processing_flag, currentData.return_code_id, currentData.return_desc)});
       }
 
       // 모니터링/광고게첨 처리

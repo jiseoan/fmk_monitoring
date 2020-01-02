@@ -30,12 +30,12 @@ public class DBHelper extends SQLiteOpenHelper {
         db.execSQL("CREATE TABLE IF NOT EXISTS temp_save_ad_check_building ( ad_check_building_id INTEGER, building_id INTEGER, building_file_url TEXT)");
         
         db.execSQL("CREATE TABLE IF NOT EXISTS processing ( building_id INTEGER, building_locate_id INTEGER, machine_code TEXT, processing_file_url TEXT, processing_date TEXT, qr_flag TEXT, no_qr_type_code_id INTEGER, no_qr_desc TEXT, monitoring_request_id INTEGER, ad_check_building_id INTEGER, processing_id INTEGER)");
-        db.execSQL("CREATE TABLE IF NOT EXISTS temp_save_processing ( building_id INTEGER, building_locate_id INTEGER, machine_code TEXT, processing_file_url TEXT, processing_date TEXT, qr_flag TEXT, no_qr_type_code_id INTEGER, no_qr_desc TEXT, monitoring_request_id INTEGER, ad_check_building_id INTEGER, processing_id INTEGER)");
+        db.execSQL("CREATE TABLE IF NOT EXISTS temp_save_processing ( processing_agent_code TEXT, building_id INTEGER, building_locate_id INTEGER, dong TEXT, unit_name TEXT, machine_code TEXT, processing_file_url TEXT, processing_date TEXT, qr_flag TEXT, no_qr_type_code_id INTEGER, no_qr_desc TEXT, monitoring_request_id INTEGER, ad_check_building_id INTEGER)");
         
         db.execSQL("CREATE TABLE IF NOT EXISTS code ( code_id INTEGER, parent_id INTEGER, code TEXT, codename TEXT)");
         
         db.execSQL("CREATE TABLE IF NOT EXISTS as_request ( building_id INTEGER, building_locate_id INTEGER, machine_code TEXT, request_date TEXT, request_type_code_ids TEXT, request_desc TEXT, request_file_url TEXT, processing_flag TEXT, as_request_id INTEGER)");
-        db.execSQL("CREATE TABLE IF NOT EXISTS temp_save_as_request ( building_id INTEGER, building_locate_id INTEGER, machine_code TEXT, request_date TEXT, request_type_code_ids TEXT, request_desc TEXT, request_file_url TEXT, processing_flag TEXT, as_request_id INTEGER)");
+        db.execSQL("CREATE TABLE IF NOT EXISTS temp_save_as_request ( building_id INTEGER, building_name TEXT, address TEXT, building_locate_id INTEGER, dong TEXT, unit_name TEXT, machine_code TEXT, request_date TEXT, request_type_code_ids TEXT, request_desc TEXT, request_file_url TEXT, request_name TEXT, request_mobile TEXT, request_agent_code TEXT)");
         
         db.execSQL("CREATE TABLE IF NOT EXISTS as_processing ( as_request_id INTEGER, processing_type_code_id INTEGER, processing_desc TEXT, processing_date TEXT, as_processing_id INTEGER)");
         db.execSQL("CREATE TABLE IF NOT EXISTS temp_save_as_processing ( as_request_id INTEGER, processing_type_code_id INTEGER, processing_desc TEXT, processing_date TEXT, as_processing_id INTEGER)");

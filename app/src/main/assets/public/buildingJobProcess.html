@@ -52,16 +52,21 @@
   var shotListSliderVue = null;
   var titleTxt = null;
   var noQrData = null;
+  var selDate = null;
+  var nowDate = null;
+  var uploadData = {};
   $(document).ready(function(){
     callNative('toolBar', 'main', "");
     callNative("hideBottomActionBar");
     
     agentCode = window.localStorage.getItem("agent_code");
     noQrData = window.localStorage.getItem("noQrData");
+    nowDate = getNowDate();
 
     mode = $.urlParam("mode");
     if (mode == "building") {
       buildingId = $.urlParam("id");
+      selDate = $.urlParam("date");
     } else {
       buildingLocateId = $.urlParam("id");
     }
@@ -98,7 +103,7 @@
         viewMode = "shot";
       } else {
         viewMode = "info";
-        jobData = dbRowArray("SELECT * FROM ad_check_request WHERE building_id='" + buildingId + "' AND request_date='" + getNowDate() + "' AND building_file_url != '' LIMIT 1");
+        jobData = dbRowArray("SELECT * FROM ad_check_request WHERE building_id='" + buildingId + "' AND request_date='" + selDate + "' AND building_file_url != '' LIMIT 1");
         if (jobData) {
           shotResult = JSON.stringify([{"filepath": jobData.building_file_url }]);
         }
@@ -115,8 +120,12 @@
       $(".return .img img").attr("height", h);
 
     } else if (mode == "building") {
-      // 단지 대표 이미지 촬영용 설정을 한다.
-      callNative('bottomActionBar', 'retakeAndConfirm', mode);
+      if (selDate == nowDate) {
+        // 단지 대표 이미지 촬영용 설정을 한다.
+        callNative('bottomActionBar', 'retakeAndConfirm', mode);
+      } else {
+        callNative('bottomActionBar', 'confirm');
+      }
       var h = $( window ).height();
     } else if (mode == "ad") {
       // 광고촬영용 설정을 한다.
@@ -203,7 +212,7 @@
       return;
     }
 
-    let uploadData = {};
+    uploadData = {};
 
     uploadData["fileData"] = $.map( $.parseJSON(shotResult), function( el, index ) {
       let arrEl = el.filepath.split("fmk_picture/");
@@ -278,8 +287,8 @@
     uploadData['url'] = BASE_URL + updateDataUrl;
 
     console.log(uploadData);
-
-    callNative('uploadData', uploadData);
+    dataLocalSave();
+    //callNative('uploadData', uploadData);
   }
 
   function uploadDataCallBack(resCode, data) {
@@ -299,6 +308,95 @@
 
   function dataLocalSave() {
     console.log('failed');
+
+    if (mode == "building") {
+    } else {
+      $.each( $.parseJSON(shotResult), function(idx, el) {
+        let uploadInData = uploadData['data']['in_data'];
+        const tempSaveProcData = uploadInData;
+        tempSaveProcData['processing_file_url'] = el.filepath;
+        console.log(tempSaveProcData);
+
+        var addQry = "";
+        if (mode == "monitoring") {
+          if (idx == 0) {
+            tempSaveProcData['monitoring_request_id'] = tempSaveProcData['bmm_monitoring_request_id'];
+            delete tempSaveProcData['bmm_monitoring_request_id'];
+          }
+
+          addQry = " building_locate_id='" + tempSaveProcData['building_locate_id'] + "' AND monitoring_request_id='" + tempSaveProcData['monitoring_request_id']+ "' ";
+        } else if (mode == "ad") {
+          if (idx == 0) {
+            tempSaveProcData['ad_check_building_id'] = tempSaveProcData['bmm_ad_check_building_id'];
+            delete tempSaveProcData['bmm_ad_check_building_id'];  
+          }
+          addQry = " building_id='" + tempSaveProcData['building_id'] + "' AND ad_check_building_id='" + tempSaveProcData['ad_check_building_id']+ "' ";
+        }
+
+        if (idx == 0) {
+          dbSql("DELETE FROM temp_save_processing WHERE " + addQry + " AND processing_agent_code='" + tempSaveProcData['processing_agent_code'] + "'");
+        }
+
+        dbInsert("temp_save_processing", tempSaveProcData);
+
+        let saveProcData = {};
+
+        $.each(uploadData['data']['in_data'], function(index, ele){
+          if (index != 'processing_agent_code' && index != 'dong' && index != 'unit_name') {
+            saveProcData[index] = ele;
+          }
+        });
+
+        //delete saveProcData['processing_agent_code'];
+        //delete saveProcData['dong'];
+        //delete saveProcData['unit_name'];
+        console.log(saveProcData);
+
+        if (idx == 0) {
+          dbSql("DELETE FROM processing WHERE " + addQry);
+        }
+
+        dbInsert("processing", saveProcData);
+
+        if (mode == "monitoring") {
+          var chkProcRow = dbRowArray("SELECT count(*) AS cnt FROM processing WHERE building_id='" + saveProcData['building_id'] + "' AND monitoring_request_id='" + saveProcData['monitoring_request_id'] + "'");
+
+          var procFlag = (jobData['machine_cnt'] == chkProcRow['cnt'])?"Y":"N";
+
+          dbSql("UPDATE monitoring_request SET processing_flag= '" + procFlag + "', processing_date='" + nowDate + "' WHERE building_id='" + saveProcData['building_id'] + "' AND monitoring_request_id='" + saveProcData['monitoring_request_id'] + "'");
+
+          if (noQrData) {
+            var tempSaveAsData = uploadData['data']['as_data'];
+            tempSaveAsData['request_file_url'] = el.filepath;
+            console.log(tempSaveAsData);
+
+            dbSql("DELETE FROM temp_save_as_request WHERE building_locate_id = '" + tempSaveAsData['building_locate_id'] + "' AND request_date='" + nowDate + "' AND request_agent_code='" + tempSaveAsData['request_agent_code'] + "'");
+
+            dbInsert("temp_save_as_request", tempSaveAsData);
+
+            var saveAsData = tempSaveAsData;
+            saveAsData['processing_flag'] = "N";
+            delete saveAsData['building_name'];
+            delete saveAsData['address'];
+            delete saveAsData['dong'];
+            delete saveAsData['unit_name'];
+            delete saveAsData['request_name'];
+            delete saveAsData['request_mobile'];
+            delete saveAsData['request_agent_code'];
+            console.log(saveAsData);
+
+            dbSql("DELETE FROM as_request WHERE building_locate_id = '" + saveAsData['building_locate_id'] + "' AND request_date='" + nowDate + "'");
+
+            dbInsert("as_request", saveAsData);
+          }
+        } else if (mode =="ad") {
+          if (idx == 0) {
+            dbSql("UPDATE ad_check_request SET processing_flag= 'Y' WHERE ad_check_building_id='" + saveProcData['ad_check_building_id'] + "'");
+          }
+        }
+      });
+    }
+    return;
     callNative("toastMessage", "서버 저장에 실패하였습니다.\n내부로 저장합니다.");
     dataSaveComplete();
   }
