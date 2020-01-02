@@ -158,8 +158,8 @@
 
     console.log(uploadData);
 
-    //callNative('uploadData', uploadData);
-    dataLocalSave();
+    callNative('uploadData', uploadData);
+    //dataLocalSave();
   }
 
   function uploadDataCallBack(resCode, data) {
@@ -180,26 +180,24 @@
   function dataLocalSave() {
     console.log('failed');
 
+    var uploadInData = uploadData['data']['in_data'];
+    let tempSaveProcData = {};
+    tempSaveProcData['processing_agent_code'] = uploadInData['processing_agent_code'];
+    tempSaveProcData['building_id'] = uploadInData['building_id'];
+    tempSaveProcData['building_locate_id'] = uploadInData['building_locate_id'];
+    tempSaveProcData['upload_json'] = JSON.stringify(uploadData);
+
+    var addQry1 = "";
+
+    tempSaveProcData['monitoring_request_id'] = uploadInData['bmm_monitoring_request_id'];
+    addQry1 = " building_locate_id='" + tempSaveProcData['building_locate_id'] + "' AND monitoring_request_id='" + tempSaveProcData['monitoring_request_id']+ "' ";
+
+    dbSql("DELETE FROM temp_save_processing WHERE " + addQry1 + " AND processing_agent_code='" + tempSaveProcData['processing_agent_code'] + "'");
+
+    console.log(tempSaveProcData);
+    dbInsert("temp_save_processing", tempSaveProcData);
+
     $.each( $.parseJSON(shotResult), function(idx, el) {
-      let uploadInData = uploadData['data']['in_data'];
-      const tempSaveProcData = uploadInData;
-      tempSaveProcData['processing_file_url'] = el.filepath;
-      console.log(tempSaveProcData);
-
-      var addQry = "";
-      if (idx == 0) {
-        tempSaveProcData['monitoring_request_id'] = tempSaveProcData['bmm_monitoring_request_id'];
-        delete tempSaveProcData['bmm_monitoring_request_id'];
-      }
-
-      addQry = " building_locate_id='" + tempSaveProcData['building_locate_id'] + "' AND monitoring_request_id='" + tempSaveProcData['monitoring_request_id']+ "' ";
-    
-
-      if (idx == 0) {
-        dbSql("DELETE FROM temp_save_processing WHERE " + addQry + " AND processing_agent_code='" + tempSaveProcData['processing_agent_code'] + "'");
-      }
-
-      dbInsert("temp_save_processing", tempSaveProcData);
 
       let saveProcData = {};
 
@@ -208,6 +206,14 @@
           saveProcData[index] = ele;
         }
       });
+
+      saveProcData['processing_file_url'] = el.filepath;
+
+      var addQry = "";
+      saveProcData['monitoring_request_id'] = saveProcData['bmm_monitoring_request_id'];
+      delete saveProcData['bmm_monitoring_request_id'];
+
+      addQry = " building_locate_id='" + saveProcData['building_locate_id'] + "' AND monitoring_request_id='" + saveProcData['monitoring_request_id']+ "' ";
 
       //delete saveProcData['processing_agent_code'];
       //delete saveProcData['dong'];
@@ -226,15 +232,10 @@
 
       dbSql("UPDATE monitoring_request SET processing_flag= '" + procFlag + "', processing_date='" + nowDate + "' WHERE building_id='" + saveProcData['building_id'] + "' AND monitoring_request_id='" + saveProcData['monitoring_request_id'] + "'");
 
-      var tempSaveAsData = uploadData['data']['as_data'];
-      tempSaveAsData['request_file_url'] = el.filepath;
-      console.log(tempSaveAsData);
+      var saveAsData = uploadData['data']['as_data'];
+      saveAsData['request_file_url'] = el.filepath;
+      console.log(saveAsData);
 
-      dbSql("DELETE FROM temp_save_as_request WHERE building_locate_id = '" + tempSaveAsData['building_locate_id'] + "' AND request_date='" + nowDate + "' AND request_agent_code='" + tempSaveAsData['request_agent_code'] + "'");
-
-      dbInsert("temp_save_as_request", tempSaveAsData);
-
-      var saveAsData = tempSaveAsData;
       saveAsData['processing_flag'] = "N";
       delete saveAsData['building_name'];
       delete saveAsData['address'];
@@ -251,7 +252,7 @@
 
     });
 
-    return;
+    //return;
     callNative("toastMessage", "서버 저장에 실패하였습니다.\n내부로 저장합니다.");
     dataSaveComplete();
   }

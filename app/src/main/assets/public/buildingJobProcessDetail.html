@@ -136,9 +136,11 @@
         jobData = dbResultArray("SELECT * FROM processing WHERE  ad_check_building_id='" + jobId + "'");
         jobRequestData = dbRowArray("SELECT * FROM ad_check_request WHERE ad_check_building_id='" + jobId + "'");
         if (jobRequestData) {
-          var codeRow = dbRowArray("SELECT codename FROM code WHERE code_id = '" + jobRequestData['return_code_id'] + "'");
-          jobRequestData['return_code_name'] = codeRow['codename']; 
-          issueData = jobRequestData;
+          if (jobRequestData['return_code_id'] && jobRequestData['return_code_id'] != 'null') {
+            var codeRow = dbRowArray("SELECT codename FROM code WHERE code_id = '" + jobRequestData['return_code_id'] + "'");
+            jobRequestData['return_code_name'] = codeRow['codename'];
+            issueData = jobRequestData; 
+          }
         }
 
         titleTxt = jobRequestData.ad_name;
@@ -212,7 +214,7 @@
     }
 
     shotListSliderVue.shotList = shotResult;
-    shotListSliderVue.issue = issueData;
+    if (issueData) shotListSliderVue.issue = issueData;
   });
 
   function confirm() {

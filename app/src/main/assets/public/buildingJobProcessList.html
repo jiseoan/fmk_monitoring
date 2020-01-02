@@ -153,9 +153,9 @@
     });
     
     callNative('setTitle', buildingData.building_name);
-    if (selDate == nowDate) {
-      callNative("bottomActionBar", "jobStart");
-    }
+    //if (selDate == nowDate) {
+    //  callNative("bottomActionBar", "jobStart");
+    //}
     monitoringList();
     adCheckList();
 
@@ -336,7 +336,7 @@
     location.href = "buildingJobProcess.html?mode=building&id=" + buildingId + "&date="+ selDate;
   }
 
-  function qrScanResult(result) {
+  /*function qrScanResult(result) {
     // 모니터링, 광고촬영에 있는지 체크
     var qrCode = $.urlParam("cd", result);
     if (qrCode === null) {
@@ -353,7 +353,7 @@
 
     var buildingLocateId = jobBuildingData.building_locate_id;
     location.href = "buildingJobList.html?id=" + buildingLocateId;
-  }
+  }*/
   </script>
 
 </body>

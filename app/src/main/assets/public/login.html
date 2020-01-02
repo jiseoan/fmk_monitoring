@@ -86,12 +86,22 @@
               window.localStorage.setItem("sel_date", getNowDate());
               location.href="main.html";
             } else {
-              $.alert(result.data);
+              //$.alert(result.data);
+              callNative("toastMessage", result.data);
             }
           })
           .fail(function() {
             console.log('failed');
-            callNative("toastMessage", "로그인에 실패하였습니다.\n인터넷연결상태를 확인해주세요.");
+            var agentCode = vueLogin.userId;
+            var mobileCode = callNative("deviceUniq");
+            var agentRow = dbRowArray("SELECT * FROM agent WHERE agent_code='" + agentCode + "' AND mobile_code='" + mobileCode+ "'");
+            if (agentRow) {
+              window.localStorage.setItem("agent_code", agentCode);
+              window.localStorage.setItem("sel_date", getNowDate());
+              location.href="main.html";
+            } else {
+              callNative("toastMessage", "로그인에 실패하였습니다.");
+            }
           });
         }
       }

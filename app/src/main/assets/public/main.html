@@ -90,7 +90,7 @@
   var noticeSliderVue = null;
   $(document).ready(function(){
     callNative("hideToolBar");
-    callNative("hideBottomActionBar");
+    callNative("bottomActionBar", "jobStart");
 
     agentCode = window.localStorage.getItem("agent_code");
     selDate = window.localStorage.getItem("sel_date");
@@ -206,7 +206,8 @@
       methods: {
         dataSync: function() {
           // 데이터를 동기화하여 받는다.
-          dataSync(agentCode);
+          //dataSync(agentCode);
+          getUploadData();
         },
         logout: function() {
           // 로그아웃한다.
@@ -259,7 +260,67 @@
         }
       }
     });
-    dataSync(agentCode);
+    noticeList();
+    buildingsJobList(selDate);
+    //dataSync(agentCode);
+    getUploadData();
+  }
+
+  var uploadTotalCnt = 0;
+  var uploadNowCnt = 0;
+  var uploadTotalData = null;
+
+  function getUploadData() {
+    uploadTotalCnt = 0;
+    uploadNowCnt = 0;
+    uploadTotalData = null;
+    var res1 = dbResultArray("SELECT upload_json FROM temp_save_ad_check_building WHERE assignment_agent_code='" + agentCode + "'");
+    if (res1) {
+      uploadTotalData = res1;
+    }
+    var res2 = dbResultArray("SELECT upload_json FROM temp_save_processing WHERE processing_agent_code='" + agentCode + "'");
+    if (res2) {
+      if (uploadTotalData) {
+        uploadTotalData = $.merge(uploadTotalData, res2);
+      } else {
+        uploadTotalData = res2;
+      }
+    }
+
+    if (uploadTotalData) {
+      console.log(uploadTotalData);
+      uploadTotalCnt = uploadTotalData.length;
+      callNative("toastMessage", "동기화중 ...");
+      uploadDataProcess();
+    } else {
+      dataSync(agentCode);
+    }
+  }
+
+  function uploadDataProcess() {
+    var nc = uploadNowCnt;
+    console.log(nc);
+    if (nc == uploadTotalCnt) {
+      dbSql("DELETE FROM temp_save_ad_check_building");
+      dbSql("DELETE FROM temp_save_processing");
+      dataSync(agentCode);
+    } else {
+      callNative('uploadData', $.parseJSON(uploadTotalData[nc]['upload_json']));
+    }
+  }
+
+  function uploadDataCallBack(resCode, data) {
+    if (parseFloat(resCode) === 200) {
+      var result = parseResult(data);
+      if (result.code == "success") {
+        uploadNowCnt++;
+        uploadDataProcess();
+      } else {
+        callNative("toastMessage", "동기화에 실패하였습니다.")
+      }
+    } else {
+      callNative("toastMessage", "동기화에 실패하였습니다.\n인터넷연결상태를 확인해주세요.")
+    }
   }
 
   function buildingsJobList(date) {
@@ -320,6 +381,31 @@
     
     mainBuildingJobListVue.items = jobListData;
     
+  }
+
+  function qrScanResult(result) {
+    // 모니터링, 광고촬영에 있는지 체크
+    var qrCode = $.urlParam("cd", result);
+    if (qrCode === null) {
+      callNative("toastMessage", "인식이 불가능한 QR코드 입니다.");
+      return;
+    }
+
+    qrCode = "T00017";
+    var buildingData = dbRowArray("SELECT bl.building_locate_id, b.building_id, b.building_name, b.address FROM building_locate bl JOIN building b ON bl.building_id=b.building_id WHERE qr_serial_code = '" + qrCode + "'");
+    if (!buildingData) {
+      callNative("toastMessage", "작업이 가능한 단지가 아닙니다.");
+      return;
+    }
+
+    var monitoringData = dbRowArray("SELECT COUNT(*) AS cnt FROM monitoring_request WHERE date(request_date) = date('" + nowDate + "') AND building_id='" + buildingData.building_id + "'");
+    if (monitoringData.cnt == 0) {
+      callNative("toastMessage", "오늘 작업이 없는 단지입니다.");
+      return;
+    }
+
+    var buildingLocateId = buildingData.building_locate_id;
+    location.href = "buildingJobList.html?id=" + buildingLocateId;
   }
 
   // 동기화 완료시 콜백

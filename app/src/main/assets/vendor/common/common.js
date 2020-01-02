@@ -522,9 +522,26 @@ function getRemoteVersion(agentCode, tost) {
     if (result.code == "success") {
       // 각 데이터의 버전을 체크한다.
       getRemoteVersionData = result.data;
+      var dataNamesAry = ['notice','building','monitoring_request','ad_check_request','processing,code','as_request','as_processing'];
+      var dataNames = '';
+      var versionData = dbRowArray("SELECT * FROM version");
+      if (versionData && (versionData['ver_date'] == getNowDate())) {
+        $.each(dataNamesAry, function (idx, el) {
+          if (getRemoteVersionData[el] != versionData[el]) {
+            dataNames += (dataNames)?"," + el:el;
+          }      
+        });
+      } else {
+        dataNames = 'notice,building,monitoring_request,ad_check_request,processing,code,as_request,as_processing';
+      }
+      console.log(dataNames);
 
-      var dataNames = 'notice,building,monitoring_request,ad_check_request,processing,code,as_request,as_processing';
-      getDownloadData(agentCode, dataNames);
+      //var dataNames = 'notice,building,monitoring_request,ad_check_request,processing,code,as_request,as_processing';
+      if (dataNames == "") {
+        completeQueries();
+      } else {
+        getDownloadData(agentCode, dataNames);
+      }
     } else {
       $.alert(result.data);
     }
@@ -550,68 +567,87 @@ function getDownloadData(agentCode, dataNames, tost) {
     if (result.code == "success") {
     
       let queryList = [];
-
+      let resData = result.data;
+      
       // 공지사항
-      queryList.push({"query": "delete from notice"});
-      for(i=0;i<result.data.notice.length;++i) {
-        let currentData = result.data.notice[i];
-        queryList.push({"query": stringFormat("insert into notice (notice_id, notice_type, title, content, create_date) " + "values('{0}', '{1}', '{2}', '{3}', '{4}')", currentData.notice_id, currentData.notice_type, currentData.title, currentData.content, currentData.create_date)});
+      if (resData.hasOwnProperty('notice')) {
+        queryList.push({"query": "delete from notice"});
+        for(i=0;i<result.data.notice.length;++i) {
+          let currentData = result.data.notice[i];
+          queryList.push({"query": stringFormat("insert into notice (notice_id, notice_type, title, content, create_date) " + "values('{0}', '{1}', '{2}', '{3}', '{4}')", currentData.notice_id, currentData.notice_type, currentData.title, currentData.content, currentData.create_date)});
+        }
       }
 
       // 단지
-      queryList.push({"query": "delete from building"});
-      for(i=0;i<result.data.building.length;++i) {
-        let currentData = result.data.building[i];
-        queryList.push({"query": stringFormat("insert into building (building_id, building_name, machine_cnt, address) " + "values('{0}', '{1}', '{2}', '{3}')", currentData.building_id, currentData.building_name, currentData.machine_cnt, currentData.address)});
+      if (resData.hasOwnProperty('building')) {
+        queryList.push({"query": "delete from building"});
+        for(i=0;i<result.data.building.length;++i) {
+          let currentData = result.data.building[i];
+          queryList.push({"query": stringFormat("insert into building (building_id, building_name, machine_cnt, address) " + "values('{0}', '{1}', '{2}', '{3}')", currentData.building_id, currentData.building_name, currentData.machine_cnt, currentData.address)});
+        }
       }
 
       // 단지 매체
-      queryList.push({"query": "delete from building_locate"});
-      for(i=0;i<result.data.building_locate.length;++i) {
-        let currentData = result.data.building_locate[i];
-        queryList.push({"query": stringFormat("insert into building_locate (building_locate_id, building_id, dong, unit_name, machine_code, qr_serial_code) " + "values('{0}', '{1}', '{2}', '{3}', '{4}', '{5}')", currentData.building_locate_id, currentData.building_id, currentData.dong, currentData.unit_name, currentData.machine_code, currentData.qr_serial_code)});
+      if (resData.hasOwnProperty('building_locate')) {
+        queryList.push({"query": "delete from building_locate"});
+        for(i=0;i<result.data.building_locate.length;++i) {
+          let currentData = result.data.building_locate[i];
+          queryList.push({"query": stringFormat("insert into building_locate (building_locate_id, building_id, dong, unit_name, machine_code, qr_serial_code) " + "values('{0}', '{1}', '{2}', '{3}', '{4}', '{5}')", currentData.building_locate_id, currentData.building_id, currentData.dong, currentData.unit_name, currentData.machine_code, currentData.qr_serial_code)});
+        }
       }
 
       // 모니터링 요청
-      queryList.push({"query": "delete from monitoring_request"});
-      for(i=0;i<result.data.monitoring_request.length;++i) {
-        let currentData = result.data.monitoring_request[i];
-        queryList.push({"query": stringFormat("insert into monitoring_request (monitoring_request_id, building_id, machine_cnt, building_locate_ids, request_date, processing_flag, processing_date) " + "values('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}')", currentData.monitoring_request_id, currentData.building_id, currentData.machine_cnt, currentData.building_locate_ids, currentData.request_date, currentData.processing_flag, currentData.processing_date)});
+      if (resData.hasOwnProperty('monitoring_request')) {
+        queryList.push({"query": "delete from monitoring_request"});
+        for(i=0;i<result.data.monitoring_request.length;++i) {
+          let currentData = result.data.monitoring_request[i];
+          queryList.push({"query": stringFormat("insert into monitoring_request (monitoring_request_id, building_id, machine_cnt, building_locate_ids, request_date, processing_flag, processing_date) " + "values('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}')", currentData.monitoring_request_id, currentData.building_id, currentData.machine_cnt, currentData.building_locate_ids, currentData.request_date, currentData.processing_flag, currentData.processing_date)});
+        }
       }
 
       // 광고게첨 요청
-      queryList.push({"query": "delete from ad_check_request"});
-      for(i=0;i<result.data.ad_check_request.length;++i) {
-        let currentData = result.data.ad_check_request[i];
-        queryList.push({"query": stringFormat("insert into ad_check_request (ad_check_request_id, ad_name, ad_type, ad_url, request_date, ad_check_building_id, building_id, building_file_url, processing_flag, return_code_id, return_desc) " + "values('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}', '{9}', '{10}')", currentData.ad_check_request_id, currentData.ad_name, currentData.ad_type, currentData.ad_url, currentData.request_date, currentData.ad_check_building_id, currentData.building_id, currentData.building_file_url, currentData.processing_flag, currentData.return_code_id, currentData.return_desc)});
+      if (resData.hasOwnProperty('ad_check_request')) {
+        queryList.push({"query": "delete from ad_check_request"});
+        for(i=0;i<result.data.ad_check_request.length;++i) {
+          let currentData = result.data.ad_check_request[i];
+          queryList.push({"query": stringFormat("insert into ad_check_request (ad_check_request_id, ad_name, ad_type, ad_url, request_date, ad_check_building_id, building_id, building_file_url, processing_flag, return_code_id, return_desc) " + "values('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}', '{9}', '{10}')", currentData.ad_check_request_id, currentData.ad_name, currentData.ad_type, currentData.ad_url, currentData.request_date, currentData.ad_check_building_id, currentData.building_id, currentData.building_file_url, currentData.processing_flag, currentData.return_code_id, currentData.return_desc)});
+        }
       }
 
       // 모니터링/광고게첨 처리
-      queryList.push({"query": "delete from processing"});
-      for(i=0;i<result.data.processing.length;++i) {
-        let currentData = result.data.processing[i];
-        queryList.push({"query": stringFormat("insert into processing (building_id, building_locate_id, machine_code, processing_file_url, processing_date, qr_flag, no_qr_type_code_id, no_qr_desc, monitoring_request_id, ad_check_building_id, processing_id) " + "values('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}', '{9}', '{10}')", currentData.building_id, currentData.building_locate_id, currentData.machine_code, currentData.processing_file_url, currentData.processing_date, currentData.qr_flag, currentData.no_qr_type_code_id, currentData.no_qr_desc, currentData.monitoring_request_id, currentData.ad_check_building_id, currentData.processing_id)});
+      if (resData.hasOwnProperty('processing')) {
+        queryList.push({"query": "delete from processing"});
+        for(i=0;i<result.data.processing.length;++i) {
+          let currentData = result.data.processing[i];
+          queryList.push({"query": stringFormat("insert into processing (building_id, building_locate_id, machine_code, processing_file_url, processing_date, qr_flag, no_qr_type_code_id, no_qr_desc, monitoring_request_id, ad_check_building_id, processing_id) " + "values('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}', '{9}', '{10}')", currentData.building_id, currentData.building_locate_id, currentData.machine_code, currentData.processing_file_url, currentData.processing_date, currentData.qr_flag, currentData.no_qr_type_code_id, currentData.no_qr_desc, currentData.monitoring_request_id, currentData.ad_check_building_id, currentData.processing_id)});
+        }
       }
 
       // 모니터링 전체 사용 코드
-      queryList.push({"query": "delete from code"});
-      for(i=0;i<result.data.code.length;++i) {
-        let currentData = result.data.code[i];
-        queryList.push({"query": stringFormat("insert into code (code_id, parent_id, code, codename) " + "values('{0}', '{1}', '{2}', '{3}')", currentData.code_id, currentData.parent_id, currentData.code, currentData.codename)});
+      if (resData.hasOwnProperty('code')) {
+        queryList.push({"query": "delete from code"});
+        for(i=0;i<result.data.code.length;++i) {
+          let currentData = result.data.code[i];
+          queryList.push({"query": stringFormat("insert into code (code_id, parent_id, code, codename) " + "values('{0}', '{1}', '{2}', '{3}')", currentData.code_id, currentData.parent_id, currentData.code, currentData.codename)});
+        }
       }
 
       // AS 요청
-      queryList.push({"query": "delete from as_request"});
-      for(i=0;i<result.data.as_request.length;++i) {
-        let currentData = result.data.as_request[i];
-        queryList.push({"query": stringFormat("insert into as_request (building_id, building_locate_id, machine_code, request_date, request_type_code_ids, request_desc, processing_flag, as_request_id) " + "values('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}')", currentData.building_id, currentData.building_locate_id, currentData.machine_code, currentData.request_date, currentData.request_type_code_ids, currentData.request_desc, currentData.processing_flag, currentData.as_request_id)});
+      if (resData.hasOwnProperty('as_request')) {
+        queryList.push({"query": "delete from as_request"});
+        for(i=0;i<result.data.as_request.length;++i) {
+          let currentData = result.data.as_request[i];
+          queryList.push({"query": stringFormat("insert into as_request (building_id, building_locate_id, machine_code, request_date, request_type_code_ids, request_desc, processing_flag, as_request_id) " + "values('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}')", currentData.building_id, currentData.building_locate_id, currentData.machine_code, currentData.request_date, currentData.request_type_code_ids, currentData.request_desc, currentData.processing_flag, currentData.as_request_id)});
+        }
       }
 
       // AS 처리
-      queryList.push({"query": "delete from as_processing"});
-      for(i=0;i<result.data.as_processing.length;++i) {
-        let currentData = result.data.as_processing[i];
-        queryList.push({"query": stringFormat("insert into as_processing (as_request_id, processing_type_code_id, processing_desc, processing_date, as_processing_id) " + "values('{0}', '{1}', '{2}', '{3}', '{4}')", currentData.as_request_id, currentData.processing_type_code_id, currentData.processing_desc, currentData.processing_date, currentData.as_processing_id)});
+      if (resData.hasOwnProperty('as_processing')) {
+        queryList.push({"query": "delete from as_processing"});
+        for(i=0;i<result.data.as_processing.length;++i) {
+          let currentData = result.data.as_processing[i];
+          queryList.push({"query": stringFormat("insert into as_processing (as_request_id, processing_type_code_id, processing_desc, processing_date, as_processing_id) " + "values('{0}', '{1}', '{2}', '{3}', '{4}')", currentData.as_request_id, currentData.processing_type_code_id, currentData.processing_desc, currentData.processing_date, currentData.as_processing_id)});
+        }
       }
 
       console.log("encoded.... end");
@@ -630,6 +666,10 @@ function getDownloadData(agentCode, dataNames, tost) {
 function completeQueries() {
   // version 테이블의 정보를 업데이트 한다.
   console.log(getRemoteVersionData);
+  getRemoteVersionData['ver_date'] = getNowDate();
+  dbSql("DELETE FROM version");
+  dbInsert("version", getRemoteVersionData);
+
   if (typeof window["dataUpdateCallBack"] === "function") {
     dataUpdateCallBack();
   } else {
