@@ -17,7 +17,7 @@
   <article class="qr">
     <h2>QR코드 미인식 모니터링</h2>
     <div class="wrapper" id="noQrProcessForm" v-cloak>
-      <p>QR코드 인식 없이 모니터링 하시는 경우 <br>하기 사항을 기입 후 진행해주세요.</p>
+      <p>QR코드 인식 없이 모니터링 하시는 경우 <br>아래 항목을 선택 후 진행해주세요.</p>
       <p>QR코드 미인식 유형을 선택해주세요.</p>
       <div class="select">
         <a v-for="(item, index) in items" v-bind:key="item.id" v-on:click="changeCode(index)" v-bind:class="{ on : item.is_on }">{{ item.codename }}</a>

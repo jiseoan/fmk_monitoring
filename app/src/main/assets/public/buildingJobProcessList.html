@@ -67,6 +67,15 @@
     line-height: 2.0 !important;
     font-weight: 700;
   }
+  .monitoring-ad .monitoring-list li {
+   width: 50%;
+  }
+  .monitoring-ad .monitoring-list li:nth-child(n+3) {
+      margin-top: 0.625rem;
+  }
+  .monitoring-ad .monitoring-list li .img {
+      height: 8rem;
+  }
   .monitoring-ad .monitoring-list li .badge-icon {
     position: absolute;
     left: 0.625rem;
@@ -153,9 +162,9 @@
     });
     
     callNative('setTitle', buildingData.building_name);
-    //if (selDate == nowDate) {
-    //  callNative("bottomActionBar", "jobStart");
-    //}
+    if (selDate == nowDate) {
+      callNative("bottomActionBar", "jobStart");
+    }
     monitoringList();
     adCheckList();
 
@@ -336,7 +345,7 @@
     location.href = "buildingJobProcess.html?mode=building&id=" + buildingId + "&date="+ selDate;
   }
 
-  /*function qrScanResult(result) {
+  function qrScanResult(result) {
     // 모니터링, 광고촬영에 있는지 체크
     var qrCode = $.urlParam("cd", result);
     if (qrCode === null) {
@@ -344,7 +353,7 @@
       return;
     }
 
-    if (qrCode === "T00001") qrCode = "T00012";
+    //if (qrCode === "T00001") qrCode = "T00012";
     var jobBuildingData = dbRowArray("SELECT bl.building_locate_id, b.building_id, b.building_name, b.address FROM building_locate bl JOIN building b ON bl.building_id=b.building_id WHERE qr_serial_code = '" + qrCode + "' AND b.building_id='" + buildingId + "'");
     if (!jobBuildingData) {
       callNative("toastMessage", "단지내 매체가 아닙니다.");
@@ -353,7 +362,7 @@
 
     var buildingLocateId = jobBuildingData.building_locate_id;
     location.href = "buildingJobList.html?id=" + buildingLocateId;
-  }*/
+  }
   </script>
 
 </body>
