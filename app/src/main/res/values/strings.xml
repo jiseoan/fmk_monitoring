@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">monitering</string>
+    <string name="app_name">포커스미디어</string>
     <string name="title_activity_webview">WebviewActivity</string>
     <string name="title_activity_camera">CameraActivity</string>
     <string name="dummy_button">Dummy Button</string>
