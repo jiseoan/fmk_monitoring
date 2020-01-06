@@ -60,7 +60,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:background="?android:attr/selectableItemBackgroundBorderless"
-            android:src="@drawable/btn_work"/>
+            android:src="@drawable/btn_jobstart"/>
 
     </LinearLayout>
 
