@@ -34,8 +34,15 @@
   var localAgentCode = window.localStorage.getItem("agent_code");
   $(document).ready(function(){
     if (localAgentCode) {
-      location.href = "main.html";
-      return;
+      var agentData = dbRowArray("SELECT * FROM agent WHERE agent_code='" + localAgentCode + "'");
+      console.log(agentData);
+      if (agentData) {
+        location.href = "main.html";
+        return;
+      } else {
+        window.localStorage.setItem("agent_code", "");
+        localAgentCode = window.localStorage.getItem("agent_code");
+      }
     }
     callNative("hideToolBar");
     callNative("bottomActionBar", "login");
