@@ -1,6 +1,8 @@
 package com.segeuru.soft.fmkmonitoring;
 
 import android.Manifest;
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -30,6 +32,7 @@ public class WebviewActivity extends BaseAtivity {
     public static final int REQUEST_CODE = 0x0000c0dd;
     public String m_webViewResult;
     private WebSupport m_webSupport;
+    private boolean m_bPopup = false;
     public String m_bottomBar_style;
 
     @Override
@@ -64,6 +67,7 @@ public class WebviewActivity extends BaseAtivity {
             m_webview.setWebContentsDebuggingEnabled(true);
         }
         m_webview.addJavascriptInterface(new AndroidBridge(this, m_webview), "android");
+        m_bPopup = getIntent().hasExtra("url") ? true : false;
         m_webview.loadUrl("file:///android_asset/public/" + (getIntent().hasExtra("url") ? getIntent().getStringExtra("url") : "login.html"));
         m_webSupport = new WebSupport(this);
 
@@ -319,7 +323,23 @@ public class WebviewActivity extends BaseAtivity {
         if(m_webview.canGoBack()){
             m_webview.goBack();
         }else{
-            super.onBackPressed();
+            if(m_bPopup) {
+                super.onBackPressed();
+                return;
+            }
+
+            AlertDialog.Builder builder = new AlertDialog.Builder(this);
+            builder.setTitle("알림");
+            builder.setMessage("앱을 종료하시겠습니까?");
+            builder.setNegativeButton("취소", null);
+            builder.setPositiveButton("종료", new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    //android.os.Process.killProcess(android.os.Process.myPid());
+                    WebviewActivity.super.onBackPressed();
+                }
+            });
+            builder.show();
         }
     }
 
