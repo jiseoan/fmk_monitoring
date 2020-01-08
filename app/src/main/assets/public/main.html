@@ -21,7 +21,54 @@
   }
   .main .header .top span.agent-name {
     font-size: 0.9375rem;
-    margin-left: 0.4375rem;
+    margin-left: 0rem;
+  }
+  .main article ul.status {
+    font-size: 0;
+    border-radius: 0.3125rem;
+    overflow: hidden;
+    background: unset;
+    margin-bottom: 1.25rem;
+  }
+
+  .main article ul.status li {
+    padding: 0 0;
+    border: 0px solid transparent;
+    background-color: #f8f5ef;
+    box-shadow:unset;
+  }
+  .main article ul.status > li > * {
+      display: inline-block;
+      font-size: 1rem;
+      vertical-align: top;
+  }
+  .main article ul.status p {
+    position: relative;
+    width: 50%;
+    padding-top: 0.1375rem;
+    padding-right: 0.825rem;
+    padding-bottom: 0.1375rem;
+    padding-left: 0.825rem;
+    text-align: left;
+    box-sizing: border-box;
+    font-size: 0.9375rem;
+    line-height: 1.4;
+  }
+
+  .main article ul.status p + p {
+    border-left: 1px solid #ebe5d9;
+  }
+
+  .main article ul.status p .doing,
+  .main article ul li div .doing {
+    float: right;
+  }
+
+  .main article ul li div + div {
+    padding-top: 0.3125rem;
+  }
+  .main .header .notice .swiper-pagination {
+    letter-spacing: 0px;
   }
   </style>
 </head>
@@ -72,6 +119,12 @@
     </div>
   </div>
   <article id="buildingsJobList">
+    <ul class="status" v-cloak>
+      <li>
+        <p><span>모니터링</span><span class="doing">{{ status.monitoring.fin }} / {{ status.monitoring.total }}</span></p>
+        <p><span>게첨</span><span class="doing">{{ status.ad.fin }} / {{ status.ad.total }}</span></p>
+      </li>
+    </ul>
     <ul>
       <li
         is="job-item"
@@ -113,7 +166,7 @@
     window.localStorage.setItem("noQrData", "");
   });
   
-  let vm = null;
+  var vm = null;
 
   function noticeList() {
     var noticeListData = dbResultArray("SELECT * FROM notice ORDER BY notice_type, create_date DESC LIMIT 10");
@@ -324,14 +377,35 @@
 
   function buildingsJobList(date) {
     var jobListData = [];
+    var jobStatusCntData = { 
+      monitoring: {
+        total : 0,
+        fin : 0
+      },
+      ad: {
+        total : 0,
+        fin : 0
+      } 
+    };
     var result = dbResultArray("SELECT t.building_id, b.building_name, b.address FROM ( SELECT mr.building_id, CASE WHEN mr.processing_flag='Y' THEN 1 ELSE 10 END AS sort_cnt FROM monitoring_request mr WHERE date(mr.request_date) = date('" + date + "') UNION SELECT acr.building_id, CASE WHEN acr.processing_flag='Y' THEN 1 WHEN acr.processing_flag='R' THEN 999 ELSE 10 END AS sort_cnt FROM ad_check_request acr WHERE date(acr.request_date) = date('" + date + "') ) t JOIN building b ON t.building_id = b.building_id GROUP BY t.building_id ORDER BY sum(t.sort_cnt) DESC");
     //console.log(result);
     if (result) {
       $.each(result, function(index, item){
         result[index].details = [];
-        var subResult = dbResultArray("SELECT t.* FROM (SELECT 0 AS class, 0 AS sort, mr.processing_flag, '모니터링' AS job_name FROM monitoring_request mr WHERE date(mr.request_date) = date('" + date + "') AND mr.building_id='" + item.building_id + "' UNION SELECT 1 AS class, acr.ad_check_request_id AS sort, acr.processing_flag, acr.ad_name AS job_name FROM ad_check_request acr WHERE date(acr.request_date) = date('" + date + "') AND acr.building_id='" + item.building_id + "' UNION SELECT 2 AS sort, ar.building_locate_id AS num, ar.processing_flag, (SELECT bl.dong||' '||bl.unit_name FROM building_locate bl WHERE bl.building_locate_id=ar.building_locate_id)||' <'||(SELECT group_concat(codename) FROM code c WHERE c.code_id IN (ar.request_type_code_ids))||'>' AS job_name FROM as_request ar WHERE date(ar.request_date) = date('" + date + "') AND ar.building_id='" + item.building_id + "') AS t ORDER BY t.class, t.sort");
+        var subResult = dbResultArray("SELECT t.class, t.job_name, SUM(t.total_cnt) AS total_cnt, SUM(t.proc_cnt) AS proc_cnt, count(t.class) AS job_cnt, SUM(t.fin_cnt) AS fin_cnt FROM ( SELECT 0 AS class, mr.monitoring_request_id AS job_id, CASE WHEN mr.processing_flag='Y' THEN 1 ELSE 0 END AS fin_cnt, '모니터링' AS job_name, mr.machine_cnt AS total_cnt, (SELECT count(*) FROM processing p WHERE p.building_id = mr.building_id AND p.monitoring_request_id=mr.monitoring_request_id) AS proc_cnt FROM monitoring_request mr WHERE date(mr.request_date) = date('" + date + "') AND mr.building_id='" + item.building_id + "' UNION SELECT 1 AS class, acr.ad_check_request_id AS job_id, CASE WHEN acr.processing_flag='Y' THEN 1 ELSE 0 END AS fin_cnt, '게첨' AS job_name, 1 AS total_cnt, CASE WHEN acr.processing_flag='Y' THEN 1 ELSE 0 END AS proc_cnt FROM ad_check_request acr WHERE date(acr.request_date) = date('" + date + "') AND acr.building_id='" + item.building_id + "') AS t GROUP BY t.class ORDER BY t.class");
         //console.log(subResult);
-        if (subResult) result[index].details = subResult;
+        if (subResult) {
+          result[index].details = subResult;
+          $.each(subResult, function(subIndex, subItem){
+            if (subItem.class == 0) {
+              jobStatusCntData.monitoring.total += parseInt(subItem.job_cnt);
+              jobStatusCntData.monitoring.fin += parseInt(subItem.fin_cnt);
+            } else {
+              jobStatusCntData.ad.total += parseInt(subItem.job_cnt);
+              jobStatusCntData.ad.fin += parseInt(subItem.fin_cnt);
+            }
+          });
+        }
       });
       jobListData = result;
       console.log(JSON.stringify(jobListData));
@@ -348,11 +422,11 @@
                         <p>{{ item.address }}</p>\
                       </a>\
                       <div v-for="detail in item.details">\
-                        <span v-if="detail.class != \'2\' && detail.processing_flag === \'N\'" class="badge gray">미완료</span>\
-                        <span v-else-if="detail.class != \'2\' && detail.processing_flag === \'Y\'" class="badge green">완료</span>\
-                        <span v-else-if="detail.class != \'2\' && detail.processing_flag === \'R\'" class="badge red">반려</span>\
-                        <span v-else-if="detail.class == \'2\'" class="badge blue">AS요청</span>\
-                        {{ detail.job_name }}\
+                        <div>\
+                          {{ detail.job_name }}\
+                          <span class="doing" v-if="detail.class == \'0\'">{{ detail.proc_cnt }} / {{ detail.total_cnt }} 대</span>\
+                          <span class="doing" v-if="detail.class == \'1\'">{{ detail.proc_cnt }} / {{ detail.total_cnt }} 건</span>\
+                        </div>\
                       </div>\
                     </li>',
           props: ['item']
@@ -362,6 +436,16 @@
       mainBuildingJobListVue = new Vue({
         el: '#buildingsJobList',
         data: {
+          status: { 
+            monitoring: {
+              total : 0,
+              fin : 0
+            },
+            ad: {
+              total : 0,
+              fin : 0
+            }
+          },
           items: []
         },
         methods: {
@@ -379,6 +463,7 @@
     }
     
     mainBuildingJobListVue.items = jobListData;
+    mainBuildingJobListVue.status = jobStatusCntData;
     
   }
 
@@ -390,7 +475,7 @@
       return;
     }
 
-    qrCode = "T00017";
+    //qrCode = "T00017";
     var buildingData = dbRowArray("SELECT bl.building_locate_id, b.building_id, b.building_name, b.address FROM building_locate bl JOIN building b ON bl.building_id=b.building_id WHERE qr_serial_code = '" + qrCode + "'");
     if (!buildingData) {
       callNative("toastMessage", "작업이 가능한 단지가 아닙니다.");

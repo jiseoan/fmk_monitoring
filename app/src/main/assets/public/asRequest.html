@@ -98,13 +98,13 @@
 
     uploadData['url'] = BASE_URL + '/Bmm_api/uploadProcessing';
     uploadData["fileData"] = $.map( $.parseJSON(shotResult), function( el, index ) {
-      let arrEl = el.filepath.split("fmk_picture/");
-      let filename = arrEl[1];
+      var arrEl = el.filepath.split("fmk_picture/");
+      var filename = arrEl[1];
       return {filename: filename};
     });
     uploadData["data"] = {};
 
-    let param = {};
+    var param = {};
     param["processing_agent_code"] = agentCode;
     param["building_id"] = buildingData.building_id;
     param["building_locate_id"] = buildingData.building_locate_id;
@@ -126,7 +126,7 @@
     }
     param["bmm_monitoring_request_id"] = jobData.monitoring_request_id;
 
-    let asParam = {};
+    var asParam = {};
     asParam["machine_code"] = buildingData.machine_code;
     asParam["building_id"] = buildingData.building_id;
     asParam["building_name"] = buildingData.building_name;
@@ -181,7 +181,7 @@
     console.log('failed');
 
     var uploadInData = uploadData['data']['in_data'];
-    let tempSaveProcData = {};
+    var tempSaveProcData = {};
     tempSaveProcData['processing_agent_code'] = uploadInData['processing_agent_code'];
     tempSaveProcData['building_id'] = uploadInData['building_id'];
     tempSaveProcData['building_locate_id'] = uploadInData['building_locate_id'];
@@ -199,7 +199,7 @@
 
     $.each( $.parseJSON(shotResult), function(idx, el) {
 
-      let saveProcData = {};
+      var saveProcData = {};
 
       $.each(uploadData['data']['in_data'], function(index, ele){
         if (index != 'processing_agent_code' && index != 'dong' && index != 'unit_name') {
@@ -264,8 +264,10 @@
   function dataSaveComplete() {    
     window.localStorage.setItem("shot_result", "");
     // 작업리스트로 이동한다.
+    var buildingId = buildingData.building_id;
     var buildingLocateId = buildingData.building_locate_id;
-    location.href = "buildingJobList.html?id=" + buildingLocateId;
+    //ocation.href = "buildingJobList.html?id=" + buildingLocateId;
+    location.href = "buildingJobProcessList.html?id=" + buildingId + "&date="+ nowDate;
   }
 </script>
 

@@ -26,17 +26,17 @@
       </label>
     </div>
   </form>
-  <p class="copyright">Copyright © Focusmedia Korea 2019. All right reserved.</p>
-  <p class="copyright"><a href="old/login.html">old Version</a></p>
+  <p class="copyright">Copyright © Focusmedia Korea 2019.<br>All right reserved.</p>
+  <!--p class="copyright"><a href="old/login.html">old Version</a></p-->
 
   <script language="javascript" type="text/javascript">
   var vueLogin = null;
   var localAgentCode = window.localStorage.getItem("agent_code");
   $(document).ready(function(){
-    // if (localAgentCode) {
-    //   location.href = "main.html";
-    //   return;
-    // }
+    if (localAgentCode) {
+      location.href = "main.html";
+      return;
+    }
     callNative("hideToolBar");
     callNative("bottomActionBar", "login");
 
@@ -44,8 +44,8 @@
       el: '#login',
       data: {
         error: '',
-        userId: 'AGE_190001',
-        userPasswd: '1234'
+        userId: '',
+        userPasswd: ''
       },
       methods: {
         sendPost: function (e) {

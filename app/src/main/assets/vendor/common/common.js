@@ -2,6 +2,7 @@
 //
 // Last Updated: -
 // written by Jae Su Kim
+"use strict";
 function parseResult(result)
 {
   var resultArray;
@@ -334,7 +335,7 @@ function dbSelect(field, table, where, orderBy)
   var query = "SELECT " + field + " FROM " + table;
   if (where) query += " WHERE " + where;
   if (orderBy) query += " ORDER BY " + orderBy;
-  result = dbSql(query);
+  var result = dbSql(query);
   return $.parseJSON(result);
 }
 
@@ -342,6 +343,7 @@ function dbRowArray(query)
 {
   var row = dbSql(query);
   console.log(row);
+  if (row === null) return null;
   row = $.parseJSON(row);
   row = (row.length > 0)?row[0]:null;
   return row;
@@ -351,6 +353,7 @@ function dbResultArray(query)
 {
   var result = dbSql(query);
   console.log(result);
+  if (result === null) return null;
   result = $.parseJSON(result);
   result = (result.length > 0)?result:null;
   return result;
@@ -522,11 +525,12 @@ function getRemoteVersion(agentCode, tost) {
     if (result.code == "success") {
       // 각 데이터의 버전을 체크한다.
       getRemoteVersionData = result.data;
-      var dataNamesAry = ['notice','building','monitoring_request','ad_check_request','processing,code','as_request','as_processing'];
+      var dataNamesAry = ['notice','building','monitoring_request','ad_check_request','processing','code','as_request','as_processing'];
       var dataNames = '';
       var versionData = dbRowArray("SELECT * FROM version");
       if (versionData && (versionData['ver_date'] == getNowDate())) {
         $.each(dataNamesAry, function (idx, el) {
+          console.log(getRemoteVersionData[el], versionData[el]);
           if (getRemoteVersionData[el] != versionData[el]) {
             dataNames += (dataNames)?"," + el:el;
           }      
@@ -572,7 +576,7 @@ function getDownloadData(agentCode, dataNames, tost) {
       // 공지사항
       if (resData.hasOwnProperty('notice')) {
         queryList.push({"query": "delete from notice"});
-        for(i=0;i<result.data.notice.length;++i) {
+        for(var i=0;i<result.data.notice.length;++i) {
           let currentData = result.data.notice[i];
           queryList.push({"query": stringFormat("insert into notice (notice_id, notice_type, title, content, create_date) " + "values('{0}', '{1}', '{2}', '{3}', '{4}')", currentData.notice_id, currentData.notice_type, currentData.title, currentData.content, currentData.create_date)});
         }
@@ -581,7 +585,7 @@ function getDownloadData(agentCode, dataNames, tost) {
       // 단지
       if (resData.hasOwnProperty('building')) {
         queryList.push({"query": "delete from building"});
-        for(i=0;i<result.data.building.length;++i) {
+        for(var i=0;i<result.data.building.length;++i) {
           let currentData = result.data.building[i];
           queryList.push({"query": stringFormat("insert into building (building_id, building_name, machine_cnt, address) " + "values('{0}', '{1}', '{2}', '{3}')", currentData.building_id, currentData.building_name, currentData.machine_cnt, currentData.address)});
         }
@@ -590,7 +594,7 @@ function getDownloadData(agentCode, dataNames, tost) {
       // 단지 매체
       if (resData.hasOwnProperty('building_locate')) {
         queryList.push({"query": "delete from building_locate"});
-        for(i=0;i<result.data.building_locate.length;++i) {
+        for(var i=0;i<result.data.building_locate.length;++i) {
           let currentData = result.data.building_locate[i];
           queryList.push({"query": stringFormat("insert into building_locate (building_locate_id, building_id, dong, unit_name, machine_code, qr_serial_code) " + "values('{0}', '{1}', '{2}', '{3}', '{4}', '{5}')", currentData.building_locate_id, currentData.building_id, currentData.dong, currentData.unit_name, currentData.machine_code, currentData.qr_serial_code)});
         }
@@ -599,7 +603,7 @@ function getDownloadData(agentCode, dataNames, tost) {
       // 모니터링 요청
       if (resData.hasOwnProperty('monitoring_request')) {
         queryList.push({"query": "delete from monitoring_request"});
-        for(i=0;i<result.data.monitoring_request.length;++i) {
+        for(var i=0;i<result.data.monitoring_request.length;++i) {
           let currentData = result.data.monitoring_request[i];
           queryList.push({"query": stringFormat("insert into monitoring_request (monitoring_request_id, building_id, machine_cnt, building_locate_ids, request_date, processing_flag, processing_date) " + "values('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}')", currentData.monitoring_request_id, currentData.building_id, currentData.machine_cnt, currentData.building_locate_ids, currentData.request_date, currentData.processing_flag, currentData.processing_date)});
         }
@@ -608,7 +612,7 @@ function getDownloadData(agentCode, dataNames, tost) {
       // 광고게첨 요청
       if (resData.hasOwnProperty('ad_check_request')) {
         queryList.push({"query": "delete from ad_check_request"});
-        for(i=0;i<result.data.ad_check_request.length;++i) {
+        for(var i=0;i<result.data.ad_check_request.length;++i) {
           let currentData = result.data.ad_check_request[i];
           queryList.push({"query": stringFormat("insert into ad_check_request (ad_check_request_id, ad_name, ad_type, ad_url, request_date, ad_check_building_id, building_id, building_file_url, processing_flag, return_code_id, return_desc) " + "values('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}', '{9}', '{10}')", currentData.ad_check_request_id, currentData.ad_name, currentData.ad_type, currentData.ad_url, currentData.request_date, currentData.ad_check_building_id, currentData.building_id, currentData.building_file_url, currentData.processing_flag, currentData.return_code_id, currentData.return_desc)});
         }
@@ -617,7 +621,7 @@ function getDownloadData(agentCode, dataNames, tost) {
       // 모니터링/광고게첨 처리
       if (resData.hasOwnProperty('processing')) {
         queryList.push({"query": "delete from processing"});
-        for(i=0;i<result.data.processing.length;++i) {
+        for(var i=0;i<result.data.processing.length;++i) {
           let currentData = result.data.processing[i];
           queryList.push({"query": stringFormat("insert into processing (building_id, building_locate_id, machine_code, processing_file_url, processing_date, qr_flag, no_qr_type_code_id, no_qr_desc, monitoring_request_id, ad_check_building_id, processing_id) " + "values('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}', '{8}', '{9}', '{10}')", currentData.building_id, currentData.building_locate_id, currentData.machine_code, currentData.processing_file_url, currentData.processing_date, currentData.qr_flag, currentData.no_qr_type_code_id, currentData.no_qr_desc, currentData.monitoring_request_id, currentData.ad_check_building_id, currentData.processing_id)});
         }
@@ -626,7 +630,7 @@ function getDownloadData(agentCode, dataNames, tost) {
       // 모니터링 전체 사용 코드
       if (resData.hasOwnProperty('code')) {
         queryList.push({"query": "delete from code"});
-        for(i=0;i<result.data.code.length;++i) {
+        for(var i=0;i<result.data.code.length;++i) {
           let currentData = result.data.code[i];
           queryList.push({"query": stringFormat("insert into code (code_id, parent_id, code, codename) " + "values('{0}', '{1}', '{2}', '{3}')", currentData.code_id, currentData.parent_id, currentData.code, currentData.codename)});
         }
@@ -635,7 +639,7 @@ function getDownloadData(agentCode, dataNames, tost) {
       // AS 요청
       if (resData.hasOwnProperty('as_request')) {
         queryList.push({"query": "delete from as_request"});
-        for(i=0;i<result.data.as_request.length;++i) {
+        for(var i=0;i<result.data.as_request.length;++i) {
           let currentData = result.data.as_request[i];
           queryList.push({"query": stringFormat("insert into as_request (building_id, building_locate_id, machine_code, request_date, request_type_code_ids, request_desc, processing_flag, as_request_id) " + "values('{0}', '{1}', '{2}', '{3}', '{4}', '{5}', '{6}', '{7}')", currentData.building_id, currentData.building_locate_id, currentData.machine_code, currentData.request_date, currentData.request_type_code_ids, currentData.request_desc, currentData.processing_flag, currentData.as_request_id)});
         }
@@ -644,7 +648,7 @@ function getDownloadData(agentCode, dataNames, tost) {
       // AS 처리
       if (resData.hasOwnProperty('as_processing')) {
         queryList.push({"query": "delete from as_processing"});
-        for(i=0;i<result.data.as_processing.length;++i) {
+        for(var i=0;i<result.data.as_processing.length;++i) {
           let currentData = result.data.as_processing[i];
           queryList.push({"query": stringFormat("insert into as_processing (as_request_id, processing_type_code_id, processing_desc, processing_date, as_processing_id) " + "values('{0}', '{1}', '{2}', '{3}', '{4}')", currentData.as_request_id, currentData.processing_type_code_id, currentData.processing_desc, currentData.processing_date, currentData.as_processing_id)});
         }
