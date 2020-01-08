@@ -19,6 +19,8 @@ import com.google.firebase.iid.InstanceIdResult;
 import com.google.zxing.integration.android.IntentIntegrator;
 import com.google.zxing.integration.android.IntentResult;
 
+import java.net.URL;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.core.content.ContextCompat;
@@ -320,14 +322,21 @@ public class WebviewActivity extends BaseAtivity {
 
     @Override
     public void onBackPressed() {
-        if(m_webview.canGoBack()){
-            m_webview.goBack();
-        }else{
-            if(m_bPopup) {
-                super.onBackPressed();
-                return;
+
+        String[] pageNames = {"login.html", "main.html"};
+
+        boolean quitApplication = false;
+        try {
+            URL url = new URL(m_webview.getUrl());
+            for (String name:pageNames) {
+                quitApplication |= url.getFile().contains(name);
             }
 
+        } catch(Exception e) {
+            e.printStackTrace();
+        }
+
+        if(quitApplication) {
             AlertDialog.Builder builder = new AlertDialog.Builder(this);
             builder.setTitle("알림");
             builder.setMessage("앱을 종료하시겠습니까?");
@@ -335,11 +344,17 @@ public class WebviewActivity extends BaseAtivity {
             builder.setPositiveButton("종료", new DialogInterface.OnClickListener() {
                 @Override
                 public void onClick(DialogInterface dialog, int which) {
-                    //android.os.Process.killProcess(android.os.Process.myPid());
-                    WebviewActivity.super.onBackPressed();
+                    android.os.Process.killProcess(android.os.Process.myPid());
                 }
             });
             builder.show();
+            return;
+        }
+
+        if(m_webview.canGoBack()){
+            m_webview.goBack();
+        } else {
+            super.onBackPressed();
         }
     }
 
