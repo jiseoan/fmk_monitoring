@@ -70,6 +70,10 @@
   .main .header .notice .swiper-pagination {
     letter-spacing: 0px;
   }
+  .main .header .notice .swiper-slide {
+    text-overflow: ellipsis; white-space: nowrap; overflow: hidden;
+    width: calc(100vh - 320px);
+  }
   </style>
 </head>
 <body class="main" id="main">
@@ -252,7 +256,7 @@
     mainTopVue = new Vue({
       el: '#mainTop',
       data: {
-        today: parseInt(selDate.substr(5,2)) + "." + parseInt(selDate.substr(8,2)),
+        today: parseInt(nowDate.substr(5,2)) + "." + parseInt(nowDate.substr(8,2)),
         agentName: agentData[0]['agent_name']
       },
       methods: {

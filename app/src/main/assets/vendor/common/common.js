@@ -528,7 +528,7 @@ function getRemoteVersion(agentCode, tost) {
       var dataNamesAry = ['notice','building','monitoring_request','ad_check_request','processing','code','as_request','as_processing'];
       var dataNames = '';
       var versionData = dbRowArray("SELECT * FROM version");
-      if (versionData && (versionData['ver_date'] == getNowDate())) {
+      if (versionData && (versionData['ver_date'] == getNowDate()) && (versionData['agent_code'] == agentCode)) {
         $.each(dataNamesAry, function (idx, el) {
           console.log(getRemoteVersionData[el], versionData[el]);
           if (getRemoteVersionData[el] != versionData[el]) {
@@ -538,6 +538,8 @@ function getRemoteVersion(agentCode, tost) {
       } else {
         dataNames = 'notice,building,monitoring_request,ad_check_request,processing,code,as_request,as_processing';
       }
+
+      getRemoteVersionData['agent_code'] = agentCode;
       console.log(dataNames);
 
       //var dataNames = 'notice,building,monitoring_request,ad_check_request,processing,code,as_request,as_processing';

@@ -32,20 +32,25 @@
   <script language="javascript" type="text/javascript">
   var vueLogin = null;
   var localAgentCode = window.localStorage.getItem("agent_code");
+  var deviceUniq = null;
   $(document).ready(function(){
     if (localAgentCode) {
       var agentData = dbRowArray("SELECT * FROM agent WHERE agent_code='" + localAgentCode + "'");
       console.log(agentData);
       if (agentData) {
-        location.href = "main.html";
+        window.localStorage.setItem("sel_date", getNowDate());
+        location.replace("main.html");
         return;
       } else {
         window.localStorage.setItem("agent_code", "");
+        window.localStorage.setItem("sel_date", getNowDate());
         localAgentCode = window.localStorage.getItem("agent_code");
       }
     }
     callNative("hideToolBar");
     callNative("bottomActionBar", "login");
+
+    deviceUniq = callNative("deviceUniq");
 
     vueLogin = new Vue({
       el: '#login',
@@ -86,12 +91,40 @@
               param['agent_type'] = userData.agent_type;
               param['job_area'] = userData.job_area;
               param['job_week'] = userData.job_week;
-              param['mobile_code'] = callNative("deviceUniq");
+              param['mobile_code'] = deviceUniq;
               var res = dbMerge("agent", param);
-              console.log(res);
-              window.localStorage.setItem("agent_code", userData.agent_code);
-              window.localStorage.setItem("sel_date", getNowDate());
-              location.href="main.html";
+
+              $.post(BASE_URL + '/Bmm_api/updateMobileCode', {
+                agent_code: userData.agent_code,
+                mobile_code: deviceUniq
+              })
+              .done(function(d) {
+                var r = parseResult(d);
+                console.log(r.d);
+                if (r.code == "success") {
+                  window.localStorage.setItem("agent_code", userData.agent_code);
+                  window.localStorage.setItem("sel_date", getNowDate());
+                  location.replace("main.html");
+                } else {
+                  //$.alert(r.d);
+                  callNative("toastMessage", r.d);
+                }
+              })
+              .fail(function() {
+                console.log('failed');
+                var agentCode = vueLogin.userId;
+                var mobileCode = deviceUniq;
+                var agentRow = dbRowArray("SELECT * FROM agent WHERE agent_code='" + agentCode + "' AND mobile_code='" + mobileCode+ "'");
+                if (agentRow) {
+                  window.localStorage.setItem("agent_code", agentCode);
+                  window.localStorage.setItem("sel_date", getNowDate());
+                  location.replace("main.html");
+                } else {
+                  callNative("toastMessage", "로그인에 실패하였습니다.");
+                }
+              });
+
+
             } else {
               //$.alert(result.data);
               callNative("toastMessage", result.data);
@@ -100,12 +133,12 @@
           .fail(function() {
             console.log('failed');
             var agentCode = vueLogin.userId;
-            var mobileCode = callNative("deviceUniq");
+            var mobileCode = deviceUniq;
             var agentRow = dbRowArray("SELECT * FROM agent WHERE agent_code='" + agentCode + "' AND mobile_code='" + mobileCode+ "'");
             if (agentRow) {
               window.localStorage.setItem("agent_code", agentCode);
               window.localStorage.setItem("sel_date", getNowDate());
-              location.href="main.html";
+              location.replace("main.html");
             } else {
               callNative("toastMessage", "로그인에 실패하였습니다.");
             }
