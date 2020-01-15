@@ -47,6 +47,13 @@
         localAgentCode = window.localStorage.getItem("agent_code");
       }
     }
+    var setUserId = "";
+    var currentAgentData = dbRowArray("SELECT * FROM agent LIMIT 1");
+    console.log(currentAgentData);
+    if (currentAgentData) {
+      setUserId = currentAgentData.agent_code;
+    }
+
     callNative("hideToolBar");
     callNative("bottomActionBar", "login");
 
@@ -56,7 +63,7 @@
       el: '#login',
       data: {
         error: '',
-        userId: '',
+        userId: setUserId,
         userPasswd: ''
       },
       methods: {
@@ -92,6 +99,7 @@
               param['job_area'] = userData.job_area;
               param['job_week'] = userData.job_week;
               param['mobile_code'] = deviceUniq;
+              dbSql("DELETE FROM agent WHERE agent_code <> '" + userData.agent_code + "'");
               var res = dbMerge("agent", param);
 
               $.post(BASE_URL + '/Bmm_api/updateMobileCode', {

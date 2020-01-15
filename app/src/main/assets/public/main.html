@@ -108,6 +108,7 @@
             v-bind:status="item.status"
             v-bind:day="item.day"
             v-on:change-day="changeDay(index)"
+            v-bind:class="item.act"
           ></td>
         </tr>
         </tbody>
@@ -245,7 +246,8 @@
         date: ymd,
         day: day,
         week: weekNum,
-        status: (ymd == selDate)?"on":((jobWeek && jobWeek.indexOf(weekNum) !== -1)?"dim":"")
+        status: (ymd == selDate)?"on":((jobWeek && jobWeek.indexOf(weekNum) !== -1)?"dim":""),
+        act: (jobWeek && jobWeek.indexOf(weekNum) !== -1)?"act":""
       };
 
       if (jobWeek && jobWeek.indexOf(weekNum) !== -1) {
@@ -291,13 +293,13 @@
         changeDay: function(idx) {
           var items = this.items;
           var row = items[idx];
-          if ($.inArray(row.date, jobDates) === -1) return;
+          //if ($.inArray(row.date, jobDates) === -1) return;
           if (selDate == row.date) return;
           console.log(this.items.length);
           $.each(items, function(index, item){
             if (index == idx) {
               items[index].status = "on";
-              if (items[index].date == nowDate) {
+              if (items[index].date == nowDate && ($.inArray(row.date, jobDates) !== -1)) {
                 callNative("bottomActionBar", "jobStart");
               } else {
                 callNative("hideBottomActionBar");
@@ -306,7 +308,7 @@
               window.localStorage.setItem("sel_date", selDate);
               buildingsJobList(selDate);
             } else {
-              if (items[index].status) {
+              if (items[index].status && items[index].act) {
                 items[index].status = "dim";
               } else {
                 items[index].status = "";
