@@ -77,6 +77,25 @@
 
         </androidx.appcompat.widget.Toolbar>
 
+        <androidx.appcompat.widget.Toolbar
+            android:id="@+id/normal"
+            android:layout_width="match_parent"
+            android:layout_height="?attr/actionBarSize"
+            android:background="@color/fmk_color_toolbar"
+            app:popupTheme="@style/AppTheme.PopupOverlay">
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:textColor="#ffffff"
+                android:textSize="18dp"
+                android:maxLines="1"
+                android:ellipsize="end"/>
+
+        </androidx.appcompat.widget.Toolbar>
+
     </com.google.android.material.appbar.AppBarLayout>
 
     <include layout="@layout/content_webview" />

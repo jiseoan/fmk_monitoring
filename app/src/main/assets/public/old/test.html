@@ -193,6 +193,7 @@
 <br/>
     <button id="main"> *top-actionbar-A1 보이기 </button><br />
     <button id="popup"> *top-actionbar-A2 보이기 </button><br />
+    <button id="normal"> *top-actionbar-A3 보이기 </button><br />
     <button id="setTitle">*타이틀 입력</button><br>
     <button id="hideAllActionBars"> *전체 액션바 숨기기 </button><br />
     <button id="link"> *새창 열기 </button><br />
@@ -347,6 +348,10 @@ $(document).ready(function(){
 
     $("#popup").on('click', function() {
       window.android.toolBar("popup", "서울 송파구");
+    })
+
+    $("#normal").on('click', function() {
+      window.android.toolBar("normal", "경기도 부천시 공존펠리체 21차 805호");
     })
 
     $('#hideAllActionBars').on('click', function() {

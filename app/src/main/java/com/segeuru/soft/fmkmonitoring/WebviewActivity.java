@@ -71,6 +71,7 @@ public class WebviewActivity extends BaseAtivity {
         m_webview.addJavascriptInterface(new AndroidBridge(this, m_webview), "android");
         m_bPopup = getIntent().hasExtra("url") ? true : false;
         m_webview.loadUrl("file:///android_asset/public/" + (getIntent().hasExtra("url") ? getIntent().getStringExtra("url") : "login.html"));
+        //m_webview.loadUrl("file:///android_asset/public/" + (getIntent().hasExtra("url") ? getIntent().getStringExtra("url") : "old/test.html"));
         m_webSupport = new WebSupport(this);
 
         //권한요구
@@ -104,6 +105,7 @@ public class WebviewActivity extends BaseAtivity {
     protected void hideAllToolBars() {
         findViewById(R.id.main).setVisibility(View.GONE);
         findViewById(R.id.popup).setVisibility(View.GONE);
+        findViewById(R.id.normal).setVisibility(View.GONE);
     }
 
     protected void hideAllBottomActionBars() {

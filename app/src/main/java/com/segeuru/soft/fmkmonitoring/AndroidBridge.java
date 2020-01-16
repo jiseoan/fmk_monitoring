@@ -109,7 +109,13 @@ public class AndroidBridge {
                 toolbar.setVisibility(is_show ? View.VISIBLE : View.GONE);
                 m_webViewActivity.setSupportActionBar(is_show ? toolbar : null);
                 m_webViewActivity.getSupportActionBar().setDisplayShowTitleEnabled(false);
-                m_currentActionBarTextView = getChildren(toolbar, TextView.class).get(0);
+                ArrayList<TextView> children = getChildren(toolbar, TextView.class);
+                if(children.size() == 0) {
+                    Log.i(DEBUG_TAG, "not found child " + toolbar);
+                    return;
+                }
+
+                m_currentActionBarTextView = children.get(0);
                 m_currentActionBarTextView.setText(title);
             }
         });
@@ -349,7 +355,7 @@ public class AndroidBridge {
         {
             View child = parent.getChildAt(i);
             if (child instanceof ViewGroup) {
-                children = getChildren((ViewGroup)child, clazz);
+                children.addAll(getChildren((ViewGroup)child, clazz));
                 if(children.size() > 0) return children;
             }
 
