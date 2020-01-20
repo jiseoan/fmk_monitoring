@@ -129,7 +129,7 @@ input {
   margin-top: 2.6375rem;
 }
 .login .copyright {
-  margin-top: 1.625rem;
+  margin-top: 1.225rem;
   margin-bottom: 0.625rem;
   font-family: 'Montserrat', sans-serif;
   font-size: 0.625rem;
@@ -1283,6 +1283,57 @@ pre {
   height: 0.5rem;
   border-radius: 0.25rem;
   background: #01CCBD;
+}
+.login .select {
+  font-size: 0;
+}
+.login .select > * {
+  display: inline-block;
+  font-size: 1rem;
+  vertical-align: top;
+}
+.login .select li {
+  box-sizing: border-box;
+}
+.login .select li:active {
+  opacity: 0.88;
+}
+.login .select li:nth-child(odd) {
+  padding-right: 0.5625rem;
+}
+.login .select li:nth-child(even) {
+  padding-left: 0.5625rem;
+}
+.login .select a {
+  position: relative;
+  display: block;
+  margin-top: 0.875rem;
+  font-weight: 400;
+  padding-top: 0rem;
+  padding-right: 0rem;
+  padding-bottom: 0rem;
+  padding-left: 1.5rem;
+  border-radius: 5px;
+  background-color: #fff;
+  font-size: 0.7875rem;
+  color:#333;
+}
+.login .select a:before {
+  content: '';
+  display: block;
+  position: absolute;
+  left: 0rem;
+  top: 0.135rem;
+  right: auto;
+  bottom: auto;
+  width: 0.9375rem;
+  height: 0.9375rem;
+  background-image: url('../images/ico-check.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+}
+.login .select a.on:before {
+  background-image: url('../images/ico-check-on.png');
 }
 
 [v-cloak] { display: none !important; }

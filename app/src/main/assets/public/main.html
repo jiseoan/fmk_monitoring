@@ -87,20 +87,17 @@
       </div>
     </div>
     <div class="calendar">
-      <table>
+      <table id="mainCalendar" v-cloak>
         <thead>
         <tr>
-          <td>일</td>
-          <td>월</td>
-          <td>화</td>
-          <td>수</td>
-          <td>목</td>
-          <td>금</td>
-          <td>토</td>
+          <td
+            is="calendar-weeks-item"
+            v-for="(item, index) in items"
+            v-bind:week="item.week"></td>
         </tr>
         </thead>
         <tbody>
-        <tr id="mainCalendar">
+        <tr>
           <td
             is="calendar-item"
             v-for="(item, index) in items"
@@ -121,6 +118,7 @@
         <!-- Optional controls -->
         <div class="swiper-pagination"  slot="pagination"></div>
       </notice-swiper>
+      <div v-else>공지사항이 없습니다.</div>
     </div>
   </div>
   <article id="buildingsJobList">
@@ -154,10 +152,11 @@
   var noticeSliderVue = null;
   $(document).ready(function(){
     callNative("hideToolBar");
-    callNative("bottomActionBar", "jobStart");
+    //callNative("bottomActionBar", "jobStart");
 
     agentCode = window.localStorage.getItem("agent_code");
     selDate = window.localStorage.getItem("sel_date");
+    nowDate = getNowDate();
 
     agentData = dbSelect("*", "agent", "agent_code='" + agentCode + "'");
     console.log(agentData);
@@ -223,8 +222,7 @@
   }
 
   function getDateSet() {  
-    nowDate = getNowDate();
-
+    var aryWeeks = new Array('일','월','화','수','목','금','토');
     var currentDay = new Date();
     var theYear = currentDay.getFullYear();
     var theMonth = currentDay.getMonth();
@@ -232,7 +230,7 @@
     var theDayOfWeek = currentDay.getDay();
     
     for(var i=0; i<7; i++) {
-      var resultDay = new Date(theYear, theMonth, theDate + (i - theDayOfWeek));
+      var resultDay = new Date(theYear, theMonth, theDate + i);
       var yyyy = resultDay.getFullYear();
       var mm = Number(resultDay.getMonth()) + 1;
       var dd = resultDay.getDate();
@@ -240,12 +238,13 @@
       mm = String(mm).length === 1 ? '0' + mm : mm;
       day = dd;
       dd = String(dd).length === 1 ? '0' + dd : dd;
-      weekNum = (i == 0)?7:i;
+      var resWeek = resultDay.getDay();
+      weekNum = (resWeek == 0)?7:resWeek;
       var ymd = yyyy + '-' + mm + '-' + dd;
       thisWeeks[i] = {
         date: ymd,
         day: day,
-        week: weekNum,
+        week: aryWeeks[resultDay.getDay()],
         status: (ymd == selDate)?"on":((jobWeek && jobWeek.indexOf(weekNum) !== -1)?"dim":""),
         act: (jobWeek && jobWeek.indexOf(weekNum) !== -1)?"act":""
       };
@@ -253,6 +252,12 @@
       if (jobWeek && jobWeek.indexOf(weekNum) !== -1) {
         jobDates.push(ymd);
       }
+    }
+    
+    if (selDate == nowDate && ($.inArray(selDate, jobDates) !== -1)) {
+      callNative("bottomActionBar", "jobStart");
+    } else {
+      callNative("hideBottomActionBar");
     }
 
     mainTopVue = new Vue({
@@ -275,6 +280,14 @@
         }
       }
     });
+
+    Vue.component(
+      'calendar-weeks-item',
+      {
+        template: '<td>{{ week }}</td>',
+        props: ['week']
+      }
+    );
 
     Vue.component(
       'calendar-item',

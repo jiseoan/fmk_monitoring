@@ -13,7 +13,7 @@
   <script type="text/javascript" src="../vendor/jquery-confirm/dist/jquery-confirm.min.js"></script>
   <script type="text/javascript" src="../vendor/common/common.js"></script>
 </head>
-<body class="login">
+<body class="login" style="height: auto;">
   <form onsubmit="return false;">
     <div class="form-box" id="login">
       <label>
@@ -24,6 +24,11 @@
         <p>PASSWORD</p>
         <input type="password" autocomplete="new-password" placeholder="비밀번호" v-model="userPasswd">
       </label>
+      <div class="auto_login_check">
+        <ul class="select">
+          <li><a v-bind:class="{on : autoActive}" v-on:click="autoCheck">로그인 상태 유지</a></li>
+        </ul>
+      </div>
     </div>
   </form>
   <p class="copyright">Copyright © Focusmedia Korea 2019.<br>All right reserved.</p>
@@ -32,14 +37,86 @@
   <script language="javascript" type="text/javascript">
   var vueLogin = null;
   var localAgentCode = window.localStorage.getItem("agent_code");
+  var autoLoginCheck = window.localStorage.getItem("auto_login_check");
   var deviceUniq = null;
   $(document).ready(function(){
-    if (localAgentCode) {
+
+    deviceUniq = callNative("deviceUniq");
+
+    if (localAgentCode && autoLoginCheck == 'Y') {
       var agentData = dbRowArray("SELECT * FROM agent WHERE agent_code='" + localAgentCode + "'");
       console.log(agentData);
-      if (agentData) {
-        window.localStorage.setItem("sel_date", getNowDate());
-        location.replace("main.html");
+      if (agentData) {       
+
+        $.post(BASE_URL + '/Bmm_api/autoLoginCheck', {
+          agent_code: agentData.agent_code,
+          mobile_code: deviceUniq
+        })
+        .done(function(data) {
+          var result = parseResult(data);
+          console.log(result.data);
+          if (result.code == "success") {
+            var userData  = result.data;
+            var param = {};
+            param['agent_code'] = userData.agent_code;
+            param['agent_name'] = userData.agent_name;
+            param['mobile'] = userData.mobile;
+            param['agent_type'] = userData.agent_type;
+            param['job_area'] = userData.job_area;
+            param['job_week'] = userData.job_week;
+            param['mobile_code'] = deviceUniq;
+            dbSql("DELETE FROM agent WHERE agent_code <> '" + userData.agent_code + "'");
+            var res = dbMerge("agent", param);
+
+            $.post(BASE_URL + '/Bmm_api/updateMobileCode', {
+              agent_code: userData.agent_code,
+              mobile_code: deviceUniq
+            })
+            .done(function(d) {
+              var r = parseResult(d);
+              console.log(r.d);
+              if (r.code == "success") {
+                window.localStorage.setItem("agent_code", userData.agent_code);
+                window.localStorage.setItem("sel_date", getNowDate());
+                location.replace("main.html");
+              } else {
+                //$.alert(r.d);
+                callNative("toastMessage", r.d);
+              }
+            })
+            .fail(function() {
+              console.log('failed');
+              var agentCode = agentData.agent_code;
+              var mobileCode = deviceUniq;
+              var agentRow = dbRowArray("SELECT * FROM agent WHERE agent_code='" + agentCode + "' AND mobile_code='" + mobileCode+ "'");
+              if (agentRow) {
+                window.localStorage.setItem("agent_code", agentCode);
+                window.localStorage.setItem("sel_date", getNowDate());
+                location.replace("main.html");
+              } else {
+                callNative("toastMessage", "로그인에 실패하였습니다.");
+              }
+            });
+
+
+          } else {
+            //$.alert(result.data);
+            callNative("toastMessage", result.data);
+          }
+        })
+        .fail(function() {
+          console.log('failed');
+          var agentCode = agentData.agent_code;
+          var mobileCode = deviceUniq;
+          var agentRow = dbRowArray("SELECT * FROM agent WHERE agent_code='" + agentCode + "' AND mobile_code='" + mobileCode+ "'");
+          if (agentRow) {
+            window.localStorage.setItem("agent_code", agentCode);
+            window.localStorage.setItem("sel_date", getNowDate());
+            location.replace("main.html");
+          } else {
+            callNative("toastMessage", "로그인에 실패하였습니다.");
+          }
+        });
         return;
       } else {
         window.localStorage.setItem("agent_code", "");
@@ -57,11 +134,10 @@
     callNative("hideToolBar");
     callNative("bottomActionBar", "login");
 
-    deviceUniq = callNative("deviceUniq");
-
     vueLogin = new Vue({
       el: '#login',
       data: {
+        autoActive: false,
         error: '',
         userId: setUserId,
         userPasswd: ''
@@ -112,6 +188,7 @@
                 if (r.code == "success") {
                   window.localStorage.setItem("agent_code", userData.agent_code);
                   window.localStorage.setItem("sel_date", getNowDate());
+                  window.localStorage.setItem("auto_login_check", ((vueLogin.autoActive)?'Y':'N'));
                   location.replace("main.html");
                 } else {
                   //$.alert(r.d);
@@ -126,6 +203,7 @@
                 if (agentRow) {
                   window.localStorage.setItem("agent_code", agentCode);
                   window.localStorage.setItem("sel_date", getNowDate());
+                  window.localStorage.setItem("auto_login_check", ((vueLogin.autoActive)?'Y':'N'));
                   location.replace("main.html");
                 } else {
                   callNative("toastMessage", "로그인에 실패하였습니다.");
@@ -146,11 +224,15 @@
             if (agentRow) {
               window.localStorage.setItem("agent_code", agentCode);
               window.localStorage.setItem("sel_date", getNowDate());
+              window.localStorage.setItem("auto_login_check", ((vueLogin.autoActive)?'Y':'N'));
               location.replace("main.html");
             } else {
               callNative("toastMessage", "로그인에 실패하였습니다.");
             }
           });
+        },
+        autoCheck: function () {
+          this.autoActive = !this.autoActive;
         }
       }
     });

@@ -496,7 +496,7 @@ function getThisWeekDates() {
   var thisWeekDates = [];
   for(var i=0; i<7; i++) {
     if (i == 0 || i == 6) {
-      var resultDay = new Date(theYear, theMonth, theDate + (i - theDayOfWeek));
+      var resultDay = new Date(theYear, theMonth, theDate + i);
       var yyyy = resultDay.getFullYear();
       var mm = Number(resultDay.getMonth()) + 1;
       var dd = resultDay.getDate();
