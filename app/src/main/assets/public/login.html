@@ -82,6 +82,7 @@
               } else {
                 //$.alert(r.d);
                 callNative("toastMessage", r.d);
+                initLogin();
               }
             })
             .fail(function() {
@@ -94,14 +95,16 @@
                 window.localStorage.setItem("sel_date", getNowDate());
                 location.replace("main.html");
               } else {
-                callNative("toastMessage", "로그인에 실패하였습니다.");
+                callNative("toastMessage", "자동 로그인에 실패하였습니다.");
+                initLogin();
               }
             });
 
 
           } else {
             //$.alert(result.data);
-            callNative("toastMessage", result.data);
+            callNative("toastMessage", "자동 로그인에 실패하였습니다.");
+            initLogin();
           }
         })
         .fail(function() {
@@ -114,7 +117,8 @@
             window.localStorage.setItem("sel_date", getNowDate());
             location.replace("main.html");
           } else {
-            callNative("toastMessage", "로그인에 실패하였습니다.");
+            callNative("toastMessage", "자동 로그인에 실패하였습니다.");
+            initLogin();
           }
         });
         return;
@@ -122,8 +126,14 @@
         window.localStorage.setItem("agent_code", "");
         window.localStorage.setItem("sel_date", getNowDate());
         localAgentCode = window.localStorage.getItem("agent_code");
+        initLogin();
       }
+    } else {
+      initLogin();
     }
+  });
+
+  function initLogin() {
     var setUserId = "";
     var currentAgentData = dbRowArray("SELECT * FROM agent LIMIT 1");
     console.log(currentAgentData);
@@ -236,7 +246,7 @@
         }
       }
     });
-  });
+  }
 
   function login () {
     //console.log("function login()");
