@@ -2,6 +2,7 @@ package com.segeuru.soft.fmkmonitoring;
 
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
@@ -10,11 +11,16 @@ import android.view.animation.AnimationUtils;
 import android.widget.ImageView;
 
 public class SplashActivity extends AppCompatActivity {
+    boolean isNeedUpdate;
+    VersionCheck versionCheck;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
+
+        final Context mContext = this;
+        versionCheck = new VersionCheck(mContext);
 
         final Animation anim = AnimationUtils.loadAnimation(this, R.anim.alpha_anim);
         final ImageView imageView = findViewById(R.id.imageView_logo);
@@ -22,11 +28,17 @@ public class SplashActivity extends AppCompatActivity {
         anim.setAnimationListener(new Animation.AnimationListener() {
             @Override
             public void onAnimationStart(Animation animation) {
-
+                // 버전 체크
+                isNeedUpdate = versionCheck.isNeedUpdate();
             }
 
             @Override
             public void onAnimationEnd(Animation animation) {
+                if (isNeedUpdate)
+                {
+                    versionCheck.showUpdateDialog();
+                    return;
+                }
 
                 new Handler().postDelayed(new Runnable() {
                     @Override
