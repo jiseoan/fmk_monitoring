@@ -270,7 +270,7 @@
               location.href = "noQrProcess.html?id=" + buildingLocateId;
             } else {
               // 모니터링/광고촬영 처리 리스트로 이동한다.
-              callNative('newWebView', "buildingJobProcessDetail.html?mode=monitoring" + "&id=" + buildingLocateId + "&jobId=" + monitoringRequestId + "&date="+ selDate);
+              callNative('newWebView', "buildingJobProcessDetail.html?mode=monitoring" + "&id=" + buildingLocateId + "&jobId=" + monitoringRequestId + "&date="+ selDate + "&type=view");
             }
           }
         }
@@ -366,7 +366,7 @@
               }
             } else {
               // 모니터링/광고촬영 처리 리스트로 이동한다.
-              callNative('newWebView', "buildingJobProcessDetail.html?mode=ad" + "&id=" + buildingId + "&jobId=" + adCheckBuildingId + "&date="+ selDate);
+              callNative('newWebView', "buildingJobProcessDetail.html?mode=ad" + "&id=" + buildingId + "&jobId=" + adCheckBuildingId + "&date="+ selDate + "&type=view");
             }
           },
           adView: function(idx) {

@@ -108,12 +108,21 @@
           
           jobId = row.job_id;
 
-          if (row.class == '0') { // 모니터링 촬영촬영용 카메라를 연다
-            callNative('camera', 'monitoring', "모니터링용\n매체사진을 촬영해주세요.", {take_count: 1, title: buildingData.building_locate_name, address: buildingData.address});
-          }
+          if (row.processing_flag == 'N') {
+            if (row.class == '0') { // 모니터링 촬영촬영용 카메라를 연다
+              callNative('camera', 'monitoring', "모니터링용\n매체사진을 촬영해주세요.", {take_count: 1, title: buildingData.building_locate_name, address: buildingData.address});
+            }
 
-          if (row.class == '1') { // 광고촬영용 카메라를 연다.
-            callNative('camera', 'ad', "광고게첨용\n매체사진을 5장 촬영해주세요.", {take_count: 5, title: row.sub_name, address: buildingData.address});
+            if (row.class == '1') { // 광고촬영용 카메라를 연다.
+              callNative('camera', 'ad', "광고게첨용\n매체사진을 5장 촬영해주세요.", {take_count: 5, title: row.sub_name, address: buildingData.address});
+            }
+          } else {
+            var mode = null;
+            if (row.class == '0') mode = 'monitoring';
+            if (row.class == '1') mode = 'ad';
+            if (mode) {
+              cameraResult(mode, '');
+            }
           }
         },
         adView: function(idx) {

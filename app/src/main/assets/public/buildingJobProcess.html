@@ -49,6 +49,7 @@
   var shotResult = null;
   var buildingData = null;
   var jobData = null;
+  var jobProcessData = null;
   var shotListSliderVue = null;
   var titleTxt = null;
   var noQrData = null;
@@ -86,31 +87,54 @@
     if (buildingRes) {
       buildingData = buildingRes;
     }
-    
+
+    if (shotResult) {
+      viewMode = "shot";
+    } else {
+      viewMode = "info";
+      shotResult = [];
+    }    
 
     if (mode =='monitoring') {
       // 모니터링 리스트 가져옴
       jobData = dbRowArray("SELECT * FROM monitoring_request WHERE  monitoring_request_id='" + jobId + "'");
 
       titleTxt = buildingData.building_locate_name;
+      if (viewMode == 'info') {
+        jobProcessData = dbResultArray("SELECT * FROM processing WHERE building_locate_id='" + buildingLocateId + "' AND monitoring_request_id='" + jobId + "'");
+        if (jobProcessData) {
+          $.each(jobProcessData, function(index, item){       
+            shotResult.push({filepath: item.processing_file_url });
+          });
+        }
+      }
     } else if (mode =='ad') {
       // 게첨 리스트 가져옴
       jobData = dbRowArray("SELECT * FROM ad_check_request WHERE  ad_check_building_id='" + jobId + "'");
+      if (viewMode == 'info') {
+        jobProcessData = dbResultArray("SELECT * FROM processing WHERE  ad_check_building_id='" + jobId + "'");
+        if (jobProcessData) {
+          $.each(jobProcessData, function(index, item){       
+            shotResult.push({filepath: item.processing_file_url });
+          });
+        }
+      }
 
       titleTxt = jobData.ad_name;
     } else if (mode =='building') {
-      if (shotResult) {
-        viewMode = "shot";
-      } else {
-        viewMode = "info";
+      if (viewMode == 'info') {
         jobData = dbRowArray("SELECT * FROM ad_check_request WHERE building_id='" + buildingId + "' AND request_date='" + selDate + "' AND building_file_url != '' LIMIT 1");
         if (jobData) {
-          shotResult = JSON.stringify([{"filepath": jobData.building_file_url }]);
+          shotResult.push({filepath: jobData.building_file_url });
         }
       }
       titleTxt = buildingData.building_name;
     }
-    
+
+    if (viewMode == 'info') {
+      shotResult = JSON.stringify(shotResult);
+    }
+
     callNative('setTitle', titleTxt);
 
     if (mode == "monitoring") {
@@ -207,8 +231,12 @@
 
     console.log("dataSaveProcess!!!");
 
-    if(mode == "building" && viewMode == "info") {
-      location.href = "buildingJobProcessList.html?id=" + buildingId + "&date=" + selDate;
+    if(viewMode == "info") {
+      if(mode == "building") {
+        location.href = "buildingJobProcessList.html?id=" + buildingId + "&date=" + selDate;
+      } else {
+        location.href = "buildingJobList.html?id=" + buildingLocateId;
+      }
       return;
     }
 
@@ -432,8 +460,8 @@
       // 작업리스트로 이동한다.
       var buildingId = buildingData.building_id;
       var buildingLocateId = buildingData.building_locate_id;
-      //location.href = "buildingJobList.html?id=" + buildingLocateId;
-      location.href = "buildingJobProcessList.html?id=" + buildingId + "&date="+ nowDate;
+      location.href = "buildingJobList.html?id=" + buildingLocateId;
+      //location.href = "buildingJobProcessList.html?id=" + buildingId + "&date="+ nowDate;
     }
   }
 
