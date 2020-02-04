@@ -39,6 +39,14 @@ public class SplashActivity extends AppCompatActivity {
                     versionCheck.showUpdateDialog();
                     return;
                 }
+                else
+                {
+                    if (versionCheck.remoteVersion.equals(""))
+                    {
+                        versionCheck.showCheckFailDialog();
+                        return;
+                    }
+                }
 
                 new Handler().postDelayed(new Runnable() {
                     @Override

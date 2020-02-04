@@ -20,6 +20,7 @@ import androidx.appcompat.app.AlertDialog;
 public class VersionCheck { // 버전 체크 클래스 [2020.01.30] - jhlee@falsto.com
     private final Context mContext;
     private final String DEBUG_TAG = "segeuru.com";
+    public String remoteVersion = "";
 
     public VersionCheck(Context context)
     {
@@ -36,6 +37,7 @@ public class VersionCheck { // 버전 체크 클래스 [2020.01.30] - jhlee@fals
         if (!remoteVersion.equals("") && !currentVersion.equals(remoteVersion)) // 원격서버 버전이 존재하고 버전이 다르다면 업데이트 존재
             return true;
         // Log.d(DEBUG_TAG, "현재버전: " + currentVersion + " (서버버전: " + remoteVersion + ")");
+        this.remoteVersion = remoteVersion;
         return false;
     }
 
@@ -54,6 +56,23 @@ public class VersionCheck { // 버전 체크 클래스 [2020.01.30] - jhlee@fals
                         mContext.startActivity(intent);
                     }
                 });
+        builder.setNegativeButton("종료",
+                new DialogInterface.OnClickListener() {
+                    public void onClick(DialogInterface dialog, int which) {
+                        android.os.Process.killProcess(android.os.Process.myPid());
+                    }
+                });
+        builder.setCancelable(false);
+        builder.show();
+    }
+
+    // 버전확인실패 창을 표시
+    public void showCheckFailDialog()
+    {
+        // 버전 업데이트 안내 팝업을 띄움
+        AlertDialog.Builder builder = new AlertDialog.Builder(mContext);
+        builder.setTitle("업데이트 확인 실패");
+        builder.setMessage("버전을 확인할 수 없습니다.");
         builder.setNegativeButton("종료",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int which) {
