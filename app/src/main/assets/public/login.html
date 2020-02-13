@@ -29,6 +29,7 @@
           <li><a v-bind:class="{on : autoActive}" v-on:click="autoCheck">로그인 상태 유지</a></li>
         </ul>
       </div>
+      <div class="link-box" v-on:click="account"><a>요원이 아니십니까? 가입을 요청하세요.</a></div>
     </div>
   </form>
   <p class="copyright">Copyright © Focusmedia Korea 2019.<br>All right reserved.</p>
@@ -78,6 +79,7 @@
               if (r.code == "success") {
                 window.localStorage.setItem("agent_code", userData.agent_code);
                 window.localStorage.setItem("sel_date", getNowDate());
+                window.localStorage.setItem("qrcode_building_keyword", "");
                 location.replace("main.html");
               } else {
                 //$.alert(r.d);
@@ -93,6 +95,7 @@
               if (agentRow) {
                 window.localStorage.setItem("agent_code", agentCode);
                 window.localStorage.setItem("sel_date", getNowDate());
+                window.localStorage.setItem("qrcode_building_keyword", "");
                 location.replace("main.html");
               } else {
                 callNative("toastMessage", "자동 로그인에 실패하였습니다.");
@@ -115,6 +118,7 @@
           if (agentRow) {
             window.localStorage.setItem("agent_code", agentCode);
             window.localStorage.setItem("sel_date", getNowDate());
+            window.localStorage.setItem("qrcode_building_keyword", "");
             location.replace("main.html");
           } else {
             callNative("toastMessage", "자동 로그인에 실패하였습니다.");
@@ -125,6 +129,7 @@
       } else {
         window.localStorage.setItem("agent_code", "");
         window.localStorage.setItem("sel_date", getNowDate());
+        window.localStorage.setItem("qrcode_building_keyword", "");
         localAgentCode = window.localStorage.getItem("agent_code");
         initLogin();
       }
@@ -185,6 +190,23 @@
               param['job_area'] = userData.job_area;
               param['job_week'] = userData.job_week;
               param['mobile_code'] = deviceUniq;
+              var versionData = dbRowArray("SELECT * FROM version");
+              if (versionData && versionData['agent_code'] != userData.agent_code) {
+                dbSql("DELETE FROM notice");
+                dbSql("DELETE FROM building");
+                dbSql("DELETE FROM building_locate");
+                dbSql("DELETE FROM monitoring_request");
+                dbSql("DELETE FROM ad_check_request");
+                dbSql("DELETE FROM temp_save_ad_check_building");
+                dbSql("DELETE FROM processing");
+                dbSql("DELETE FROM temp_save_processing");
+                dbSql("DELETE FROM code");
+                dbSql("DELETE FROM as_request");
+                dbSql("DELETE FROM as_processing");
+                dbSql("DELETE FROM temp_save_as_processing");
+                dbSql("DELETE FROM version");
+              }
+
               dbSql("DELETE FROM agent WHERE agent_code <> '" + userData.agent_code + "'");
               var res = dbMerge("agent", param);
 
@@ -198,6 +220,7 @@
                 if (r.code == "success") {
                   window.localStorage.setItem("agent_code", userData.agent_code);
                   window.localStorage.setItem("sel_date", getNowDate());
+                  window.localStorage.setItem("qrcode_building_keyword", "");
                   window.localStorage.setItem("auto_login_check", ((vueLogin.autoActive)?'Y':'N'));
                   location.replace("main.html");
                 } else {
@@ -212,7 +235,8 @@
                 var agentRow = dbRowArray("SELECT * FROM agent WHERE agent_code='" + agentCode + "' AND mobile_code='" + mobileCode+ "'");
                 if (agentRow) {
                   window.localStorage.setItem("agent_code", agentCode);
-                  window.localStorage.setItem("sel_date", getNowDate());
+                  window.localStorage.setItem("sel_date", getNowDate())
+                  window.localStorage.setItem("qrcode_building_keyword", "");
                   window.localStorage.setItem("auto_login_check", ((vueLogin.autoActive)?'Y':'N'));
                   location.replace("main.html");
                 } else {
@@ -234,6 +258,7 @@
             if (agentRow) {
               window.localStorage.setItem("agent_code", agentCode);
               window.localStorage.setItem("sel_date", getNowDate());
+              window.localStorage.setItem("qrcode_building_keyword", "");
               window.localStorage.setItem("auto_login_check", ((vueLogin.autoActive)?'Y':'N'));
               location.replace("main.html");
             } else {
@@ -243,6 +268,9 @@
         },
         autoCheck: function () {
           this.autoActive = !this.autoActive;
+        },
+        account: function () {
+          callNative('newWebView', "account.html");
         }
       }
     });

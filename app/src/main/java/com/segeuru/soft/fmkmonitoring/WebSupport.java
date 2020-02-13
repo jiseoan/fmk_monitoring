@@ -16,6 +16,7 @@ import java.net.HttpURLConnection;
 import java.net.URL;
 import java.net.URLEncoder;
 import java.util.ArrayList;
+import java.io.OutputStreamWriter;
 
 public class WebSupport {
     private final String DEBUG_TAG = "segeuru.com";
@@ -50,10 +51,10 @@ public class WebSupport {
 
             params = jsonRoot;
 //            //test, list of params.
-//            for(int i=0;i<params.length();++i) {
-//                Log.i(DEBUG_TAG, params.names().getString(i));
-//                Log.i(DEBUG_TAG, params.get(params.names().getString(i)).toString());
-//            }
+            for(int i=0;i<params.length();++i) {
+                Log.i(DEBUG_TAG, params.names().getString(i));
+                Log.i(DEBUG_TAG, params.get(params.names().getString(i)).toString());
+            }
 
             //list of file paths.
             m_fileNames = new ArrayList<>();
@@ -91,59 +92,80 @@ public class WebSupport {
             httpConn.setRequestMethod("POST");
             httpConn.setRequestProperty("Connection", "Keep-Alive");
             httpConn.setRequestProperty("Charset", "UTF-8");
-            httpConn.setRequestProperty("ENCTYPE", "multipart/form-data");
-            httpConn.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
+            Log.i(DEBUG_TAG, String.valueOf(m_fileNames.size()));
+            if (m_fileNames.size() > 0) {
+                httpConn.setRequestProperty("ENCTYPE", "multipart/form-data");
+                httpConn.setRequestProperty("Content-Type", "multipart/form-data;boundary=" + boundary);
 
-            DataOutputStream dataOutputStream = new DataOutputStream(httpConn.getOutputStream());
 
-            //BEGIN - form datas
-            for(int i=0;i<params.length();++i) {
-                dataOutputStream.writeBytes(twoHyphens + boundary + lineEnd);
-                dataOutputStream.writeBytes(String.format("Content-Disposition: form-data; name=\"%s\"" + lineEnd, params.names().getString(i)));
-                dataOutputStream.writeBytes(lineEnd);
-                //dataOutputStream.writeUTF(params.getString(params.names().getString(i)));
-                dataOutputStream.writeBytes(URLEncoder.encode (params.getString(params.names().getString(i)), "UTF-8"));
-                dataOutputStream.writeBytes(lineEnd);
-            }
+                DataOutputStream dataOutputStream = new DataOutputStream(httpConn.getOutputStream());
 
-            dataOutputStream.writeBytes(twoHyphens + boundary + lineEnd);
-
-            //BEGIN - media datas
-            for(int i=0;i<m_fileNames.size();++i) {
-                dataOutputStream.writeBytes("Content-Disposition: form-data; name=\"uploaded_file[]\";filename=\"" + m_fileNames.get(i) + "\"" + lineEnd);
-                dataOutputStream.writeBytes(lineEnd);
-
-                File sourceFile = new File(MoniteringApp.APP_STORE_PICTURE_PATH + "/" + m_fileNames.get(i));
-                if (!sourceFile.exists()) {
-                    Log.i(DEBUG_TAG, "not exists");
-                    return;
+                //BEGIN - form datas
+                for(int i=0;i<params.length();++i) {
+                    dataOutputStream.writeBytes(twoHyphens + boundary + lineEnd);
+                    dataOutputStream.writeBytes(String.format("Content-Disposition: form-data; name=\"%s\"" + lineEnd, params.names().getString(i)));
+                    dataOutputStream.writeBytes(lineEnd);
+                    //dataOutputStream.writeUTF(params.getString(params.names().getString(i)));
+                    dataOutputStream.writeBytes(URLEncoder.encode (params.getString(params.names().getString(i)), "UTF-8"));
+                    dataOutputStream.writeBytes(lineEnd);
                 }
-                FileInputStream fileInputStream = new FileInputStream(sourceFile);
 
-                // create a buffer of  maximum size
-                bytesAvailable = fileInputStream.available();
+                dataOutputStream.writeBytes(twoHyphens + boundary + lineEnd);
 
-                bufferSize = Math.min(bytesAvailable, maxBufferSize);
-                buffer = new byte[bufferSize];
+                //BEGIN - media datas
+                for(int i=0;i<m_fileNames.size();++i) {
+                    dataOutputStream.writeBytes("Content-Disposition: form-data; name=\"uploaded_file[]\";filename=\"" + m_fileNames.get(i) + "\"" + lineEnd);
+                    dataOutputStream.writeBytes(lineEnd);
 
-                // read file and write it into form
-                bytesRead = fileInputStream.read(buffer, 0, bufferSize);
+                    File sourceFile = new File(MoniteringApp.APP_STORE_PICTURE_PATH + "/" + m_fileNames.get(i));
+                    if (!sourceFile.exists()) {
+                        Log.i(DEBUG_TAG, "not exists");
+                        return;
+                    }
+                    FileInputStream fileInputStream = new FileInputStream(sourceFile);
 
-                while (bytesRead > 0) {
-                    dataOutputStream.write(buffer, 0, bufferSize);
+                    // create a buffer of  maximum size
                     bytesAvailable = fileInputStream.available();
+
                     bufferSize = Math.min(bytesAvailable, maxBufferSize);
+                    buffer = new byte[bufferSize];
+
+                    // read file and write it into form
                     bytesRead = fileInputStream.read(buffer, 0, bufferSize);
+
+                    while (bytesRead > 0) {
+                        dataOutputStream.write(buffer, 0, bufferSize);
+                        bytesAvailable = fileInputStream.available();
+                        bufferSize = Math.min(bytesAvailable, maxBufferSize);
+                        bytesRead = fileInputStream.read(buffer, 0, bufferSize);
+                    }
+
+                    // send multipart form data necesssary after file data...
+                    fileInputStream.close();
+                    dataOutputStream.writeBytes(lineEnd);
+                    dataOutputStream.writeBytes(twoHyphens + boundary + lineEnd);
+                    //dos.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
                 }
 
-                // send multipart form data necesssary after file data...
-                fileInputStream.close();
-                dataOutputStream.writeBytes(lineEnd);
-                dataOutputStream.writeBytes(twoHyphens + boundary + lineEnd);
-                //dos.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
-            }
+                dataOutputStream.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
 
-            dataOutputStream.writeBytes(twoHyphens + boundary + twoHyphens + lineEnd);
+                //close the streams //
+                dataOutputStream.flush();
+                dataOutputStream.close();
+            } else {
+                httpConn.setRequestProperty("Content-Type", "application/x-www-form-urlencoded" );
+
+                OutputStreamWriter pramsOutputStream = new OutputStreamWriter( httpConn.getOutputStream() );
+
+                for(int i=0;i<params.length();++i) {
+                    if (i > 0) pramsOutputStream.write( "&" );
+                    pramsOutputStream.write( URLEncoder.encode (params.names().getString(i), "UTF-8") );
+                    pramsOutputStream.write( "=" );
+                    pramsOutputStream.write( URLEncoder.encode (params.getString(params.names().getString(i)), "UTF-8") );
+                }
+                pramsOutputStream.flush();
+                pramsOutputStream.close();
+            }
 
             // Responses from the server (code and message)
             m_serverResponseCode = httpConn.getResponseCode();
@@ -165,10 +187,6 @@ public class WebSupport {
 
 //            Log.i(DEBUG_TAG, "HTTP Response is : " + m_serverResponseMessage + ": " + m_serverResponseCode);
 //            Log.i(DEBUG_TAG, m_serverResponseBody);
-
-            //close the streams //
-            dataOutputStream.flush();
-            dataOutputStream.close();
 
         } catch(Exception e) {
             e.printStackTrace();

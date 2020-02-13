@@ -76,6 +76,9 @@ function callNative(command, param, param2, param3) {
       } else if (command == "camera") {
         // 카메라 촬영 보이기
         window.android.camera(param, param2, JSON.stringify(param3));
+      } else if (command == "qrScan") {
+        // qr 스케너 보이기
+        window.android.qrCode();
       } else if (command == "massQueries") {
         window.android.massQueries(JSON.stringify(param));
       } else if (command == "toastMessage") {
@@ -128,6 +131,15 @@ function NativeCallback(command, param, result)
           login();
         } else {
           console.log("no function login()");
+        }
+      }
+      else if (command == "request")
+      {
+        // 로그인
+       if (typeof window["request"] === "function") {
+          request();
+        } else {
+          console.log("no function request()");
         }
       }
       else if (command == "qrScan")
@@ -191,7 +203,11 @@ function NativeCallback(command, param, result)
       else if (command == "cancel")
       {
         // 취소
-        history.back(-1);
+        if (typeof window["cancel"] === "function") {
+          cancel();
+        } else {
+          history.back(-1);
+        }
       }
       else if (command == "asRequest")
       {
@@ -474,7 +490,10 @@ function dataSync(agentCode, tost) {
   if (typeof(tost) === "undefined") tost = true;
   // 서버에 업로드 되지않은 데이터를 업로드 한다.
   // 업로드가 완료되면 내려받기 위해 버전을 체크한다.
-  if(tost) callNative("toastMessage", "동기화중 ...");
+  if(tost) callNative("toastMessage", "동기화중 ...");    
+    if (typeof window["listLoadingStart"] === "function") {
+      listLoadingStart();
+    }
   getRemoteVersion(agentCode, tost);
 }
 
@@ -525,6 +544,10 @@ function getRemoteVersion(agentCode, tost) {
     if (result.code == "success") {
       // 각 데이터의 버전을 체크한다.
       getRemoteVersionData = result.data;
+
+      var getAgentData = dbSelect("*", "agent", "agent_code='" + agentCode + "'");
+      var agentType = agentData[0]['agent_type'];
+
       var dataNamesAry = ['notice','building','monitoring_request','ad_check_request','processing','code','as_request','as_processing'];
       var dataNames = '';
       var versionData = dbRowArray("SELECT * FROM version");
@@ -532,7 +555,13 @@ function getRemoteVersion(agentCode, tost) {
         $.each(dataNamesAry, function (idx, el) {
           console.log(getRemoteVersionData[el], versionData[el]);
           if (getRemoteVersionData[el] != versionData[el]) {
-            dataNames += (dataNames)?"," + el:el;
+            if (agentType == 'A') {
+              if (el == 'building' || el == 'code' || el == 'as_request' || el == 'as_processing') {
+                dataNames += (dataNames)?"," + el:el;
+              }
+            } else {
+              dataNames += (dataNames)?"," + el:el;
+            }
           }      
         });
       } else {
@@ -549,23 +578,38 @@ function getRemoteVersion(agentCode, tost) {
         getDownloadData(agentCode, dataNames);
       }
     } else {
-      $.alert(result.data);
+      //$.alert(result.data);
+      if(tost) callNative("toastMessage", result.data);
+      if (typeof window["listLoadingEnd"] === "function") {
+        listLoadingEnd();
+      }
     }
   })
   .fail(function() {
     console.log('failed');
-    if(tost) callNative("toastMessage", "동기화에 실패하였습니다.\n인터넷연결상태를 확인해주세요.")
+    if(tost) callNative("toastMessage", "동기화에 실패하였습니다.\n인터넷연결상태를 확인해주세요.");    
+    if (typeof window["listLoadingEnd"] === "function") {
+      listLoadingEnd();
+    }
   });
 }
 
-function getDownloadData(agentCode, dataNames, tost) {
+function dataBuildingSync(agentCode, tost, params) {
   if (typeof(tost) === "undefined") tost = true;
+  if(tost) callNative("toastMessage", "동기화중 ...");
+  getDownloadData(agentCode, "building", tost, params);
+}
+
+function getDownloadData(agentCode, dataNames, tost, params) {
+  if (typeof(tost) === "undefined") tost = true;
+  if (typeof(params) === "undefined") params = {};
   var thisWeekDates = getThisWeekDates();
   $.post(BASE_URL + '/Bmm_api/getUpdateDataList', {
     agent_code: agentCode,
     start_date: thisWeekDates['start'],
     end_date: thisWeekDates['end'],
-    dataNames: dataNames
+    dataNames: dataNames,
+    params: params
   })
   .done(function(data) {
     var result = parseResult(data);
@@ -586,19 +630,33 @@ function getDownloadData(agentCode, dataNames, tost) {
 
       // 단지
       if (resData.hasOwnProperty('building')) {
-        queryList.push({"query": "delete from building"});
+        var mode = (params.hasOwnProperty('building_id'))?"update":"insert";
+        if (mode == "insert"){
+          queryList.push({"query": "delete from building"});
+        }
         for(var i=0;i<result.data.building.length;++i) {
           let currentData = result.data.building[i];
-          queryList.push({"query": stringFormat("insert into building (building_id, building_name, machine_cnt, address) " + "values('{0}', '{1}', '{2}', '{3}')", currentData.building_id, currentData.building_name, currentData.machine_cnt, currentData.address)});
+          if (mode == "insert"){
+            queryList.push({"query": stringFormat("insert into building (building_id, building_name, machine_cnt, address) " + "values('{0}', '{1}', '{2}', '{3}')", currentData.building_id, currentData.building_name, currentData.machine_cnt, currentData.address)});
+          } else {
+            queryList.push({"query": stringFormat("update building set building_name='{1}', machine_cnt='{2}', address='{3}' where building_id='{0}'", currentData.building_id, currentData.building_name, currentData.machine_cnt, currentData.address)});
+          }
         }
       }
 
       // 단지 매체
       if (resData.hasOwnProperty('building_locate')) {
-        queryList.push({"query": "delete from building_locate"});
+        var mode = (params.hasOwnProperty('building_id'))?"update":"insert";
+        if (mode == "insert"){
+          queryList.push({"query": "delete from building_locate"});
+        }
         for(var i=0;i<result.data.building_locate.length;++i) {
           let currentData = result.data.building_locate[i];
-          queryList.push({"query": stringFormat("insert into building_locate (building_locate_id, building_id, dong, unit_name, machine_code, qr_serial_code) " + "values('{0}', '{1}', '{2}', '{3}', '{4}', '{5}')", currentData.building_locate_id, currentData.building_id, currentData.dong, currentData.unit_name, currentData.machine_code, currentData.qr_serial_code)});
+          if (mode == "insert"){
+            queryList.push({"query": stringFormat("insert into building_locate (building_locate_id, building_id, dong, unit_name, machine_code, qr_serial_code) " + "values('{0}', '{1}', '{2}', '{3}', '{4}', '{5}')", currentData.building_locate_id, currentData.building_id, currentData.dong, currentData.unit_name, currentData.machine_code, currentData.qr_serial_code)});
+          } else {
+            queryList.push({"query": stringFormat("update building_locate set building_id='{1}', dong='{2}', unit_name='{3}', machine_code='{4}', qr_serial_code='{5}' where building_locate_id='{0}'", currentData.building_locate_id, currentData.building_id, currentData.dong, currentData.unit_name, currentData.machine_code, currentData.qr_serial_code)});
+          }
         }
       }
 
@@ -659,22 +717,30 @@ function getDownloadData(agentCode, dataNames, tost) {
       console.log("encoded.... end");
       callNative('massQueries', queryList);
     } else {
-      if(tost) callNative("toastMessage", "동기화에 실패하였습니다.");
+      if(tost) callNative("toastMessage", "동기화에 실패하였습니다.");    
+      if (typeof window["listLoadingEnd"] === "function") {
+        listLoadingEnd();
+      }
     }
   })
   .fail(function() {
     console.log('failed');
-    if(tost) callNative("toastMessage", "동기화에 실패하였습니다.\n인터넷연결상태를 확인해주세요.");
+    if(tost) callNative("toastMessage", "동기화에 실패하였습니다.\n인터넷연결상태를 확인해주세요.");    
+    if (typeof window["listLoadingEnd"] === "function") {
+      listLoadingEnd();
+    }
   });
 }
 
 // 다운로드 완료시 콜백
 function completeQueries() {
-  // version 테이블의 정보를 업데이트 한다.
-  console.log(getRemoteVersionData);
-  getRemoteVersionData['ver_date'] = getNowDate();
-  dbSql("DELETE FROM version");
-  dbInsert("version", getRemoteVersionData);
+  if (getRemoteVersionData) {
+    // version 테이블의 정보를 업데이트 한다.
+    console.log(getRemoteVersionData);
+    getRemoteVersionData['ver_date'] = getNowDate();
+    dbSql("DELETE FROM version");
+    dbInsert("version", getRemoteVersionData);
+  }
 
   if (typeof window["dataUpdateCallBack"] === "function") {
     dataUpdateCallBack();

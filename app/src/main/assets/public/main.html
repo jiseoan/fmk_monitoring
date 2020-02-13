@@ -111,7 +111,7 @@
         </tbody>
       </table>
     </div>
-    <div class="notice" id="noticeSlider">
+    <div class="notice dp-none" id="noticeSlider">
       <notice-swiper ref="awesomeSwiper" :options="swiperOption" v-if="noticeList.length>0">
         <!-- slides -->
         <notice-slide v-for="(notice, index) in noticeList" v-bind:key="notice.id" v-cloak>{{ notice.title }}</notice-slide>
@@ -120,8 +120,18 @@
       </notice-swiper>
       <div v-else>공지사항이 없습니다.</div>
     </div>
+    <div class="as-search dp-none" id="asSearch">
+      <div class="input-search">
+        <i class="input-search-ico"></i>
+        <input type="search" class="" id="qrcodeBuildingKeyword" placeholder="단지 또는 주소">
+        <a class="input-reset-btn dp-none" id="searchResetBtn"></a>
+      </div>
+    </div>
   </div>
-  <article id="buildingsJobList">
+  <article class="list-loading dp-none" id="ListLoading">
+    <div class="loader"><span></span></div>
+  </article>
+  <article id="buildingsJobList" class="dp-none">
     <ul class="status" v-cloak>
       <li>
         <p><span>모니터링</span><span class="doing">{{ status.monitoring.fin }} / {{ status.monitoring.total }}</span></p>
@@ -137,9 +147,24 @@
       </li>
     </ul>
   </article>
+  <article id="qrcodeJobList" class="dp-none">
+    <ul>
+      <li
+        is="job-item"
+        v-for="(item, index) in items"
+        v-bind:item="item"
+        v-on:job-detail="jobDetail(index)" v-cloak>
+      </li>
+    </ul>
+    <div class="more">
+      <a class="btn-more" v-on:click="listMore"><span>더보기</span></a>
+      <div class="loader dp-none"><span></span></div>
+    </div>
+  </article>
 
   <script language="javascript" type="text/javascript">
   var agentCode = null;
+  var agentType = null;
   var agentData = null;
   var thisWeeks = [];
   var jobDates = [];
@@ -149,26 +174,92 @@
   var mainTopVue = null;
   var mainCalendarVue = null;
   var mainBuildingJobListVue = null;
+  var mainQrcodeJobListVue = null;
   var noticeSliderVue = null;
+  var jobListPage = 1;
+  var jobListPageLoading = false;
+  var jobListEnd = false;
+  var qrcodeBuildingKeyword = "";
   $(document).ready(function(){
     callNative("hideToolBar");
     //callNative("bottomActionBar", "jobStart");
 
     agentCode = window.localStorage.getItem("agent_code");
     selDate = window.localStorage.getItem("sel_date");
+    qrcodeBuildingKeyword = window.localStorage.getItem("qrcode_building_keyword");
+    $("#qrcodeBuildingKeyword").val(qrcodeBuildingKeyword);
     nowDate = getNowDate();
 
     agentData = dbSelect("*", "agent", "agent_code='" + agentCode + "'");
     console.log(agentData);
     if (agentData) {
       jobWeek = agentData[0]['job_week'];
-    } else {
-      jobWeek = '1,2,3,4,5';
+      agentType = agentData[0]['agent_type'];
+
+      if (agentType == 'A') {
+        $("body").addClass("as-main");
+        $("#asSearch").removeClass("dp-none");
+        
+        if(qrcodeBuildingKeyword == '') {
+          $("#qrcodeBuildingKeyword").next().addClass("dp-none");
+        } else {
+          $("#qrcodeBuildingKeyword").next().removeClass("dp-none");
+        }
+
+        $("#qrcodeBuildingKeyword").on("keyup focus blur", function() {
+          var currentVal = $(this).val().trim();
+          if(currentVal == '') {
+            $(this).next().addClass("dp-none");
+          } else {
+            $(this).next().removeClass("dp-none");
+          }
+        }).on("search", function() {
+          qrcodeBuildingSearch();
+        });
+
+        $("#searchResetBtn").on("click", function () {
+          $("#qrcodeBuildingKeyword").val("");
+          $("#qrcodeBuildingKeyword").focus();
+        });
+
+        $(".more .btn-more").addClass("dp-none");
+        $(".more .loader").removeClass("dp-none");
+      } else {
+        $("#noticeSlider").removeClass("dp-none");
+      }
     }
     getDateSet();
 
     window.localStorage.setItem("noQrData", "");
+  })
+  .scroll(function(){
+    console.log("scroll");
+    var mh = $(document).height();
+    var nh = $(window).scrollTop() + $(window).height();
+    //끝에 닿기전에 미리 함수실행
+    if((mh <= nh + 400) && !jobListPageLoading && !jobListEnd)
+    {
+      jobListPageLoading = true;
+      $(".more .btn-more").addClass("dp-none");
+      $(".more .loader").removeClass("dp-none");
+      jobListPage++;      
+      //setTimeout(function() {
+        qrcodeJobList();
+      //}, 7000);
+    }
   });
+
+  function qrcodeBuildingSearch() {
+    $("#qrcodeBuildingKeyword").blur();
+    jobListPageLoading = true;
+    $(".more .btn-more").addClass("dp-none");
+    $(".more .loader").removeClass("dp-none");
+    jobListPage = 1;
+    qrcodeBuildingKeyword = $("#qrcodeBuildingKeyword").val().trim();
+    window.localStorage.setItem("qrcode_building_keyword", qrcodeBuildingKeyword);
+    $(document).scrollTop(0);
+    qrcodeJobList();
+  }
   
   var vm = null;
 
@@ -245,8 +336,8 @@
         date: ymd,
         day: day,
         week: aryWeeks[resultDay.getDay()],
-        status: (ymd == selDate)?"on":((jobWeek && jobWeek.indexOf(weekNum) !== -1)?"dim":""),
-        act: (jobWeek && jobWeek.indexOf(weekNum) !== -1)?"act":""
+        status: (ymd == selDate)?"on":((agentType != 'A' && jobWeek && jobWeek.indexOf(weekNum) !== -1)?"dim":""),
+        act: (agentType != 'A' && jobWeek && jobWeek.indexOf(weekNum) !== -1)?"act":""
       };
 
       if (jobWeek && jobWeek.indexOf(weekNum) !== -1) {
@@ -254,7 +345,8 @@
       }
     }
     
-    if (selDate == nowDate && ($.inArray(selDate, jobDates) !== -1)) {
+    // 작업시작 버튼 노출
+    if (agentType != 'A' && selDate == nowDate && ($.inArray(selDate, jobDates) !== -1)) {
       callNative("bottomActionBar", "jobStart");
     } else {
       callNative("hideBottomActionBar");
@@ -307,6 +399,7 @@
           var items = this.items;
           var row = items[idx];
           //if ($.inArray(row.date, jobDates) === -1) return;
+          if (agentType == 'A') return;
           if (selDate == row.date) return;
           console.log(this.items.length);
           $.each(items, function(index, item){
@@ -331,8 +424,13 @@
         }
       }
     });
-    noticeList();
-    buildingsJobList(selDate);
+
+    if (agentType != 'A') {
+      noticeList();
+      buildingsJobList(selDate);
+    } else {
+      qrcodeJobList();
+    }
     //dataSync(agentCode);
     getUploadData();
   }
@@ -341,10 +439,12 @@
   var uploadNowCnt = 0;
   var uploadTotalData = null;
 
+  // 임시 저장한 업로드 데이터 추출
   function getUploadData() {
     uploadTotalCnt = 0;
     uploadNowCnt = 0;
     uploadTotalData = null;
+
     var res1 = dbResultArray("SELECT upload_json FROM temp_save_ad_check_building WHERE assignment_agent_code='" + agentCode + "'");
     if (res1) {
       uploadTotalData = res1;
@@ -358,42 +458,85 @@
       }
     }
 
+    var res3 = dbResultArray("SELECT upload_json FROM temp_save_building_qrcode");
+    if (res3) {
+      if (uploadTotalData) {
+        uploadTotalData = $.merge(uploadTotalData, res3);
+      } else {
+        uploadTotalData = res3;
+      }
+    }
+
     if (uploadTotalData) {
       console.log(uploadTotalData);
       uploadTotalCnt = uploadTotalData.length;
       callNative("toastMessage", "동기화중 ...");
+      listLoadingStart();
       uploadDataProcess();
     } else {
       dataSync(agentCode);
     }
   }
 
+  // 임시저장한 데이터 업로드
   function uploadDataProcess() {
     var nc = uploadNowCnt;
     console.log(nc);
     if (nc == uploadTotalCnt) {
       dbSql("DELETE FROM temp_save_ad_check_building");
       dbSql("DELETE FROM temp_save_processing");
+      dbSql("DELETE FROM temp_save_building_qrcode");
       dataSync(agentCode);
     } else {
       callNative('uploadData', $.parseJSON(uploadTotalData[nc]['upload_json']));
     }
   }
 
+  // 업로드 완료시 콜백
   function uploadDataCallBack(resCode, data) {
     if (parseFloat(resCode) === 200) {
       var result = parseResult(data);
-      if (result.code == "success") {
+      if (result.code == "success" || result.code == "fail") {
         uploadNowCnt++;
         uploadDataProcess();
       } else {
-        callNative("toastMessage", "동기화에 실패하였습니다.")
+        callNative("toastMessage", "동기화에 실패하였습니다.");
+        listLoadingEnd();
       }
     } else {
-      callNative("toastMessage", "동기화에 실패하였습니다.\n인터넷연결상태를 확인해주세요.")
+      callNative("toastMessage", "동기화에 실패하였습니다.\n인터넷연결상태를 확인해주세요.");
+      listLoadingEnd();
     }
   }
 
+  function listLoadingStart() {
+    if (agentType == 'A') {
+      if ($("#qrcodeJobList").hasClass("dp-none") === false) $("#qrcodeJobList").addClass("dp-none");
+    } else {
+      if ($("#buildingsJobList").hasClass("dp-none") === false) $("#buildingsJobList").addClass("dp-none");
+    }
+    if ($("#ListLoading").hasClass("dp-none") === true) $("#ListLoading").removeClass("dp-none");
+    jobListPageLoading = true;
+    jobListPage = 1;
+  }
+
+  function listLoadingEnd() {
+    if (agentType == 'A') {
+      if ($("#qrcodeJobList").hasClass("dp-none") === true) $("#qrcodeJobList").removeClass("dp-none");
+    } else {
+      if ($("#buildingsJobList").hasClass("dp-none") === true) $("#buildingsJobList").removeClass("dp-none");
+    }
+    if ($("#ListLoading").hasClass("dp-none") === false) $("#ListLoading").addClass("dp-none");
+
+    if (agentType != 'A') {
+      noticeList();
+      buildingsJobList(selDate);
+    } else {
+      qrcodeJobList();
+    }
+  }
+
+  // 모니터링, 광고촬영 단지 업무 리스트
   function buildingsJobList(date) {
     var jobListData = [];
     var jobStatusCntData = { 
@@ -486,6 +629,89 @@
     
   }
 
+  // QR코드 단지 리스트
+  function qrcodeJobList() {
+    var jobListData = [];
+    var limit = 20;
+    var start = (jobListPage - 1) * limit;
+    var keyword = (qrcodeBuildingKeyword != '')?qrcodeBuildingKeyword:null;
+    var addQry = "";
+    if (keyword) {
+      addQry = " WHERE b.building_name LIKE '%" + keyword + "%' OR b.address LIKE '%" + keyword + "%' ";
+    }
+    var result = dbResultArray("SELECT 'QR매체' AS job_name, b.building_id, b.building_name, b.address, b.machine_cnt, SUM(CASE WHEN t.qr_serial_code !='' THEN 1 ELSE 0 END) qr_machine_cnt FROM building_locate t JOIN building b ON t.building_id = b.building_id " + addQry + " GROUP BY t.building_id ORDER BY b.building_name ASC LIMIT " + start + ", " + limit);
+    //console.log(result);
+    if (result) {
+      jobListData = result;
+      console.log(JSON.stringify(jobListData));
+    }
+
+    if (mainQrcodeJobListVue === null) {
+
+      Vue.component(
+        'job-item',
+        {
+          template: '<li v-on:click="$emit(\'job-detail\')">\
+                      <a>\
+                        <p>{{ item.building_name }}</p>\
+                        <p>{{ item.address }}</p>\
+                      </a>\
+                      <div>\
+                        <div>\
+                          {{ item.job_name }}\
+                          <span class="doing">{{ item.qr_machine_cnt }} / {{ item.machine_cnt }} 대</span>\
+                        </div>\
+                      </div>\
+                    </li>',
+          props: ['item']
+        }
+      );
+
+      mainQrcodeJobListVue = new Vue({
+        el: '#qrcodeJobList',
+        data: {
+          items: []
+        },
+        methods: {
+          jobDetail: function(idx) {
+            var items = this.items;
+            var row = items[idx];
+            var buildingId = row.building_id;
+            console.log(buildingId);
+
+            // 모니터링/광고촬영 처리 리스트로 이동한다.
+            location.href = "buildingQrcodeJobProcessList.html?id=" + buildingId;
+          },
+          listMore: function() {
+            callNative("toastMessage", "listMore");
+            jobListPageLoading = true;
+            $(".more .loader").removeClass("dp-none");
+            $(".more .btn-more").addClass("dp-none");
+            jobListPage++;
+            //setTimeout(function() {
+              qrcodeJobList();
+            //}, 7000);
+          }
+        }
+      });
+    }
+    if (jobListPage == 1) {
+      mainQrcodeJobListVue.items = jobListData;
+    } else {
+      mainQrcodeJobListVue.items = mainQrcodeJobListVue.items.concat(jobListData);
+    }
+    if (jobListData.length == limit) {
+      jobListEnd = false;
+      $(".more .loader").addClass("dp-none");
+      $(".more .btn-more").removeClass("dp-none");
+    } else {
+      $(".more .loader").addClass("dp-none");
+      jobListEnd = true;
+    }
+    jobListPageLoading = false;
+  }
+
+  // 작업시작클릭시 QR코드 스킨 콜백
   function qrScanResult(result) {
     // 모니터링, 광고촬영에 있는지 체크
     var qrCode = $.urlParam("cd", result);
@@ -514,8 +740,7 @@
   // 동기화 완료시 콜백
   function dataUpdateCallBack() {
     callNative("toastMessage", "동기화가 완료되었습니다.");
-    noticeList();
-    buildingsJobList(selDate);
+    listLoadingEnd();
   }
 
   </script>

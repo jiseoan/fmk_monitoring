@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, user-scalable=no">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Focus Media Korea Monitoring App</title>
+  <link rel="stylesheet" type="text/css" href="css/base.css"/>
+  <link rel="stylesheet" type="text/css" href="css/layout.css"/>
+  <link rel="stylesheet" type="text/css" href="../vendor/jquery-confirm/dist/jquery-confirm.min.css">
+  <script type="text/javascript" src="../vendor/jquery/jquery-3.1.1.min.js"></script>
+  <script type="text/javascript" src="../vendor/vue/vue.js"></script>
+  <script type="text/javascript" src="../vendor/jquery-confirm/dist/jquery-confirm.min.js"></script>
+  <script type="text/javascript" src="../vendor/common/common.js"></script>
+  <style type="text/css">
+
+.qrcode .cont-wrap {
+  padding-top: 1.25rem;
+  padding-right: 1rem;
+  padding-bottom: 1.25rem;
+  padding-left: 1rem;
+}
+.qrcode .machine-list {
+  font-size: 0;
+}
+.qrcode .machine-list > * {
+  display: inline-block;
+  font-size: 1rem;
+  vertical-align: top;
+}
+.qrcode .machine-list li {
+  width: 25%;
+  padding-top: 0rem;
+  padding-right: 0.1rem;
+  padding-bottom: 0rem;
+  padding-left: 0.1rem;
+  box-sizing: border-box;
+}
+.qrcode .machine-list li div {
+  position: relative;
+  display: block;
+  margin-top: 0;
+  margin-right: 0.155rem;
+  font-weight: 400;
+  padding-top: 0;
+  padding-right: 0rem;
+  padding-bottom: 0;
+  padding-left: 0rem;
+  border-radius: 5px;
+  box-shadow: 0 2px 3px 0 #d9d1be;
+  background-color: #fff;
+  font-size: 0.7875rem;
+  text-align: center;
+  overflow: hidden;
+}
+.qrcode .machine-list li div:before {
+  content: '';
+  display: block;
+  position: absolute;
+  left: 0rem;
+  top: 0rem;
+  right: auto;
+  bottom: auto;
+  width: 100%;
+  height: 100%;
+  box-sizing: border-box;
+}
+.qrcode .machine-list li div > span {
+  display: block;
+}
+.qrcode .machine-list li div:active:before {
+  border: 3px solid #C18109;
+}
+
+.qrcode .machine-list li:nth-child(4n) div {
+    margin-right: 0;
+}
+.qrcode .machine-list li:nth-child(n+5) {
+    margin-top: 0.425rem;
+}
+
+.qrcode .machine-list li .qr-serial-code {
+  padding-top: 0.7375rem;
+  overflow: hidden;
+  padding-bottom: 0.5375rem;
+  font-weight: 700;
+  font-size: 0.7875rem;
+  background-color:#C88912;
+  color:#fff;
+}
+.qrcode .machine-list li .empaty {
+  font-weight: 400;
+  background-color:#C1C1C1;
+}
+.qrcode .machine-list li .location {
+  background: #fff;
+  padding:0 0;
+  height: 100%;
+}
+.qrcode .machine-list li .location span {
+  display: block;
+  float: none;
+  font-size: 0.7625rem;
+  line-height: 1.6625rem;
+  overflow: hidden;
+  white-space: nowrap;
+  margin: 0 5px;
+}
+.qrcode .machine-list li .location span + span {
+  float: none;
+  border-top: 1px solid #f8f5ef;
+}
+.jconfirm .jconfirm-box {
+  padding:0 0;
+}
+.jconfirm .jconfirm-box div.jconfirm-title-c {
+  padding:15px 15px 10px 15px;
+  border-bottom: 1px solid #ececec;
+}
+
+.jconfirm .jconfirm-box div.jconfirm-closeIcon {
+  top: 13px;
+  right: 13px;
+}
+.jconfirm .jconfirm-box div.jconfirm-content-pane {
+  margin-bottom: 0.4375rem;
+  padding-top:15px;
+}
+
+.jconfirm .jconfirm-box div.jconfirm-content-pane .jconfirm-content {
+  font-size: 0.6875rem;
+  line-height: 1.1625rem;
+  text-align: center;
+  padding:0px 15px;
+}
+.jconfirm .jconfirm-box div.jconfirm-title-c .jconfirm-title {
+  font-size: 0.7625rem;
+}
+.jconfirm.jconfirm-white .jconfirm-box .jconfirm-buttons, .jconfirm.jconfirm-light .jconfirm-box .jconfirm-buttons {
+  float: unset;
+  text-align: center;
+  padding-bottom: 0;
+}
+
+.jconfirm .jconfirm-box div.jconfirm-closeIcon {
+  line-height: 24px !important;
+}
+
+.jconfirm.jconfirm-white .jconfirm-box .jconfirm-buttons button.btn-default, .jconfirm.jconfirm-light .jconfirm-box .jconfirm-buttons button.btn-default {
+  font-weight: 400;
+}
+.jconfirm.jconfirm-white .jconfirm-box .jconfirm-buttons button, .jconfirm.jconfirm-light .jconfirm-box .jconfirm-buttons button {
+  min-width: 50%;
+  margin:unset;
+  padding:10px;
+  border-radius:0;
+  outline:none;
+}
+
+.btn-ok {
+  background: #01CCBD;
+  color:#fff;
+  font-weight: 400 !important;
+}
+
+  </style>
+</head>
+<body id="buildingQrcodeJobProcessList">
+  <article class="qrcode">
+    <div class="cont-wrap">
+      <div class="machine">
+        <ul class="machine-list" id="qrcodeJobList">
+        <li
+          is="job-item"
+          v-for="(item, index) in items"
+          v-bind:item="item"
+          v-on:qr-scan-job="qrScanJob(index)" v-cloak>
+        </li>
+      </ul>
+      </div>
+    </div>
+  </article>
+
+  <script language="javascript" type="text/javascript">
+  var agentCode = null;
+  var buildingId = null;
+  var buildingData = null;
+  var qrcodeJobListVue = null;
+  var qrcodeJobData = null;
+  var uploadData = {};
+  $(document).ready(function(){
+    callNative('toolBar', 'main', "");
+    callNative("hideBottomActionBar");
+    
+    agentCode = window.localStorage.getItem("agent_code");
+    buildingId = $.urlParam("id");
+
+    var buildingRes = dbRowArray("SELECT * FROM building WHERE building_id='" + buildingId + "'");
+
+    if (buildingRes) {
+      buildingData = buildingRes;
+    }
+    
+    callNative('setTitle', buildingData.building_name);
+    qrcodeJobList();
+  });
+
+  function qrcodeJobList() {
+    var jobListData = [];
+
+    // 모니터링 리스트 가져옴
+    var result = dbResultArray("SELECT * FROM building_locate WHERE building_id='" + buildingData.building_id + "'");
+
+    if (result) {
+      jobListData = result;
+      console.log(JSON.stringify(jobListData));
+    }
+
+    if (qrcodeJobListVue === null) {
+      Vue.component(
+        'job-item',
+        {
+          template: '<li v-on:click="$emit(\'qr-scan-job\')">\
+            <div>\
+              <span v-if="item.qr_serial_code !=\'\'" class="qr-serial-code">{{ item.qr_serial_code }}</span>\
+              <span v-else class="qr-serial-code empaty">미등록</span>\
+              <span class="location">\
+                <span>{{ item.dong }}</span>\
+                <span>{{ item.unit_name }}</span>\
+              </span>\
+            </div>\
+          </li>',
+          props: ['item']
+        }
+      );
+
+      qrcodeJobListVue = new Vue({
+        el: '#qrcodeJobList',
+        data: {
+          items: []
+        },
+        methods: {
+          qrScanJob: function(idx) {
+            var items = this.items;
+            var row = items[idx];
+            console.log('qrScanJob', JSON.stringify(row));
+
+            var msg = "";
+            // 신규인지 아닌지 체크
+            if (row.qr_serial_code != '') {
+              // 기존 QR코드 존재시
+              msg = "이미 QR코드가 등록된 매체입니다.<br>변경을 진행하시겠습니까?";
+            } else {
+              // 신규시
+              msg = "QR코드 미등록 매체입니다.<br>등록을 진행하시겠습니까?";
+            }
+            qrcodeJobData = row;
+            $.confirm({
+              boxWidth: '80%',
+              useBootstrap: false,
+              closeIcon: true,
+              backgroundDismiss: false,
+              backgroundDismissAnimation: '',
+              animation: 'none',
+              title: '알림',
+              content: msg,
+              buttons: {        
+                cancel: {
+                  text: '취소',
+                  action: function () {
+                  }
+                },
+                confirm: {
+                  text: '확인',
+                  btnClass: 'btn-ok',
+                  action: function () {
+                    callNative("qrScan");
+                  }
+                }
+              }
+            });
+          }
+        }
+      });
+    }
+
+    qrcodeJobListVue.items = jobListData;
+  }
+
+  function qrScanResult(result) {
+    // 모니터링, 광고촬영에 있는지 체크
+    var qrCode = $.urlParam("cd", result);
+    if (qrCode === null) {
+      callNative("toastMessage", "인식이 불가능한 QR코드 입니다.");
+      return;
+    }
+
+    // 신규인지 아닌지 체크
+    if (qrcodeJobData.qr_serial_code != '') {
+      // 기존 QR코드 존재시
+      if (qrcodeJobData.qr_serial_code == qrCode) {
+        callNative("toastMessage", "해당매체의 QR코드와 동일한 QR코드입니다.\n다른 QR코드로 진행해 주세요.");
+        return;
+      }
+    } else {
+      // 신규시
+      var qrcodeCheck = dbRowArray("SELECT COUNT(*) AS cnt FROM building_locate WHERE qr_serial_code = '" + qrCode + "'");
+
+      if (qrcodeCheck.cnt > 0) {
+        callNative("toastMessage", "사용중인 QR코드입니다.\n다른 QR코드로 진행해 주세요.");
+        return;
+      }
+    }
+
+    console.log("dataSaveProcess!!!");
+
+    uploadData = {};
+    uploadData["data"] = {};
+
+    var param = {};
+    var updateDataUrl = '/Bmm_api/uploadQrcodeProcessing';
+
+    param["qr_serial_code"] = qrCode;
+
+    uploadData['data']['id'] = qrcodeJobData.building_locate_id;
+    uploadData['data']['in_data'] = param;
+    uploadData['url'] = BASE_URL + updateDataUrl;
+
+    console.log(uploadData);
+    //dataLocalSave();
+    callNative('uploadData', uploadData);
+  }
+
+  function uploadDataCallBack(resCode, data) {
+    if (parseFloat(resCode) === 200) {
+      var result = parseResult(data);
+      if (result.code == "success") {
+        // 데이터를 동기화하여 받는다.
+        var params = { building_id: buildingId };
+        dataBuildingSync(agentCode, false, params);
+      } else if (result.code == "fail") {
+        if (result.data.err_code == 1) {
+          callNative("toastMessage", "해당매체의 QR코드와 동일한 QR코드입니다.\n다른 QR코드로 진행해 주세요.");
+        } else if (result.data.err_code == 2) {
+          callNative("toastMessage", "사용중인 QR코드입니다.\n다른 QR코드로 진행해 주세요.");
+        }
+        qrcodeJobData = null;
+        // 데이터를 동기화하여 받는다.
+        var params = { building_id: buildingId };
+        dataBuildingSync(agentCode, false, params);
+      } else {
+        dataLocalSave();
+      }
+    } else {
+      dataLocalSave();
+    }
+  }
+
+  function dataLocalSave() {
+    console.log('failed');
+
+    var uploadInData = uploadData['data']['in_data'];
+    var uploadId = uploadData['data']['id'];
+
+    var tempSaveProcData = {};
+    tempSaveProcData['building_locate_id'] = uploadId;
+    tempSaveProcData['qr_serial_code'] = uploadInData['qr_serial_code'];
+    tempSaveProcData['upload_json'] = JSON.stringify(uploadData);
+
+    dbSql("DELETE FROM temp_save_building_qrcode WHERE building_locate_id='" + tempSaveProcData['building_locate_id'] + "'");
+
+    console.log(tempSaveProcData);
+    dbInsert("temp_save_building_qrcode", tempSaveProcData);
+    callNative("toastMessage", "서버 저장에 실패하였습니다.\n내부로 저장합니다.");
+    dataSaveComplete();
+  }
+
+  // 동기화 완료시 콜백
+  function dataUpdateCallBack() {
+    dataSaveComplete();
+  }
+
+  function dataSaveComplete() {
+    var msg = null;
+    if (qrcodeJobData.qr_serial_code != '') {
+      msg = "변경되었습니다.";
+    } else {
+      msg = "등록되었습니다.";
+    }
+    callNative("toastMessage", msg);
+    qrcodeJobData = null;
+    qrcodeJobList();
+  }
+  </script>
+
+</body>
+</html>

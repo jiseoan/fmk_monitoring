@@ -1,0 +1,197 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, user-scalable=no">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Focus Media Korea Monitoring App</title>
+  <link rel="stylesheet" type="text/css" href="css/base.css"/>
+  <link rel="stylesheet" type="text/css" href="css/layout.css"/>
+  <script type="text/javascript" src="../vendor/jquery/jquery-3.1.1.min.js"></script>
+  <script type="text/javascript" src="../vendor/vue/vue.js"></script>
+  <script type="text/javascript" src="../vendor/common/common.js"></script>
+</head>
+<body id="account">
+  <form onsubmit="return false;">
+  <article class="account" id="accountForm" v-bind:class="[formVisible ? '' : 'dp-none']">
+    <div class="wrapper">
+      <p>해당 입력란을 입력해 주세요.</p>
+      <div class="form-box" >
+      <label>
+        <p>아이디</p>
+        <input type="text" autocomplete="off" maxlength="12" v-model="userId" ref="userId" placeholder="6~12자리 영문 또는 영문+숫자">
+        <small class="invalid-feedback" v-bind:class="[userIdErrorMsg !='' ? '' : 'dp-none']" v-cloak>{{ userIdErrorMsg }}</small>
+      </label>
+      <label>
+        <p>이름</p>
+        <input type="text" autocomplete="off" maxlength="10" v-model="userName" ref="userName">
+        <small class="invalid-feedback" v-bind:class="[userNameErrorMsg !='' ? '' : 'dp-none']" v-cloak>{{ userNameErrorMsg }}</small>
+      </label>
+      <label>
+        <p>핸드폰번호</p>
+        <input type="number" autocomplete="off" maxlength="11" v-model="userMobile" ref="userMobile">
+        <small class="invalid-feedback" v-bind:class="[userMobileErrorMsg !='' ? '' : 'dp-none']" v-cloak>{{ userMobileErrorMsg }}</small>
+      </label>
+      </div>
+    </div>
+  </article>
+  </form>
+  <!--a onClick="request()">요청</a -->
+  <article class="account-end" id="accountResult" v-bind:class="[visible ? '' : 'dp-none']" v-cloak>
+    <div class="wrapper">
+      <div class="end-text">
+        <p>요원가입 요청이<br>정상적으로 완료되었습니다.</p>
+        <p>가입승인 여부는 입력하신 휴대폰으로<br>연락드리겠습니다.</p>
+      </div>
+    </div>
+  </article>
+
+  <script language="javascript" type="text/javascript">
+  var vueAccountForm = null;
+  var vueAccountResult = null;
+  $(document).ready(function(){
+    callNative('toolBar', 'normal', "회원가입");
+    callNative("hideBottomActionBar");
+    
+    callNative("bottomActionBar", "cancelAndRequest");
+    initRequest();
+  });
+
+  function initRequest() {
+
+    vueAccountForm = new Vue({
+      el: '#accountForm',
+      data: {
+        formVisible: true,
+        userId: '',
+        userIdErrorMsg: '',
+        userName: '',
+        userNameErrorMsg: '',
+        userMobile: '',
+        userMobileHypen: '',
+        userMobileErrorMsg: ''
+      },
+      methods: {
+        sendPost: function (e) {
+          this.error = false;
+          this.userIdErrorMsg ='';
+          this.userNameErrorMsg ='';
+          this.userMobileErrorMsg ='';
+          this.userMobileHypen ='';
+
+          if (!this.userId) {
+            this.userIdErrorMsg = "아이디를 입력해 주세요.";
+            this.$refs.userId.focus();
+            return false;
+          } else {
+
+            var engNumCheck = /^(?=.*\d)(?=.*[a-zA-Z])[0-9a-zA-Z]{6,12}$/; //6~12자리 영문, 숫자 조합
+            var engCheck = /^[a-zA-Z]{6,12}$/; //6~12자리 영문
+
+            if (engNumCheck.test(this.userId) != true && engCheck.test(this.userId) != true) {
+              this.userIdErrorMsg = "6~12자리 영문 또는 영문+숫자 조합입니다.";
+              this.$refs.userId.focus();
+              return false;
+            }
+          }
+
+
+          if (!this.userName) {
+            this.userNameErrorMsg = '이름을 입력해 주세요.';
+            this.$refs.userName.focus();
+            return false;
+          }
+
+          if (!this.userMobile) {
+            this.userMobileErrorMsg = '핸드폰번호를 입력해 주세요.';
+            this.$refs.userMobile.focus();
+            return false;
+          } else {            
+            var trans_num = this.userMobile;
+            // 입력값이 있을때만 실행합니다.
+            if(trans_num != null && trans_num != '')
+            {
+              // 총 핸드폰 자리수는 11글자이거나, 10자여야 합니다.
+              if(trans_num.length==11 || trans_num.length==10) 
+              {   
+                // 유효성 체크
+                var regExp_ctn = /^(01[016789]{1}|02|0[3-9]{1}[0-9]{1})([0-9]{3,4})([0-9]{4})$/;
+                if(regExp_ctn.test(trans_num))
+                {
+                  // 유효성 체크에 성공하면 하이픈을 넣고 값을 바꿔줍니다.
+                  trans_num = trans_num.replace(/^(01[016789]{1}|02|0[3-9]{1}[0-9]{1})-?([0-9]{3,4})-?([0-9]{4})$/, "$1-$2-$3");                  
+                  this.userMobileHypen = trans_num;
+                }
+                else
+                {
+                  this.userMobileErrorMsg = '유효하지 않은 핸드폰번호 입니다.';
+                  this.$refs.userMobile.focus();
+                  return false;
+                }
+              }
+              else 
+              {
+                this.userMobileErrorMsg = '유효하지 않은 핸드폰번호 입니다.';
+                this.$refs.userMobile.focus();
+                return false;
+              }
+            }
+          }
+
+          this.$refs.userId.blur();
+          this.$refs.userName.blur();
+          this.$refs.userMobile.blur();
+
+          var param = {};
+          param['agent_code'] = this.userId;
+          param['agent_name'] = this.userName;
+          param['mobile'] = this.userMobileHypen;
+          param['agent_type'] = 'O';
+
+          $.post(BASE_URL + '/Bmm_api/accountRequest', {
+            in_data: param
+          })
+          .done(function(data) {
+            var result = parseResult(data);
+            console.log(result.data);
+            if (result.code == "success") {
+              vueAccountForm.formVisible = false;
+              vueAccountResult.visible = true;
+              callNative("hideBottomActionBar");              
+              callNative("bottomActionBar", "confirm");
+            } else if (result.code == "fail") {
+              callNative("toastMessage", result.data);
+            } else {
+              callNative("toastMessage", "회원가입 요청이 실패하였습니다");
+            }
+          })
+          .fail(function() {
+            callNative("toastMessage", "회원가입 요청이 실패하였습니다.\n인터넷연결상태를 확인해주세요.");
+          });
+        }
+      }
+    });
+
+    vueAccountResult = new Vue({
+      el: '#accountResult',
+      data: {
+        visible: false
+      }
+    });
+  }
+
+  function cancel() {
+    NativeCallback('close');
+  }
+
+  function request() {
+    vueAccountForm.sendPost();
+  }
+
+  function confirm() {
+    NativeCallback('close');
+  }
+  </script>
+
+</body>
+</html>
