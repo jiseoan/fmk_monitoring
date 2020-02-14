@@ -546,7 +546,7 @@ function getRemoteVersion(agentCode, tost) {
       getRemoteVersionData = result.data;
 
       var getAgentData = dbSelect("*", "agent", "agent_code='" + agentCode + "'");
-      var agentType = agentData[0]['agent_type'];
+      var agentType = getAgentData[0]['agent_type'];
 
       var dataNamesAry = ['notice','building','monitoring_request','ad_check_request','processing','code','as_request','as_processing'];
       var dataNames = '';
