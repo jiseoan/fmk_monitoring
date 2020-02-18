@@ -66,6 +66,7 @@ function callNative(command, param, param2, param3) {
         // 상단바 레이아웃별 보이기
         // main : 뒤로가기 | 타이틀명 | 홈
         // popup : 타이틀명 | 닫기
+        // normal : 타이틀명
         window.android.toolBar(param, param2);
       } else if (command == "setTitle") {
         // 타이틀명 변경하기
@@ -117,7 +118,11 @@ function NativeCallback(command, param, result)
       else if (command == "home")
       {
         // 홈
-        location.href = "main.html";
+        if (typeof window["home"] === "function") {
+          home();
+        } else {
+          location.href = "main.html";
+        }
       }
       else if (command == "close")
       {

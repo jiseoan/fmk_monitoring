@@ -1,0 +1,181 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, user-scalable=no">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <title>Focus Media Korea Monitoring App</title>
+  <link rel="stylesheet" type="text/css" href="css/base.css"/>
+  <link rel="stylesheet" type="text/css" href="css/layout.css"/>
+  <script type="text/javascript" src="../vendor/jquery/jquery-3.1.1.min.js"></script>
+  <script type="text/javascript" src="../vendor/vue/vue.js"></script>
+  <script type="text/javascript" src="../vendor/common/common.js"></script>
+</head>
+<body id="account">
+  <form onsubmit="return false;">
+  <article class="setting" id="settingForm">
+    <ul>
+      <li>
+        <div v-on:click="logout">
+          <p>로그아웃</p>
+        </div>
+      </li>
+      <li v-bind:class="[toggleActive ? 'on' : '', menuPwdActive ? '' : 'dp-none']">
+        <div class="drop-down" v-on:click="toggle">
+          <p>비밀번호 변경</p>
+        </div>
+        <div class="drop-down-content">
+          <p>데이터 통신이 연결 가능하여야 합니다.</p>
+          <div class="form-box">
+            <label>
+              <p>기존 비밀번호</p>
+              <input type="password" autocomplete="off" maxlength="20" v-model="oldPw" ref="oldPw">
+              <small class="invalid-feedback" v-bind:class="[oldPwErrorMsg !='' ? '' : 'dp-none']" v-cloak>{{ oldPwErrorMsg }}</small>
+            </label>
+            <label>
+              <p>새 비밀번호</p>
+              <input type="password" autocomplete="off" maxlength="20" v-model="newPw" ref="newPw" placeholder="8~20자리 영문+숫자+특수문자">
+              <small class="invalid-feedback" v-bind:class="[newPwErrorMsg !='' ? '' : 'dp-none']" v-cloak>{{ newPwErrorMsg }}</small>
+            </label>
+            <label>
+              <p>새 비밀번호 확인</p>
+              <input type="password" autocomplete="off" maxlength="20" v-model="confirmNewPw" ref="confirmNewPw">
+              <small class="invalid-feedback" v-bind:class="[confirmNewPwErrorMsg !='' ? '' : 'dp-none']" v-cloak>{{ confirmNewPwErrorMsg }}</small>
+            </label>
+            <a class="change-btn" v-on:click="sendPost">변경</a>
+          </div>
+        </div>
+      </li>
+    </ul>
+  </article>
+  </form>
+
+  <script language="javascript" type="text/javascript">
+  var agentCode = null;
+  var agentType = null;
+  var vueSettingForm = null;
+  var menuPwdActive = false;
+  $(document).ready(function(){
+    callNative('toolBar', 'main', "설정");
+    callNative("hideBottomActionBar");
+    
+    initSetting();
+  });
+
+  function initSetting() {
+    agentCode = window.localStorage.getItem("agent_code");
+    agentData = dbSelect("*", "agent", "agent_code='" + agentCode + "'");
+    console.log(agentData);
+    if (agentData) {
+      agentType = agentData[0]['agent_type'];
+      if (agentType != 'F') {
+        menuPwdActive = true;
+      }
+    }
+
+    vueSettingForm = new Vue({
+      el: '#settingForm',
+      data: {
+        menuPwdActive: menuPwdActive,
+        toggleActive: false,
+        oldPw: '',
+        oldPwErrorMsg: '',
+        newPw: '',
+        newPwErrorMsg: '',
+        confirmNewPw: '',
+        confirmNewPwErrorMsg: ''
+      },
+      methods: {
+        sendPost: function (e) {
+          this.oldPwErrorMsg ='';
+          this.newPwErrorMsg ='';
+          this.confirmNewPwErrorMsg ='';
+
+          if (!this.oldPw) {
+            this.oldPwErrorMsg = "기존 비밀번호를 입력해 주세요.";
+            this.$refs.oldPw.focus();
+            return false;
+          }
+
+
+          if (!this.newPw) {
+            this.newPwErrorMsg = '새 비밀번호를 입력해 주세요.';
+            this.$refs.newPw.focus();
+            return false;
+          } else {
+
+            var pwCheck = /^(?=.*[A-Za-z])(?=.*\d)(?=.*[!@#$%^*+=-])[A-Za-z\d!@#$%^*+=-]{8,20}$/; //8~20자 영문대소문자, 숫자, 특수문자 혼합하여 사용
+            if (pwCheck.test(this.newPw) != true) {
+              this.newPwErrorMsg = "8~20자 영문+숫자+특수문자(!@#$%^*+=-) 조합입니다.";
+              this.$refs.newPw.focus();
+              return false;
+            }
+          }
+
+          if (!this.confirmNewPw) {
+            this.confirmNewPwErrorMsg = '새 비밀번호 확인을 입력해 주세요.';
+            this.$refs.confirmNewPw.focus();
+            return false;
+          } else {
+            if (this.newPw != this.confirmNewPw) {
+              this.confirmNewPwErrorMsg = '새 비밀번호와 다릅니다.';
+              this.$refs.confirmNewPw.focus();
+              return false;
+            }
+
+          }
+
+          this.$refs.oldPw.blur();
+          this.$refs.newPw.blur();
+          this.$refs.confirmNewPw.blur();
+
+          var param = {};
+          param['agent_code'] = agentCode;
+          param['old_pw'] = this.oldPw;
+          param['new_pw'] = this.newPw;
+
+          $.post(BASE_URL + '/Bmm_api/changePassword', {
+            in_data: param
+          })
+          .done(function(data) {
+            var result = parseResult(data);
+            console.log(result.data);
+            if (result.code == "success") {
+              vueSettingForm.toggleActive = false;
+              vueSettingForm.oldPw ='';
+              vueSettingForm.oldPwErrorMsg ='';
+              vueSettingForm.newPw ='';
+              vueSettingForm.newPwErrorMsg ='';
+              vueSettingForm.confirmNewPw ='';
+              vueSettingForm.confirmNewPwErrorMsg ='';
+              callNative("toastMessage", "비밀번호 변경이 완료되었습니다");
+            } else if (result.code == "fail") {
+              callNative("toastMessage", result.data);
+            } else {
+              callNative("toastMessage", "비밀번호 변경이 실패하였습니다");
+            }
+          })
+          .fail(function() {
+            callNative("toastMessage", "비밀번호 변경이 실패하였습니다.\n인터넷연결상태를 확인해주세요.");
+          });
+        },
+        logout: function() {
+          // 로그아웃한다.
+          window.localStorage.setItem("agent_code", "");
+          console.log(window.localStorage.getItem("agent_code"));
+          location.href = "login.html";
+        },
+        toggle: function (e) {
+          this.toggleActive = !this.toggleActive;
+        }
+      }
+    });
+  }
+
+  function home() {
+    NativeCallback('back');
+  }
+  </script>
+
+</body>
+</html>

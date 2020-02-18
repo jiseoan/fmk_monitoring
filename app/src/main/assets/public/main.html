@@ -83,7 +83,7 @@
       <span class="agent-name">{{ agentName }}님</span>
       <div class="util">
         <a class="refresh" v-on:click="dataSync"></a>
-        <a class="logout" v-on:click="logout"></a>
+        <a class="my-setting" v-on:click="setting"></a>
       </div>
     </div>
     <div class="calendar">
@@ -361,14 +361,11 @@
       methods: {
         dataSync: function() {
           // 데이터를 동기화하여 받는다.
-          //dataSync(agentCode);
           getUploadData();
         },
-        logout: function() {
-          // 로그아웃한다.
-          window.localStorage.setItem("agent_code", "");
-          console.log(window.localStorage.getItem("agent_code"));
-          location.href = "login.html";
+        setting: function() {
+          // 설정으로 이동한다.
+          location.href = "setting.html";
         }
       }
     });

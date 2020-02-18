@@ -138,7 +138,7 @@ public class WebviewActivity extends BaseAtivity {
             case 0: {
                 String result = data.getStringExtra("result");
                 javaScriptCallback("newWebViewCallBack", null, result);
-                Log.i(DEBUG_TAG, result);
+                //Log.i(DEBUG_TAG, result);
                 break;
             }
             case WebviewActivity.REQUEST_CODE: {
@@ -366,7 +366,8 @@ public class WebviewActivity extends BaseAtivity {
         if(m_webview.canGoBack()){
             m_webview.goBack();
         } else {
-            super.onBackPressed();
+            //super.onBackPressed();
+            close();
         }
     }
 

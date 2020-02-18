@@ -242,6 +242,13 @@ input {
   background-size: contain;
   background-repeat: no-repeat;
 }
+.main .header .top .util .my-setting {
+  width: 3.825rem;
+  height: 1.375rem;
+  background-image: url('../images/setting.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+}
 .main .header .calendar {
   height: 4.75rem;
 }
@@ -1652,7 +1659,7 @@ pre {
 }
 .setting ul li .drop-down-content .form-box input {
   margin-top: 0.425rem;
-  margin-bottom: 0.625rem;
+  margin-bottom: 0.125rem;
   padding: 0.625rem;
   width: 100%;
   font-size: 0.7625rem;

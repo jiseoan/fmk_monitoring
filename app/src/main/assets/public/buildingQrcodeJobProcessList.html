@@ -225,8 +225,10 @@
               <span v-if="item.qr_serial_code !=\'\'" class="qr-serial-code">{{ item.qr_serial_code }}</span>\
               <span v-else class="qr-serial-code empaty">미등록</span>\
               <span class="location">\
-                <span>{{ item.dong }}</span>\
-                <span>{{ item.unit_name }}</span>\
+                <span v-if="item.dong !=\'\'">{{ item.dong }}</span>\
+                <span v-else>-</span>\
+                <span v-if="item.unit_name !=\'\'">{{ item.unit_name }}</span>\
+                <span v-else>-</span>\
               </span>\
             </div>\
           </li>',
